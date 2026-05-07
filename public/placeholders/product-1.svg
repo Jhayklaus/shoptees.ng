@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Placeholder product image — folded tee">
+  <rect width="800" height="1000" fill="#ebe2cf"/>
+  <g transform="translate(400 520)">
+    <!-- folded tee silhouette -->
+    <path d="M-220 -180 L-140 -240 L-60 -210 L60 -210 L140 -240 L220 -180 L200 -40 L220 120 L-220 120 L-200 -40 Z" fill="#0b0b0a" opacity="0.92"/>
+    <path d="M-60 -210 Q0 -180 60 -210" fill="none" stroke="#f4efe6" stroke-width="6"/>
+    <circle cx="0" cy="-120" r="10" fill="#d4441e"/>
+  </g>
+  <text x="60" y="930" font-family="JetBrains Mono, monospace" font-size="20" letter-spacing="3" fill="#0b0b0a">[PLACEHOLDER · 01]</text>
+  <text x="60" y="80" font-family="Georgia, serif" font-style="italic" font-size="28" fill="#0b0b0a" opacity="0.55">no. one</text>
+</svg>

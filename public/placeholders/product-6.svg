@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Placeholder product image — long sleeve">
+  <rect width="800" height="1000" fill="#f4efe6"/>
+  <g transform="translate(400 520)">
+    <path d="M-260 -240 L-160 -260 L-90 -240 L-60 -200 L60 -200 L90 -240 L160 -260 L260 -240 L280 -120 L210 -100 L210 320 L-210 320 L-210 -100 L-280 -120 Z" fill="#0b0b0a"/>
+    <line x1="-90" y1="-240" x2="60" y2="-240" stroke="#f4efe6" stroke-width="3"/>
+    <text x="0" y="120" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="64" fill="#d4441e">no.</text>
+    <text x="0" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="92" fill="#f4efe6">06</text>
+  </g>
+  <text x="60" y="930" font-family="JetBrains Mono, monospace" font-size="20" letter-spacing="3" fill="#0b0b0a">[PLACEHOLDER · 06]</text>
+</svg>
