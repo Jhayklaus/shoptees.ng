@@ -14,9 +14,7 @@ export function Manifesto() {
             print slowly. We ship in paper. We answer DMs ourselves.
           </p>
           <p className="mt-6 font-mono-tight text-paper/55 max-w-md">
-            [PLACEHOLDER copy — replace with verbatim brand statement once
-            provided. Tone above is a guess at the studio&apos;s voice based on
-            similar Nigerian streetwear studios.]
+            What good are wings without the courage to fly.
           </p>
         </div>
       </div>

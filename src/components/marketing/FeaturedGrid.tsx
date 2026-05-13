@@ -1,11 +1,25 @@
 import Link from "next/link";
-import { products } from "@/data/products";
+import { listActiveProducts, toDisplayProduct } from "@/lib/server/products";
 import { ProductCard } from "@/components/product/ProductCard";
 
-export function FeaturedGrid() {
-  const featured = products.slice(0, 4);
+export async function FeaturedGrid() {
+  const rows = await listActiveProducts();
+  const featured = rows.slice(0, 4).map(toDisplayProduct);
+
+  if (featured.length === 0) {
+    return (
+      <section className="mx-auto max-w-[1400px] px-5 md:px-10 pb-32">
+        <div className="border border-dashed border-line p-16 text-center">
+          <p className="font-italic-accent text-2xl text-ink/55">
+            The studio is between drops.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="mx-auto max-w-[1400px] px-5 md:px-10 pb-32">
+    <section className="mx-auto max-w-[1400px] px-5 md:px-10 pt-32 mb-12">
       <div className="flex items-end justify-between mb-12 border-b border-line pb-4">
         <div>
           <p className="font-mono-tight text-ink/55">Selection · 01</p>

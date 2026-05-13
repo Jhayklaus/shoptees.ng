@@ -11,7 +11,7 @@ const items = [
 
 export function AnnouncementBar() {
   // 4× repeat so the seamless -50% translate has enough content
-  const reel = Array.from({ length: 4 }).flatMap(() => items);
+  const reel = Array.from({ length: 8 }).flatMap(() => items);
 
   return (
     <div
