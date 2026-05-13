@@ -1,6 +1,31 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 
+// Keyword set surfaced site-wide. Google ignores this meta for ranking, but
+// it still shows up in: smaller search engines, some internal/site search
+// systems, AI crawler context windows, and social previews. Keep it focused
+// on terms the brand actually wants to be associated with — no stuffing.
+const KEYWORDS = [
+  // Brand
+  "Shoptees", "Shopteesng", "Shoptees NG", "Shoptees Nigeria", "shptz",
+  // Categories
+  "streetwear", "football jerseys", "soccer jerseys", "tees", "t-shirts",
+  "graphic tees", "jorts", "jersey shorts", "hoodies", "pants", "trousers",
+  // Audience
+  "men's streetwear", "women's streetwear", "unisex apparel",
+  "men's clothing Nigeria", "women's clothing Nigeria",
+  // Geography
+  "Nigerian streetwear", "Lagos streetwear", "Nigerian fashion",
+  "Lagos fashion", "Nigeria clothing brand", "made in Nigeria",
+  "African streetwear",
+  // B2B
+  "wholesale clothing Nigeria", "wholesale streetwear",
+  "bulk t-shirts Nigeria", "jersey wholesale Nigeria",
+  // Football culture
+  "football kits Nigeria", "club jerseys", "supporters wear",
+  "terrace fashion", "matchday wear",
+];
+
 // Root-layout metadata. The title template means every other page just sets
 // its short title (e.g. "About") and Next renders "About — Shoptees".
 // `title.default` is the homepage value when no per-page title is set.
@@ -11,6 +36,12 @@ export const rootMetadata: Metadata = {
     template: `%s — ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  keywords: KEYWORDS,
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.name }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
+  category: "Fashion",
   openGraph: {
     title: `${siteConfig.name} — Streetwear & football jerseys`,
     description: siteConfig.description,

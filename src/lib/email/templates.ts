@@ -230,6 +230,38 @@ export function newsletterWelcome() {
   return { subject, html, text };
 }
 
+export function adminInviteEmail(args: {
+  inviteUrl: string;
+  invitedByName: string;
+  brandName: string;
+}) {
+  const subject = `You've been invited to the ${args.brandName} admin`;
+  const html = `${WRAP_OPEN}
+    <p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:0 0 10px;">Studio access</p>
+    <h1 style="font-size:26px;margin:0 0 6px;letter-spacing:-0.01em;">You're invited.</h1>
+    <p style="color:#555;line-height:1.6;margin:14px 0 0;">
+      ${escapeHtml(args.invitedByName)} has invited you to join the ${escapeHtml(args.brandName)}
+      admin. Click below to set your password and get started — the link expires in 7 days.
+    </p>
+    <p style="margin:28px 0 0;">
+      <a href="${escapeHtml(args.inviteUrl)}" style="display:inline-block;background:#1a1a1a;color:#fff;text-decoration:none;padding:14px 22px;font-size:14px;letter-spacing:0.04em;">Accept invitation →</a>
+    </p>
+    <p style="margin:24px 0 0;color:#999;font-size:12px;word-break:break-all;">
+      Or paste this link: ${escapeHtml(args.inviteUrl)}
+    </p>
+  ${WRAP_CLOSE}`;
+
+  const text = [
+    `You're invited to the ${args.brandName} admin`,
+    ``,
+    `${args.invitedByName} has invited you to join the admin.`,
+    `Set your password and get started (link expires in 7 days):`,
+    args.inviteUrl,
+  ].join("\n");
+
+  return { subject, html, text };
+}
+
 function escapeHtml(s: string) {
   return s
     .replace(/&/g, "&amp;")
