@@ -2,6 +2,8 @@ import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
 import { getOrderByNumber } from "@/lib/server/orders";
 import { formatNaira } from "@/lib/utils";
+import { prisma } from "@/lib/db";
+import { isPaystackConfigured, verifyTransaction } from "@/lib/paystack";
 
 export const metadata = buildMetadata({
   title: "Order confirmed — Shoptees",
@@ -12,9 +14,19 @@ export const dynamic = "force-dynamic";
 export default async function CheckoutSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ref?: string }>;
+  searchParams: Promise<{ ref?: string; reference?: string; trxref?: string }>;
 }) {
-  const { ref } = await searchParams;
+  const { ref, reference, trxref } = await searchParams;
+
+  // Paystack appends ?reference=...&trxref=... when redirecting back. Verify
+  // server-side before showing the receipt as PAID. Idempotent — re-runs are safe.
+  const paystackRef = reference ?? trxref;
+  if (paystackRef && isPaystackConfigured()) {
+    await reconcilePaystack(paystackRef).catch((e) => {
+      console.error("[checkout/success] reconcile failed", e);
+    });
+  }
+
   const order = ref ? await getOrderByNumber(ref) : null;
 
   if (!order) {
@@ -55,6 +67,17 @@ export default async function CheckoutSuccessPage({
             dateStyle: "medium",
             timeStyle: "short",
           })}
+        </p>
+        <p className="mt-3">
+          <span
+            className={`inline-block px-3 py-1 font-mono-tight text-xs uppercase tracking-wider ${
+              order.status === "PAID"
+                ? "bg-ink text-paper"
+                : "bg-vermillion/10 text-vermillion border border-vermillion/40"
+            }`}
+          >
+            {order.status === "PAID" ? "Paid" : "Awaiting payment"}
+          </span>
         </p>
       </div>
 
@@ -111,4 +134,31 @@ export default async function CheckoutSuccessPage({
       </div>
     </main>
   );
+}
+
+// Reconcile a Paystack reference returned via the callback URL: verify with
+// Paystack, then mark the order PAID and decrement stock if successful.
+// Idempotent — safe to call on every page load.
+async function reconcilePaystack(reference: string) {
+  const order = await prisma.order.findFirst({
+    where: { paystackReference: reference },
+    include: { items: true },
+  });
+  if (!order || order.status === "PAID") return;
+
+  const verification = await verifyTransaction(reference);
+  if (verification.status !== "success") return;
+  if (verification.amount !== order.totalNGN * 100) return;
+
+  await prisma.$transaction([
+    prisma.order.update({ where: { id: order.id }, data: { status: "PAID" } }),
+    ...order.items
+      .filter((item) => item.variantId !== null)
+      .map((item) =>
+        prisma.variant.update({
+          where: { id: item.variantId! },
+          data: { stock: { decrement: item.quantity } },
+        }),
+      ),
+  ]);
 }

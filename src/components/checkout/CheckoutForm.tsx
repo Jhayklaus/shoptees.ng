@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/store/cart";
 import { useHydratedCart } from "@/store/useHydratedCart";
 import { formatNaira } from "@/lib/utils";
-import { isPaystackConfigured } from "@/lib/paystack";
+
+const PAYSTACK_PUBLIC_KEY = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "";
 
 const NIGERIAN_STATES = [
   "Lagos", "FCT - Abuja", "Rivers", "Oyo", "Kano", "Kaduna", "Enugu",
@@ -22,7 +23,7 @@ export function CheckoutForm() {
 
   const lines = cart.lines;
   const subtotal = lines.reduce((s, l) => s + l.lineTotalNGN, 0);
-  const paystackReady = isPaystackConfigured();
+  const paystackReady = Boolean(PAYSTACK_PUBLIC_KEY);
   const empty = cart.status === "ready" && lines.length === 0;
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,8 +62,28 @@ export function CheckoutForm() {
         setError(body.error ?? "Checkout failed");
         return;
       }
-      // Order created. Clear the cart and forward to success.
+
+      // Cart is now an order. Clear it so back-button doesn't double-purchase.
       clearCart();
+
+      // If Paystack is configured, hand off to its hosted page; otherwise
+      // fall through to the pay-later receipt.
+      if (paystackReady) {
+        const init = await fetch("/api/paystack/initialize", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ orderId: body.orderId }),
+        });
+        const initBody = await init.json().catch(() => ({}));
+        if (!init.ok || !initBody.authorizationUrl) {
+          setError(initBody.error ?? "Could not start payment. Your order is recorded as pending.");
+          router.push(`/checkout/success?ref=${encodeURIComponent(body.orderNumber)}`);
+          return;
+        }
+        window.location.href = initBody.authorizationUrl;
+        return;
+      }
+
       router.push(`/checkout/success?ref=${encodeURIComponent(body.orderNumber)}`);
     });
   };
