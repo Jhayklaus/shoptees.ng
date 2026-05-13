@@ -1,7 +1,9 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { resolveDatabaseUrls } from "../src/config/env";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ datasourceUrl: resolveDatabaseUrls().databaseUrl });
 
 // ────────────────────────────────────────────────────────────────────
 // Placeholder catalogue. Migrated verbatim from the old src/data/products.ts.
