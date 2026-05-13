@@ -8,6 +8,7 @@ import {
   Package,
   ScrollText,
   Users,
+  UserCog,
   Settings,
   LogOut,
   ExternalLink,
@@ -25,6 +26,7 @@ const nav: NavItem[] = [
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/orders", label: "Orders", icon: ScrollText },
   { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/admin/team", label: "Team", icon: UserCog },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

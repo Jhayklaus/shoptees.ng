@@ -21,12 +21,28 @@ datasource db {
 // ────────────────────────────────────────────────────────────────────
 
 model AdminUser {
-  id           String    @id @default(cuid())
-  email        String    @unique
+  id           String        @id @default(cuid())
+  email        String        @unique
   passwordHash String
   name         String
   sessions     Session[]
-  createdAt    DateTime  @default(now())
+  sentInvites  AdminInvite[]
+  createdAt    DateTime      @default(now())
+}
+
+model AdminInvite {
+  id          String     @id @default(cuid())
+  email       String
+  token       String     @unique
+  name        String?
+  invitedById String?
+  invitedBy   AdminUser? @relation(fields: [invitedById], references: [id], onDelete: SetNull)
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime   @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
 }
 
 model Session {
