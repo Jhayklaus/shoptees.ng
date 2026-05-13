@@ -17,14 +17,17 @@ export const SETTING_KEYS = [
   "banner.cta_href",
   "banner.image_url",
   "banner.image_alt",
+  // Notifications
+  "notifications.admin_email",
 ] as const;
 export type SettingKey = (typeof SETTING_KEYS)[number];
 
 const fallback: Record<SettingKey, string> = {
   "site.name": "Shoptees",
-  "site.tagline": "[PLACEHOLDER: brand tagline / one-line description]",
-  "contact.email": "[PLACEHOLDER: customer email]",
-  "contact.phone": "[PLACEHOLDER: +234 ...]",
+  "site.tagline":
+    "Streetwear and football jerseys for men and women. Built in Lagos, sold by the piece or by the carton.",
+  "contact.email": "",
+  "contact.phone": "",
   "order.counter": "0",
   "order.year": new Date().getFullYear().toString(),
   "banner.enabled": "false",
@@ -35,6 +38,7 @@ const fallback: Record<SettingKey, string> = {
   "banner.cta_href": "/shop",
   "banner.image_url": "",
   "banner.image_alt": "",
+  "notifications.admin_email": "",
 };
 
 export async function getAllSettings(): Promise<Record<SettingKey, string>> {

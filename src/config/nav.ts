@@ -1,8 +1,15 @@
-export const mainNav = [
-  { label: "Shop", href: "/shop" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-] as const;
+// Top nav can mix plain links and dropdown triggers. Dropdowns are
+// declared by `kind`; the Header decides what menu content to render
+// based on that key (e.g. "collections" → live categories from the DB).
+export type NavItem =
+  | { type: "link"; label: string; href: string }
+  | { type: "dropdown"; label: string; kind: "collections" };
+
+export const mainNav: NavItem[] = [
+  { type: "dropdown", label: "Collections", kind: "collections" },
+  { type: "link", label: "Shop", href: "/shop" },
+  { type: "link", label: "About", href: "/about" },
+];
 
 export const footerNav = {
   shop: [

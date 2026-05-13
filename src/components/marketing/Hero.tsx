@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const cyclingNouns = ["ideas.", "hands.", "runs.", "drops.", "stains.", "marks."];
+const cyclingNouns = ["streets.", "stands.", "block.", "pitch.", "city.", "long haul."];
 
 export function Hero() {
   // ── Cycling italic noun in the headline ──────────────────────────────
@@ -75,10 +75,12 @@ export function Hero() {
             className="col-span-12 md:col-span-9 font-display text-[18vw] md:text-[10.5rem] leading-[0.86] tracking-[-0.04em] rise"
             style={{ animationDelay: "120ms" }}
           >
-            Plain
-            <span className="font-italic-accent text-vermillion"> cloth,</span>
+            Threads
+            <span className="font-italic-accent text-vermillion"> for the</span>
             <br />
-            stubborn
+            culture,
+            <br />
+            built for the
             <br />
             <span
               aria-live="polite"
@@ -100,7 +102,7 @@ export function Hero() {
               ))}
               {/* Reserve baseline space using the longest candidate */}
               <span aria-hidden className="font-italic-accent invisible">
-                stains.
+                long haul.
               </span>
             </span>
           </h1>
@@ -111,9 +113,10 @@ export function Hero() {
             style={{ animationDelay: "240ms" }}
           >
             <p className="font-italic-accent text-xl md:text-[1.35rem] leading-snug text-ink-soft max-w-sm md:max-w-none">
-              Shoptees is a small Nigerian wardrobe studio.{" "}
+              Shoptees is a Nigerian streetwear label.{" "}
               <span className="text-ink/55">
-                [PLACEHOLDER: replace with verbatim brand statement.]
+                Cut-and-sew apparel and football jerseys for the everyday and
+                the matchday — sold by the piece or by the carton.
               </span>
             </p>
             <Link

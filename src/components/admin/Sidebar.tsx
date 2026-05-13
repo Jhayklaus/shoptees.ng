@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
@@ -40,11 +41,20 @@ export function Sidebar({ userEmail }: { userEmail: string }) {
   return (
     <aside className="w-60 shrink-0 border-r border-line bg-paper-deep flex flex-col">
       <div className="px-5 py-6 border-b border-ink/10">
-        <Link href="/admin" className="block">
-          <p className="font-mono-tight text-ink/55">Studio</p>
-          <h2 className="font-display text-2xl tracking-[-0.02em] leading-none mt-0.5">
-            Shop<span className="font-italic-accent text-vermillion">tees</span>
-          </h2>
+        <Link href="/admin" className="flex items-center gap-3">
+          <Image
+            src="/logo.png"
+            alt="Shoptees"
+            width={48}
+            height={48}
+            className="h-12 w-12 object-contain shrink-0"
+          />
+          <div>
+            <p className="font-mono-tight text-ink/55 leading-none">Studio</p>
+            <p className="font-display text-base tracking-[-0.01em] leading-tight mt-0.5">
+              Shoptees
+            </p>
+          </div>
         </Link>
       </div>
 

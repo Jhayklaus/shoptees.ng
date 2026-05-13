@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { prisma } from "@/lib/db";
+import { markOrderPaid } from "@/lib/server/markOrderPaid";
 
 // Paystack webhook receiver.
 //
@@ -51,34 +51,8 @@ export async function POST(req: Request) {
 }
 
 async function handleChargeSuccess(data: ChargeData) {
-  const reference = data.reference;
-  if (!reference) return;
-
-  const order = await prisma.order.findFirst({
-    where: { paystackReference: reference },
-    include: { items: true },
-  });
-  if (!order || order.status === "PAID") return;
-
-  // Defend against amount tampering. `data.amount` is kobo.
-  if (data.amount !== order.totalNGN * 100) {
-    console.error(
-      `[paystack/webhook] amount mismatch for ${reference}: got=${data.amount}, expected=${order.totalNGN * 100}`,
-    );
-    return;
-  }
-
-  await prisma.$transaction([
-    prisma.order.update({ where: { id: order.id }, data: { status: "PAID" } }),
-    ...order.items
-      .filter((item) => item.variantId !== null)
-      .map((item) =>
-        prisma.variant.update({
-          where: { id: item.variantId! },
-          data: { stock: { decrement: item.quantity } },
-        }),
-      ),
-  ]);
+  if (!data.reference || typeof data.amount !== "number") return;
+  await markOrderPaid({ reference: data.reference, paidAmountKobo: data.amount });
 }
 
 function signaturesMatch(expectedHex: string, gotHex: string) {

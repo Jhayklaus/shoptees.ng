@@ -2,12 +2,13 @@ import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
 import { getOrderByNumber } from "@/lib/server/orders";
 import { formatNaira } from "@/lib/utils";
-import { prisma } from "@/lib/db";
 import { isPaystackConfigured, verifyTransaction } from "@/lib/paystack";
+import { markOrderPaid } from "@/lib/server/markOrderPaid";
 
 export const metadata = buildMetadata({
-  title: "Order confirmed — Shoptees",
+  title: "Order confirmed",
   path: "/checkout/success",
+  noIndex: true,
 });
 export const dynamic = "force-dynamic";
 
@@ -140,25 +141,7 @@ export default async function CheckoutSuccessPage({
 // Paystack, then mark the order PAID and decrement stock if successful.
 // Idempotent — safe to call on every page load.
 async function reconcilePaystack(reference: string) {
-  const order = await prisma.order.findFirst({
-    where: { paystackReference: reference },
-    include: { items: true },
-  });
-  if (!order || order.status === "PAID") return;
-
   const verification = await verifyTransaction(reference);
   if (verification.status !== "success") return;
-  if (verification.amount !== order.totalNGN * 100) return;
-
-  await prisma.$transaction([
-    prisma.order.update({ where: { id: order.id }, data: { status: "PAID" } }),
-    ...order.items
-      .filter((item) => item.variantId !== null)
-      .map((item) =>
-        prisma.variant.update({
-          where: { id: item.variantId! },
-          data: { stock: { decrement: item.quantity } },
-        }),
-      ),
-  ]);
+  await markOrderPaid({ reference, paidAmountKobo: verification.amount });
 }

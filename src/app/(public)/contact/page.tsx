@@ -3,7 +3,7 @@ import { siteConfig } from "@/config/site";
 import { Mail, Phone, AtSign } from "lucide-react";
 import { ContactForm } from "@/components/contact/ContactForm";
 
-export const metadata = buildMetadata({ title: "Contact — Shoptees", path: "/contact" });
+export const metadata = buildMetadata({ title: "Contact", path: "/contact" });
 
 export default function ContactPage() {
   return (

@@ -1,8 +1,7 @@
 import { Fraunces, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { buildMetadata } from "@/lib/seo";
+import { rootMetadata } from "@/lib/seo";
 import { organizationJsonLd } from "@/lib/jsonld";
-import { siteConfig } from "@/config/site";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -25,11 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata = buildMetadata({
-  title: `${siteConfig.name} — ${siteConfig.description}`,
-  description: siteConfig.description,
-  path: "/",
-});
+export const metadata = rootMetadata;
 
 // Root layout: html/body/fonts only. Public pages get header/footer via
 // (public)/layout.tsx. Admin pages get the sidebar via admin/(authed)/layout.tsx.

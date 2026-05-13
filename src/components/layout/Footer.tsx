@@ -92,7 +92,7 @@ export async function Footer() {
           <p className="font-mono-tight text-paper/55">
             © {new Date().getFullYear()} Shoptees. All rights reserved.
           </p>
-          <ul className="flex gap-5">
+          {/* <ul className="flex gap-5">
             {footerNav.legal.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="font-mono-tight text-paper/55 hover:text-vermillion">
@@ -100,7 +100,7 @@ export async function Footer() {
                 </Link>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </div>
       </div>
     </footer>

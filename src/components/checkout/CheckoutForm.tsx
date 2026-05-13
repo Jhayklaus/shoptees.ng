@@ -134,9 +134,9 @@ export function CheckoutForm() {
               </div>
               {!paystackReady && (
                 <p className="mt-4 bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
-                  [PLACEHOLDER] Paystack SDK not yet installed. The order will be
-                  recorded as <span className="font-mono-tight">PENDING</span> in
-                  the admin without payment until HILCS #3 wires it up.
+                  Online payment is temporarily unavailable. Your order will be
+                  recorded as <span className="font-mono-tight">PENDING</span>
+                  &nbsp;and we&apos;ll reach out on WhatsApp to arrange payment.
                 </p>
               )}
             </div>

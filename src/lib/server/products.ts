@@ -57,9 +57,11 @@ export function listAdminProducts() {
   });
 }
 
-export function listActiveProducts() {
+export function listActiveProducts(opts?: { categorySlug?: string }) {
+  const where: Prisma.ProductWhereInput = { status: "ACTIVE" };
+  if (opts?.categorySlug) where.category = { slug: opts.categorySlug };
   return prisma.product.findMany({
-    where: { status: "ACTIVE" },
+    where,
     orderBy: { createdAt: "desc" },
     include: {
       category: true,
