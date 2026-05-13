@@ -12,6 +12,15 @@ const STOREFRONT_FIELDS = [
   { key: "contact.phone", label: "WhatsApp / phone", type: "tel" },
 ] as const;
 
+const NOTIFICATION_FIELDS = [
+  {
+    key: "notifications.admin_email",
+    label: "New-order admin email",
+    type: "email",
+    hint: "Where new paid-order notifications are sent. Leave blank to disable.",
+  },
+] as const;
+
 const BANNER_FIELDS = [
   { key: "banner.eyebrow", label: "Eyebrow", hint: 'Small label above the headline. e.g. "New arrival · 02".' },
   { key: "banner.title", label: "Headline" },
@@ -22,6 +31,7 @@ const BANNER_FIELDS = [
 
 const ALL_KEYS = [
   ...STOREFRONT_FIELDS.map((f) => f.key),
+  ...NOTIFICATION_FIELDS.map((f) => f.key),
   ...BANNER_FIELDS.map((f) => f.key),
   "banner.enabled",
   "banner.image_url",
@@ -77,6 +87,24 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
             onChange={(v) => set(f.key, v)}
             type={"type" in f ? f.type : undefined}
             multiline={"multiline" in f ? f.multiline : false}
+          />
+        ))}
+      </section>
+
+      {/* ── Notifications ────────────────────────────────────────────── */}
+      <section className="space-y-5">
+        <header className="border-b border-line pb-2">
+          <h3 className="font-display text-2xl tracking-tight">Notifications</h3>
+        </header>
+        {NOTIFICATION_FIELDS.map((f) => (
+          <Field
+            key={f.key}
+            id={f.key}
+            label={f.label}
+            hint={"hint" in f ? f.hint : undefined}
+            value={values[f.key]}
+            onChange={(v) => set(f.key, v)}
+            type={"type" in f ? f.type : undefined}
           />
         ))}
       </section>

@@ -1,9 +1,10 @@
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
-  title: "Studio — Shoptees",
+  title: "Studio",
   description: "Admin",
   path: "/admin",
+  noIndex: true,
 });
 
 // Bare wrapper. Routes inside /admin/(authed) get the sidebar + auth gate.

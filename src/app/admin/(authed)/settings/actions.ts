@@ -20,6 +20,7 @@ const allowedKeys = [
   "banner.cta_href",
   "banner.image_url",
   "banner.image_alt",
+  "notifications.admin_email",
 ] as const;
 type AllowedKey = (typeof allowedKeys)[number];
 

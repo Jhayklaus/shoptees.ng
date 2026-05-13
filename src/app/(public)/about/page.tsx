@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata = buildMetadata({ title: "About — Shoptees", path: "/about" });
+export const metadata = buildMetadata({ title: "About", path: "/about" });
 
 export default function AboutPage() {
   return (
@@ -10,16 +10,16 @@ export default function AboutPage() {
         <div className="col-span-12 md:col-span-8">
           <p className="font-mono-tight text-ink/55">A studio note</p>
           <h1 className="font-display text-7xl md:text-[10rem] leading-[0.85] tracking-[-0.04em] mt-2">
-            Cotton, <span className="font-italic-accent text-vermillion">ink,</span>
+            Built <span className="font-italic-accent text-vermillion">here,</span>
             <br />
-            and a lot of stubbornness.
+            worn everywhere.
           </h1>
         </div>
         <div className="col-span-12 md:col-span-4 md:pt-3">
           <p className="font-italic-accent text-xl text-ink/70">
-            [PLACEHOLDER — replace with verbatim founder statement once
-            provided. The text below is structural placeholder copy intended
-            to demonstrate the editorial layout, NOT real brand history.]
+            Shoptees is a Nigerian streetwear label working in apparel and
+            football jerseys — for the everyday, the matchday, and the
+            in-between. We sell by the piece, and by the carton.
           </p>
         </div>
       </header>
@@ -37,24 +37,26 @@ export default function AboutPage() {
 
         <div className="col-span-12 md:col-span-6 md:col-start-7 md:pt-12">
           <h2 className="font-display text-4xl md:text-5xl leading-tight tracking-tight">
-            We started small <span className="font-italic-accent text-vermillion">on purpose.</span>
+            We make it <span className="font-italic-accent text-vermillion">to be worn.</span>
           </h2>
           <div className="mt-6 columns-1 md:columns-2 gap-8 text-ink-soft leading-relaxed">
             <p className="break-inside-avoid">
-              <span className="font-display text-6xl float-left mr-2 leading-[0.85] -mt-1">L</span>
-              orem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-              ultrices odio in eros pretium, vel rutrum velit gravida. Etiam
-              auctor, ipsum nec faucibus efficitur.
+              <span className="font-display text-6xl float-left mr-2 leading-[0.85] -mt-1">S</span>
+              hoptees is a small label out of Lagos working in cut-and-sew
+              streetwear and football jerseys for men and women. Pieces are
+              made to be worn hard — on the commute, in the stands, on the
+              block.
             </p>
             <p className="break-inside-avoid mt-4 md:mt-0">
-              [PLACEHOLDER paragraph]. Replace with the founder&apos;s actual
-              account of why the studio exists, where the first piece was
-              printed, and what stays the same season after season.
+              We supply retail customers directly through this site, and we
+              ship wholesale to stockists, shops and team kits across Nigeria.
+              Same garments, same fits — one piece or one carton at a time.
             </p>
             <p className="break-inside-avoid mt-4">
-              [PLACEHOLDER paragraph]. We will fill this with real provenance
-              once the user supplies it. Until then this column reads like a
-              dummy magazine spread.
+              Football is in the work. From terrace classics to club-faithful
+              kits, the jerseys we make sit next to the rest of the line
+              because that&apos;s how they&apos;re actually worn — at the
+              ground on Saturday, on the street on Monday.
             </p>
           </div>
         </div>
@@ -62,10 +64,10 @@ export default function AboutPage() {
 
       <section className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 border-y border-line py-10">
         {[
-          ["Founded", "[YYYY]"],
-          ["Studio", "Lagos, NG"],
-          ["Drops / yr", "≤ 4"],
-          ["Press", "[PLACEHOLDER]"],
+          ["Made in", "Lagos, NG"],
+          ["Catalog", "Apparel + jerseys"],
+          ["Wholesale", "By the carton"],
+          ["Shipping", "Nationwide"],
         ].map(([k, v]) => (
           <div key={k}>
             <p className="font-mono-tight text-ink/55">{k}</p>

@@ -1,6 +1,6 @@
 export function Manifesto() {
   return (
-    <section className="bg-ink text-paper py-28 relative overflow-hidden">
+    <section className="bg-ink text-paper py-28 relative overflow-hidden mt-32">
       <div className="mx-auto max-w-[1400px] px-5 md:px-10 grid grid-cols-12 gap-6">
         <p className="col-span-12 md:col-span-3 font-mono-tight text-paper/55">
           Manifesto · §02

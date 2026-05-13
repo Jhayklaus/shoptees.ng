@@ -40,7 +40,17 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-24">
       <p className="font-mono-tight text-ink/55 mb-6">
         <Link href="/shop" className="hover:text-vermillion">Shop</Link>
-        {product.category && <> / {product.category.name}</>}
+        {product.category && (
+          <>
+            {" "}/{" "}
+            <Link
+              href={`/shop?c=${product.category.slug}`}
+              className="hover:text-vermillion"
+            >
+              {product.category.name}
+            </Link>
+          </>
+        )}
       </p>
 
       <div className="grid grid-cols-12 gap-6 lg:gap-12">
@@ -61,7 +71,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
           )}
 
           <p className="mt-6 font-display text-3xl">
-            {displayPrice > 0 ? formatNaira(displayPrice) : "[PLACEHOLDER price]"}
+            {displayPrice > 0 ? formatNaira(displayPrice) : "Price on request"}
           </p>
 
           <p className="mt-6 text-ink-soft leading-relaxed whitespace-pre-line">

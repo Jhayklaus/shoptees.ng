@@ -1,21 +1,19 @@
 // Single source of truth for brand-level config.
-// All real values come from BRAND_BRIEF.md gaps — placeholders until user provides.
+// `contact.email` and `contact.phone` are overridden by SiteSetting values when
+// the admin sets them in /admin/settings.
 export const siteConfig = {
   name: "Shoptees",
-  // [PLACEHOLDER: tagline] — needs verbatim copy from user
-  description: "[PLACEHOLDER: brand tagline / one-line description]",
-  // [PLACEHOLDER: production domain]
-  url: "https://example.com",
-  ogImage: "/placeholders/og-default.svg",
+  description:
+    "Streetwear and football jerseys for men and women. Built in Lagos, sold by the piece or by the carton.",
+  url: "https://shoptees.ng",
+  ogImage: "/og-image.jpg",
   social: {
     instagram: "https://www.instagram.com/shopteesng/",
     x: "https://x.com/_Shoptees",
   },
   contact: {
-    // [PLACEHOLDER: customer email]
-    email: "[PLACEHOLDER: customer email]",
-    // [PLACEHOLDER: phone / WhatsApp]
-    phone: "[PLACEHOLDER: +234 ...]",
+    email: "contact@shoptees.ng",
+    phone: "+2348110513407",
   },
 } as const;
 
