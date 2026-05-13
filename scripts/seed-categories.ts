@@ -3,9 +3,11 @@
 //
 //   npx tsx scripts/seed-categories.ts
 
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
+import { resolveDatabaseUrls } from "../src/config/env";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ datasourceUrl: resolveDatabaseUrls().databaseUrl });
 
 const TARGET = [
   { slug: "tees", name: "Tees", sortOrder: 1 },

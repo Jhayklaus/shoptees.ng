@@ -1,10 +1,9 @@
-// Prisma schema. SQLite for local dev, Postgres for production.
+// Prisma schema. Postgres (Supabase) for both staging and production.
 //
-// Prisma does NOT support env() in the `provider` field, so it's hardcoded to
-// "sqlite" here. To deploy to Postgres: change `provider` to "postgresql",
-// point DATABASE_URL at the Postgres instance, and run `npx prisma db push`.
-// The schema below avoids native enums and array columns so it's portable
-// without further changes.
+// Connection routing is driven by NEXT_PUBLIC_APP_ENVIRONMENT — see
+// prisma.config.ts (CLI) and src/config/env.ts (app runtime). Both set
+// DATABASE_URL / DIRECT_URL to the STAGING_* or PROD_* values before Prisma
+// resolves the env() calls below.
 
 generator client {
   provider = "prisma-client-js"
@@ -12,8 +11,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("STAGING_DATABASE_URL")
-  directUrl = env("STAGING_DIRECT_URL")
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ────────────────────────────────────────────────────────────────────
