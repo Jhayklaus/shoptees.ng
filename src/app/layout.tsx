@@ -3,9 +3,6 @@ import "./globals.css";
 import { buildMetadata } from "@/lib/seo";
 import { organizationJsonLd } from "@/lib/jsonld";
 import { siteConfig } from "@/config/site";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -34,25 +31,22 @@ export const metadata = buildMetadata({
   path: "/",
 });
 
+// Root layout: html/body/fonts only. Public pages get header/footer via
+// (public)/layout.tsx. Admin pages get the sidebar via admin/(authed)/layout.tsx.
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
       className={`${fraunces.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-paper text-ink flex flex-col grain">
+      <body className="min-h-full bg-paper text-ink flex flex-col">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
         />
-        <AnnouncementBar />
-        <Header />
-        <div className="flex-1">{children}</div>
-        <Footer />
+        {children}
       </body>
     </html>
   );

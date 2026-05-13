@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { footerNav } from "@/config/nav";
 import { siteConfig } from "@/config/site";
+import { getAllSettings } from "@/lib/server/settings";
 
 const reel = [
   "SHOPTEES",
   "—",
-  "[PLACEHOLDER TAGLINE]",
+  "Streetwear that speaks for YOU.",
   "—",
   "MADE IN NIGERIA",
   "—",
@@ -13,8 +14,11 @@ const reel = [
   "—",
 ];
 
-export function Footer() {
+export async function Footer() {
+  const settings = await getAllSettings();
   const items = Array.from({ length: 4 }).flatMap(() => reel);
+  const tagline = settings["site.tagline"];
+  const email = settings["contact.email"];
 
   return (
     <footer className="mt-24 bg-ink text-paper">
@@ -35,10 +39,7 @@ export function Footer() {
       <div className="mx-auto max-w-[1400px] px-5 md:px-10 py-16 grid grid-cols-2 md:grid-cols-12 gap-10">
         <div className="col-span-2 md:col-span-5">
           <p className="font-italic-accent text-2xl md:text-3xl leading-tight max-w-md">
-            A small studio working in cotton, &amp; ink.{" "}
-            <span className="text-paper/55">
-              [PLACEHOLDER: replace with verbatim brand description.]
-            </span>
+            {tagline}
           </p>
         </div>
 
@@ -81,7 +82,7 @@ export function Footer() {
                 X / Twitter ↗
               </a>
             </li>
-            <li className="pt-2 text-paper/55 text-sm">{siteConfig.contact.email}</li>
+            <li className="pt-2 text-paper/55 text-sm">{email}</li>
           </ul>
         </div>
       </div>

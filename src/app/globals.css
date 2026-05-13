@@ -95,6 +95,59 @@ body {
   animation: marquee-slow 90s linear infinite;
 }
 
+/* Slow rotation used on the decorative hero rings */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 80s linear infinite;
+  transform-origin: center;
+}
+@keyframes spin-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+.animate-spin-reverse {
+  animation: spin-reverse 140s linear infinite;
+  transform-origin: center;
+}
+
+/* Breathing scale, used on the central vermillion disc */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+.animate-breathe {
+  animation: breathe 5.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Blinking caret used in live-time ticker */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 1.05s steps(2) infinite;
+}
+
+/* Cycling word: each candidate fades up briefly while data-active, others stack invisibly */
+@keyframes word-rise {
+  0% { opacity: 0; transform: translateY(0.6em) rotateX(-25deg); filter: blur(4px); }
+  20%, 80% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+  100% { opacity: 0; transform: translateY(-0.6em) rotateX(25deg); filter: blur(4px); }
+}
+
+/* Drift used on tilted photo strip cards */
+@keyframes drift {
+  0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+  50% { transform: translateY(-8px) rotate(var(--tilt, 0deg)); }
+}
+.animate-drift {
+  animation: drift 6s ease-in-out infinite;
+}
+
 /* Editorial fade-in stagger */
 @keyframes rise {
   0% {
@@ -114,6 +167,19 @@ body {
 ::selection {
   background: var(--vermillion);
   color: var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-marquee-slow,
+  .animate-spin-slow,
+  .animate-spin-reverse,
+  .animate-breathe,
+  .animate-blink,
+  .animate-drift,
+  .rise {
+    animation: none !important;
+  }
 }
 
 /* Custom focus ring across interactive elements */

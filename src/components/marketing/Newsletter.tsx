@@ -7,7 +7,7 @@ export function Newsletter() {
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <section className="bg-paper-deep py-24">
+    <section className="bg-paper-deep py-24 my-24">
       <div className="mx-auto max-w-[1400px] px-5 md:px-10 grid grid-cols-12 gap-6 items-end">
         <div className="col-span-12 md:col-span-7">
           <p className="font-mono-tight text-ink/55 mb-3">Letters · 03</p>

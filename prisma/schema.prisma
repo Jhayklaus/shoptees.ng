@@ -1,0 +1,180 @@
+// Prisma schema. SQLite for local dev, Postgres for production.
+//
+// Prisma does NOT support env() in the `provider` field, so it's hardcoded to
+// "sqlite" here. To deploy to Postgres: change `provider` to "postgresql",
+// point DATABASE_URL at the Postgres instance, and run `npx prisma db push`.
+// The schema below avoids native enums and array columns so it's portable
+// without further changes.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("STAGING_DATABASE_URL")
+  directUrl = env("STAGING_DIRECT_URL")
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Auth
+// ────────────────────────────────────────────────────────────────────
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  sessions     Session[]
+  createdAt    DateTime  @default(now())
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  userId    String
+  user      AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Catalog
+// ────────────────────────────────────────────────────────────────────
+
+model Category {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  name      String
+  sortOrder Int       @default(0)
+  products  Product[]
+  createdAt DateTime  @default(now())
+}
+
+// status: "DRAFT" | "ACTIVE" | "ARCHIVED"
+model Product {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  name        String
+  description String
+  priceNGN    Int
+  status      String         @default("DRAFT")
+  categoryId  String?
+  category    Category?      @relation(fields: [categoryId], references: [id])
+  variants    Variant[]
+  images      ProductImage[]
+  orderItems  OrderItem[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([status])
+  @@index([categoryId])
+}
+
+model Variant {
+  id               String      @id @default(cuid())
+  productId        String
+  product          Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size             String
+  color            String      @default("Default")
+  sku              String      @unique
+  stock            Int         @default(0)
+  priceOverrideNGN Int?
+  orderItems       OrderItem[]
+  createdAt        DateTime    @default(now())
+
+  @@index([productId])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String  @default("")
+  sortOrder Int     @default(0)
+
+  @@index([productId])
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Customers / Orders
+// ────────────────────────────────────────────────────────────────────
+
+model Customer {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  phone     String?
+  firstName String
+  lastName  String
+  addresses Address[]
+  orders    Order[]
+  createdAt DateTime  @default(now())
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  line1      String
+  line2      String?
+  city       String
+  state      String
+  postal     String?
+  country    String   @default("Nigeria")
+  orders     Order[]
+  createdAt  DateTime @default(now())
+
+  @@index([customerId])
+}
+
+// status: "PENDING" | "PAID" | "FULFILLED" | "CANCELLED"
+model Order {
+  id                String      @id @default(cuid())
+  orderNumber       String      @unique
+  customerId        String
+  customer          Customer    @relation(fields: [customerId], references: [id])
+  addressId         String?
+  address           Address?    @relation(fields: [addressId], references: [id])
+  status            String      @default("PENDING")
+  subtotalNGN       Int
+  shippingNGN       Int         @default(0)
+  totalNGN          Int
+  paystackReference String?
+  items             OrderItem[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([status])
+  @@index([customerId])
+  @@index([createdAt])
+}
+
+// Snapshot fields (productName, variantSize, unitPriceNGN) preserve order
+// history even if the underlying product/variant is later edited or deleted.
+model OrderItem {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId    String?
+  product      Product? @relation(fields: [productId], references: [id])
+  variantId    String?
+  variant      Variant? @relation(fields: [variantId], references: [id])
+  productName  String
+  variantSize  String
+  unitPriceNGN Int
+  quantity     Int
+
+  @@index([orderId])
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Settings
+// ────────────────────────────────────────────────────────────────────
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}

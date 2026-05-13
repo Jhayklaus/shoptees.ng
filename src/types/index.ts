@@ -1,33 +1,48 @@
-export type Size = "XS" | "S" | "M" | "L" | "XL" | "XXL";
+// Storefront display shapes. These mirror the DB rows but are the contract
+// the customer-facing components rely on, so server queries get normalised
+// into these shapes via toDisplayProduct() in lib/server/products.ts.
 
-export type ProductVariant = {
+export type DisplayVariant = {
   id: string;
-  size: Size;
+  size: string;
   color: string;
   sku: string;
-  inStock: boolean;
+  stock: number;
+  priceOverrideNGN: number | null;
 };
 
-export type Product = {
+export type DisplayImage = {
+  url: string;
+  alt: string;
+};
+
+export type DisplayCategory = {
+  slug: string;
+  name: string;
+};
+
+export type DisplayProduct = {
   id: string;
   slug: string;
   name: string;
   description: string;
   priceNGN: number;
-  images: { src: string; alt: string }[];
-  variants: ProductVariant[];
-  category: string;
-  isPlaceholder?: boolean;
+  category: DisplayCategory | null;
+  images: DisplayImage[];
+  variants: DisplayVariant[];
 };
 
+// What the cart actually persists in localStorage.
 export type CartLine = {
   productId: string;
   variantId: string;
   quantity: number;
 };
 
+// Hydrated cart line — joined against current product/variant data.
 export type CartLineHydrated = CartLine & {
-  product: Product;
-  variant: ProductVariant;
+  product: DisplayProduct;
+  variant: DisplayVariant;
+  unitPriceNGN: number;
   lineTotalNGN: number;
 };
