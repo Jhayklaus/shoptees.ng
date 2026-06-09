@@ -33,11 +33,15 @@ export async function POST(req: Request) {
   const reference = `shptz_${order.orderNumber}_${randomBytes(4).toString("hex")}`;
   const origin = new URL(req.url).origin;
 
+  // Do NOT append our own query params to the callback URL. Paystack appends
+  // `?trxref=...&reference=...` with a naive `?`, which would collide with an
+  // existing query string and corrupt both. The success page recovers the
+  // order from the Paystack reference instead.
   const init = await initializeTransaction({
     email: order.customer.email,
     amountKobo: order.totalNGN * 100,
     reference,
-    callbackUrl: `${origin}/checkout/success?ref=${encodeURIComponent(order.orderNumber)}`,
+    callbackUrl: `${origin}/checkout/success`,
     metadata: { orderId: order.id, orderNumber: order.orderNumber },
   }).catch((e: Error) => {
     console.error("[paystack/initialize]", e);
