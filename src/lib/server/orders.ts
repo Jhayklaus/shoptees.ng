@@ -38,6 +38,17 @@ export function getOrderByNumber(orderNumber: string) {
   });
 }
 
+export function getOrderByPaystackReference(paystackReference: string) {
+  return prisma.order.findFirst({
+    where: { paystackReference },
+    include: {
+      customer: true,
+      address: true,
+      items: { include: { product: true, variant: true } },
+    },
+  });
+}
+
 export async function updateOrderStatus(id: string, status: OrderStatus) {
   return prisma.order.update({ where: { id }, data: { status } });
 }
