@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { SingleImagePicker } from "@/components/admin/SingleImagePicker";
 import { saveBannerAction, deleteBannerAction } from "@/app/admin/(authed)/banners/actions";
-import { BANNER_LAYOUTS, type BannerLayout } from "@/lib/server/banners";
+import { BANNER_LAYOUTS, type BannerLayout } from "@/lib/banners-shared";
 
 export type BannerFormValues = {
   id?: string;

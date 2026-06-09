@@ -1,22 +1,8 @@
 import "server-only";
 import { prisma } from "@/lib/db";
+import type { SaveBannerInput } from "@/lib/banners-shared";
 
-export const BANNER_LAYOUTS = ["imageLeft", "imageRight"] as const;
-export type BannerLayout = (typeof BANNER_LAYOUTS)[number];
-
-export type SaveBannerInput = {
-  id?: string;
-  enabled: boolean;
-  sortOrder: number;
-  eyebrow: string;
-  title: string;
-  body: string;
-  ctaLabel: string;
-  ctaHref: string;
-  imageUrl: string;
-  imageAlt: string;
-  layout: BannerLayout;
-};
+export { BANNER_LAYOUTS, type BannerLayout, type SaveBannerInput } from "@/lib/banners-shared";
 
 // Storefront: every enabled banner, in display order.
 export function listEnabledBanners() {
