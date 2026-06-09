@@ -250,14 +250,14 @@ function Toggle({
       aria-label={label}
       onClick={() => onChange(!checked)}
       className={[
-        "relative w-11 h-6 rounded-full transition-colors shrink-0",
+        "relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0",
         checked ? "bg-vermillion" : "bg-line",
       ].join(" ")}
     >
       <span
         className={[
-          "absolute top-0.5 w-5 h-5 bg-paper rounded-full transition-transform shadow-sm",
-          checked ? "translate-x-5" : "translate-x-0.5",
+          "absolute top-0.5 left-0.5 w-5 h-5 bg-paper rounded-full shadow-sm transition-transform duration-200",
+          checked ? "translate-x-5" : "translate-x-0",
         ].join(" ")}
       />
     </button>
