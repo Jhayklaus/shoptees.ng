@@ -29,11 +29,18 @@ function client() {
 
 const SAFE_FILENAME = /[^a-zA-Z0-9._-]/g;
 
+// Folder is environment-scoped so staging uploads never mix with production assets.
+function imageFolder() {
+  return process.env.NEXT_PUBLIC_APP_ENVIRONMENT === "production"
+    ? "products"
+    : "staging-products";
+}
+
 export function buildObjectKey(filename: string) {
   const safe = filename.replace(SAFE_FILENAME, "-").slice(0, 80);
   const stamp = Date.now().toString(36);
   const rand = Math.random().toString(36).slice(2, 8);
-  return `products/${stamp}-${rand}-${safe}`;
+  return `${imageFolder()}/${stamp}-${rand}-${safe}`;
 }
 
 export async function presignUpload(opts: {
