@@ -136,9 +136,35 @@ async function seedAdmin() {
   console.log(`✓ created admin user ${email}`);
 }
 
+async function seedStarterBanner() {
+  // Only seed if there are no banners at all, so we never clobber real content
+  // or re-create a banner the admin has since deleted.
+  const existing = await prisma.homeBanner.count();
+  if (existing > 0) {
+    console.log(`ℹ ${existing} homepage banner(s) already present — skipping starter banner.`);
+    return;
+  }
+  await prisma.homeBanner.create({
+    data: {
+      enabled: false, // hidden by default — admin flips it on once an image is set
+      sortOrder: 0,
+      eyebrow: "New arrival · 01",
+      title: "[PLACEHOLDER: banner headline]",
+      body: "[PLACEHOLDER: one short line about the collection or restock.]",
+      ctaLabel: "Shop the drop",
+      ctaHref: "/shop",
+      imageUrl: "",
+      imageAlt: "",
+      layout: "imageLeft",
+    },
+  });
+  console.log("✓ starter homepage banner created (disabled)");
+}
+
 async function main() {
   await seedCategoriesAndProducts();
   await seedSiteSettings();
+  await seedStarterBanner();
   await seedAdmin();
   console.log("✓ seed complete");
 }

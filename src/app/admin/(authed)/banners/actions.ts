@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/session";
 import {
   saveBanner,
   deleteBanner,
+  reorderBanners,
   BANNER_LAYOUTS,
   type SaveBannerInput,
 } from "@/lib/server/banners";
@@ -42,6 +43,25 @@ export async function saveBannerAction(
     return { ok: true, id: saved.id };
   } catch (e: unknown) {
     return { ok: false, error: e instanceof Error ? e.message : "Save failed" };
+  }
+}
+
+export async function reorderBannersAction(
+  ids: string[]
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const user = await requireAdmin();
+  if (!user) return { ok: false, error: "Unauthorized" };
+
+  const parsed = z.array(z.string().min(1)).safeParse(ids);
+  if (!parsed.success) return { ok: false, error: "Invalid input" };
+
+  try {
+    await reorderBanners(parsed.data);
+    revalidatePath("/admin/banners");
+    revalidatePath("/", "layout");
+    return { ok: true };
+  } catch (e: unknown) {
+    return { ok: false, error: e instanceof Error ? e.message : "Reorder failed" };
   }
 }
 

@@ -60,3 +60,13 @@ export async function saveBanner(input: SaveBannerInput) {
 export function deleteBanner(id: string) {
   return prisma.homeBanner.delete({ where: { id } });
 }
+
+// Persist a new display order. `ids` is the full list of banner ids in the
+// desired order; each row's sortOrder is set to its index.
+export async function reorderBanners(ids: string[]) {
+  await prisma.$transaction(
+    ids.map((id, index) =>
+      prisma.homeBanner.update({ where: { id }, data: { sortOrder: index } }),
+    ),
+  );
+}
