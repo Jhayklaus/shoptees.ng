@@ -9,6 +9,10 @@ import { Newsletter } from "@/components/marketing/Newsletter";
 import { getAllSettings } from "@/lib/server/settings";
 import { getHeroBanner } from "@/lib/server/banners";
 
+// Homepage content (hero banner, campaign banners, settings) is admin-managed
+// in the DB, so render per-request instead of freezing it at build time.
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [s, heroBanner] = await Promise.all([getAllSettings(), getHeroBanner()]);
 
