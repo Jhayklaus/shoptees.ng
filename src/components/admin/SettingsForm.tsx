@@ -21,21 +21,33 @@ const NOTIFICATION_FIELDS = [
   },
 ] as const;
 
-const BANNER_FIELDS = [
-  { key: "banner.eyebrow", label: "Eyebrow", hint: 'Small label above the headline. e.g. "New arrival · 02".' },
-  { key: "banner.title", label: "Headline" },
-  { key: "banner.body", label: "Body", hint: "One short paragraph.", multiline: true },
-  { key: "banner.cta_label", label: "Button label", hint: 'e.g. "Shop the drop".' },
-  { key: "banner.cta_href", label: "Button link", hint: "Path or full URL." },
+const HERO_FIELDS = [
+  { key: "hero.eyebrow", label: "Eyebrow", hint: 'Small label above the headline. e.g. "Issue 01 · Spring/Summer · Lagos".' },
+  { key: "hero.headline", label: "Headline", hint: "Main display headline. Use line breaks for each line.", multiline: true },
+  { key: "hero.cycle_words", label: "Cycling words", hint: "Comma-separated. They animate one after another at the end of the headline. Leave blank for none." },
+  { key: "hero.body", label: "Body", hint: "Short paragraph in the right column.", multiline: true },
+  { key: "hero.cta_label", label: "Button label", hint: 'e.g. "Shop the collection".' },
+  { key: "hero.cta_href", label: "Button link", hint: "Path or full URL." },
+  { key: "hero.caption", label: "Image caption", hint: "Small caption overlaid on the hero image." },
+] as const;
+
+const CAMPAIGN_FIELDS = [
+  { key: "campaign.headline", label: "Headline" },
+  { key: "campaign.subcopy", label: "Sub-copy", hint: "One short line.", multiline: true },
+  { key: "campaign.cta_label", label: "Button label", hint: 'e.g. "Shop the drop".' },
+  { key: "campaign.cta_href", label: "Button link", hint: "Path or full URL." },
 ] as const;
 
 const ALL_KEYS = [
   ...STOREFRONT_FIELDS.map((f) => f.key),
   ...NOTIFICATION_FIELDS.map((f) => f.key),
-  ...BANNER_FIELDS.map((f) => f.key),
-  "banner.enabled",
-  "banner.image_url",
-  "banner.image_alt",
+  ...HERO_FIELDS.map((f) => f.key),
+  ...CAMPAIGN_FIELDS.map((f) => f.key),
+  "hero.image_url",
+  "hero.image_alt",
+  "campaign.enabled",
+  "campaign.image_url",
+  "campaign.image_alt",
 ] as const;
 
 type AnyKey = (typeof ALL_KEYS)[number];
@@ -54,7 +66,7 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
   const set = <K extends AnyKey>(k: K, v: string) =>
     setValues((s) => ({ ...s, [k]: v }));
 
-  const bannerOn = values["banner.enabled"] === "true";
+  const campaignOn = values["campaign.enabled"] === "true";
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,33 +121,65 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
         ))}
       </section>
 
-      {/* ── Homepage banner ──────────────────────────────────────────── */}
+      {/* ── Homepage hero ────────────────────────────────────────────── */}
+      <section className="space-y-5">
+        <header className="border-b border-line pb-2">
+          <h3 className="font-display text-2xl tracking-tight">Homepage hero</h3>
+          <p className="font-italic-accent text-ink/55">
+            The top of the homepage — headline, copy, call-to-action and banner image.
+          </p>
+        </header>
+
+        <SingleImagePicker
+          label="Hero image"
+          value={values["hero.image_url"]}
+          onChange={(url) => set("hero.image_url", url)}
+          altValue={values["hero.image_alt"]}
+          onAltChange={(alt) => set("hero.image_alt", alt)}
+        />
+
+        <div className="space-y-5">
+          {HERO_FIELDS.map((f) => (
+            <Field
+              key={f.key}
+              id={f.key}
+              label={f.label}
+              hint={"hint" in f ? f.hint : undefined}
+              value={values[f.key]}
+              onChange={(v) => set(f.key, v)}
+              multiline={"multiline" in f ? f.multiline : false}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* ── Campaign banner ──────────────────────────────────────────── */}
       <section className="space-y-5">
         <header className="border-b border-line pb-2 flex items-center justify-between gap-4">
           <div>
-            <h3 className="font-display text-2xl tracking-tight">Homepage banner</h3>
+            <h3 className="font-display text-2xl tracking-tight">Campaign banner</h3>
             <p className="font-italic-accent text-ink/55">
-              Sits below the featured grid. Toggle off to hide it without losing the content.
+              Full-bleed image with overlaid headline, directly under the hero. Toggle off to hide it.
             </p>
           </div>
           <Toggle
-            checked={bannerOn}
-            onChange={(v) => set("banner.enabled", v ? "true" : "false")}
+            checked={campaignOn}
+            onChange={(v) => set("campaign.enabled", v ? "true" : "false")}
             label="Enabled"
           />
         </header>
 
-        <div className={bannerOn ? "" : "opacity-60 pointer-events-none"}>
+        <div className={campaignOn ? "" : "opacity-60 pointer-events-none"}>
           <SingleImagePicker
-            label="Banner image"
-            value={values["banner.image_url"]}
-            onChange={(url) => set("banner.image_url", url)}
-            altValue={values["banner.image_alt"]}
-            onAltChange={(alt) => set("banner.image_alt", alt)}
+            label="Campaign image"
+            value={values["campaign.image_url"]}
+            onChange={(url) => set("campaign.image_url", url)}
+            altValue={values["campaign.image_alt"]}
+            onAltChange={(alt) => set("campaign.image_alt", alt)}
           />
 
           <div className="mt-6 space-y-5">
-            {BANNER_FIELDS.map((f) => (
+            {CAMPAIGN_FIELDS.map((f) => (
               <Field
                 key={f.key}
                 id={f.key}
