@@ -56,9 +56,12 @@ export async function markOrderPaid(args: {
       ),
   ]);
 
-  // Fire-and-forget emails. Don't await — we want this function to return
-  // fast and not propagate email errors. Failures are logged inside sendEmail.
-  void sendPaidEmails(order.id).catch((e) => {
+  // Await the emails. They must NOT be fire-and-forget: on serverless hosts
+  // (e.g. Vercel) the function freezes once the response is returned, so a
+  // dangling promise is killed before the email request completes — the
+  // confirmation silently never sends. sendEmail already swallows and logs its
+  // own failures, so awaiting here is best-effort and never throws.
+  await sendPaidEmails(order.id).catch((e) => {
     console.error("[markOrderPaid] sendPaidEmails threw", e);
   });
 

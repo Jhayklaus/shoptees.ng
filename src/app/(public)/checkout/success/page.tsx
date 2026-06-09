@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
-import { getOrderByNumber } from "@/lib/server/orders";
+import { getOrderByNumber, getOrderByPaystackReference } from "@/lib/server/orders";
 import { formatNaira } from "@/lib/utils";
 import { isPaystackConfigured, verifyTransaction } from "@/lib/paystack";
 import { markOrderPaid } from "@/lib/server/markOrderPaid";
@@ -28,7 +28,13 @@ export default async function CheckoutSuccessPage({
     });
   }
 
-  const order = ref ? await getOrderByNumber(ref) : null;
+  // Pay-later / Paystack-failed paths arrive with ?ref=ORDER_NUMBER. Coming back
+  // from Paystack we only have its reference, so recover the order by that.
+  const order = ref
+    ? await getOrderByNumber(ref)
+    : paystackRef
+      ? await getOrderByPaystackReference(paystackRef)
+      : null;
 
   if (!order) {
     return (
