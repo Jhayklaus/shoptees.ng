@@ -2,18 +2,17 @@
 @import "tw-animate-css";
 
 :root {
-  /* Brighter, higher-energy take on the editorial palette: warm near-white
-     paper instead of vintage cream, lighter surfaces, and a more vivid
-     vermillion. Components reference only these tokens, so this block is the
-     single source of truth for the theme. */
-  --paper: #fdfaf3;
-  --paper-deep: #f4eddd;
+  /* Pure-white, high-energy take on the editorial palette. Components
+     reference only these tokens, so this block is the single source of
+     truth for the theme. */
+  --paper: #ffffff;
+  --paper-deep: #f4f2ec;
   --ink: #131210;
   --ink-soft: #3a3831;
   --vermillion: #e84a16;
   --vermillion-deep: #c2390e;
   --olive: #6c6140;
-  --line: #e6ddc8;
+  --line: #e8e4da;
 }
 
 @theme inline {
