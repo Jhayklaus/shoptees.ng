@@ -67,6 +67,27 @@ model Category {
   createdAt DateTime  @default(now())
 }
 
+// Homepage promotional banners. Fully admin-managed (create / edit / reorder /
+// toggle) from /admin/banners. The storefront renders every enabled row in
+// sortOrder. Replaces the old single settings-driven announcement banner.
+model HomeBanner {
+  id        String   @id @default(cuid())
+  enabled   Boolean  @default(true)
+  sortOrder Int      @default(0)
+  eyebrow   String   @default("")
+  title     String
+  body      String   @default("")
+  ctaLabel  String   @default("")
+  ctaHref   String   @default("/shop")
+  imageUrl  String   @default("")
+  imageAlt  String   @default("")
+  layout    String   @default("imageLeft") // "imageLeft" | "imageRight"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([enabled, sortOrder])
+}
+
 // status: "DRAFT" | "ACTIVE" | "ARCHIVED"
 model Product {
   id          String         @id @default(cuid())

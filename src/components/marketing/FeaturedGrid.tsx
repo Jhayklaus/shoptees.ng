@@ -22,9 +22,9 @@ export async function FeaturedGrid() {
     <section className="mx-auto max-w-[1400px] px-5 md:px-10 pt-32 mb-12">
       <div className="flex items-end justify-between mb-12 border-b border-line pb-4">
         <div>
-          <p className="font-mono-tight text-ink/55">Selection · 01</p>
+          <p className="font-mono-tight text-ink/55">Latest · 01</p>
           <h2 className="font-display text-5xl md:text-6xl tracking-tight mt-1">
-            On the table <span className="font-italic-accent text-vermillion">this week</span>
+            New <span className="font-italic-accent text-vermillion">in</span>
           </h2>
         </div>
         <Link href="/shop" className="hidden md:inline font-mono-tight underline-offset-4 hover:underline">
