@@ -9,11 +9,14 @@ export default function NewBannerPage() {
       <PageHeader eyebrow="Homepage" title="New banner" accent="fresh slot." />
       <BannerForm
         initial={{
+          slot: "banner",
           enabled: true,
           sortOrder: 0,
           eyebrow: "",
           title: "",
           body: "",
+          cycleWords: "",
+          caption: "",
           ctaLabel: "Shop the drop",
           ctaHref: "/shop",
           imageUrl: "",

@@ -7,24 +7,41 @@ import { HomeBanners } from "@/components/marketing/HomeBanners";
 import { Manifesto } from "@/components/marketing/Manifesto";
 import { Newsletter } from "@/components/marketing/Newsletter";
 import { getAllSettings } from "@/lib/server/settings";
+import { getHeroBanner } from "@/lib/server/banners";
 
 export default async function HomePage() {
-  const s = await getAllSettings();
+  const [s, heroBanner] = await Promise.all([getAllSettings(), getHeroBanner()]);
 
-  const hero: HeroContent = {
-    eyebrow: s["hero.eyebrow"],
-    headline: s["hero.headline"],
-    cycleWords: s["hero.cycle_words"]
-      .split(",")
-      .map((w) => w.trim())
-      .filter(Boolean),
-    body: s["hero.body"],
-    ctaLabel: s["hero.cta_label"],
-    ctaHref: s["hero.cta_href"],
-    imageUrl: s["hero.image_url"],
-    imageAlt: s["hero.image_alt"],
-    caption: s["hero.caption"],
-  };
+  // Hero content: DB hero-slot banner takes priority, settings keys are the fallback.
+  const hero: HeroContent = heroBanner
+    ? {
+        eyebrow: heroBanner.eyebrow || s["hero.eyebrow"],
+        headline: heroBanner.title,
+        cycleWords: heroBanner.cycleWords
+          .split(",")
+          .map((w) => w.trim())
+          .filter(Boolean),
+        body: heroBanner.body,
+        ctaLabel: heroBanner.ctaLabel,
+        ctaHref: heroBanner.ctaHref || "/shop",
+        imageUrl: heroBanner.imageUrl,
+        imageAlt: heroBanner.imageAlt,
+        caption: heroBanner.caption,
+      }
+    : {
+        eyebrow: s["hero.eyebrow"],
+        headline: s["hero.headline"],
+        cycleWords: s["hero.cycle_words"]
+          .split(",")
+          .map((w) => w.trim())
+          .filter(Boolean),
+        body: s["hero.body"],
+        ctaLabel: s["hero.cta_label"],
+        ctaHref: s["hero.cta_href"],
+        imageUrl: s["hero.image_url"],
+        imageAlt: s["hero.image_alt"],
+        caption: s["hero.caption"],
+      };
 
   return (
     <>

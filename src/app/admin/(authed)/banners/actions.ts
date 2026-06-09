@@ -13,11 +13,14 @@ import {
 
 const schema = z.object({
   id: z.string().optional(),
+  slot: z.enum(["hero", "banner"]).optional(),
   enabled: z.boolean(),
   sortOrder: z.number().int(),
   eyebrow: z.string().max(200),
   title: z.string().min(1, "Headline is required").max(300),
   body: z.string().max(2000),
+  cycleWords: z.string().max(500),
+  caption: z.string().max(300),
   ctaLabel: z.string().max(120),
   ctaHref: z.string().max(500),
   imageUrl: z.string().max(1000),

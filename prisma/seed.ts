@@ -137,20 +137,42 @@ async function seedAdmin() {
 }
 
 async function seedStarterBanner() {
-  // Only seed if there are no banners at all, so we never clobber real content
-  // or re-create a banner the admin has since deleted.
   const existing = await prisma.homeBanner.count();
   if (existing > 0) {
-    console.log(`ℹ ${existing} homepage banner(s) already present — skipping starter banner.`);
+    console.log(`ℹ ${existing} homepage banner(s) already present — skipping starter banners.`);
     return;
   }
+
+  // Hero slot — disabled until the admin sets an image and flips it on.
   await prisma.homeBanner.create({
     data: {
-      enabled: false, // hidden by default — admin flips it on once an image is set
+      slot: "hero",
+      enabled: false,
+      sortOrder: 0,
+      eyebrow: "Issue 01 · Spring/Summer · Lagos",
+      title: "Threads for the\nculture,\nbuilt for the",
+      body: "Shoptees is a Nigerian streetwear label. Cut-and-sew apparel and football jerseys for the everyday and the matchday.",
+      cycleWords: "streets.,stands.,block.,pitch.,city.,long haul.",
+      caption: "· THE CLASSIC collection ·",
+      ctaLabel: "Shop the collection",
+      ctaHref: "/shop",
+      imageUrl: "",
+      imageAlt: "Shoptees — current collection banner",
+      layout: "imageLeft",
+    },
+  });
+
+  // Starter campaign banner.
+  await prisma.homeBanner.create({
+    data: {
+      slot: "banner",
+      enabled: false,
       sortOrder: 0,
       eyebrow: "New arrival · 01",
       title: "[PLACEHOLDER: banner headline]",
       body: "[PLACEHOLDER: one short line about the collection or restock.]",
+      cycleWords: "",
+      caption: "",
       ctaLabel: "Shop the drop",
       ctaHref: "/shop",
       imageUrl: "",
@@ -158,7 +180,8 @@ async function seedStarterBanner() {
       layout: "imageLeft",
     },
   });
-  console.log("✓ starter homepage banner created (disabled)");
+
+  console.log("✓ starter hero + campaign banner created (both disabled)");
 }
 
 async function main() {

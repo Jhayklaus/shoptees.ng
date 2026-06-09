@@ -6,11 +6,14 @@ export type BannerLayout = (typeof BANNER_LAYOUTS)[number];
 
 export type SaveBannerInput = {
   id?: string;
+  slot?: "hero" | "banner";
   enabled: boolean;
   sortOrder: number;
   eyebrow: string;
   title: string;
   body: string;
+  cycleWords: string;
+  caption: string;
   ctaLabel: string;
   ctaHref: string;
   imageUrl: string;
