@@ -24,11 +24,14 @@ export default async function EditBannerPage({
       <BannerForm
         initial={{
           id: banner.id,
+          slot: banner.slot === "hero" ? "hero" : "banner",
           enabled: banner.enabled,
           sortOrder: banner.sortOrder,
           eyebrow: banner.eyebrow,
           title: banner.title,
           body: banner.body,
+          cycleWords: banner.cycleWords,
+          caption: banner.caption,
           ctaLabel: banner.ctaLabel,
           ctaHref: banner.ctaHref,
           imageUrl: banner.imageUrl,

@@ -4,10 +4,18 @@ import type { SaveBannerInput } from "@/lib/banners-shared";
 
 export { BANNER_LAYOUTS, type BannerLayout, type SaveBannerInput } from "@/lib/banners-shared";
 
-// Storefront: every enabled banner, in display order.
+// Storefront: enabled hero banner (slot = "hero"), or null.
+export function getHeroBanner() {
+  return prisma.homeBanner.findFirst({
+    where: { slot: "hero", enabled: true },
+    orderBy: { sortOrder: "asc" },
+  });
+}
+
+// Storefront: every enabled non-hero banner, in display order.
 export function listEnabledBanners() {
   return prisma.homeBanner.findMany({
-    where: { enabled: true },
+    where: { slot: "banner", enabled: true },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
   });
 }
@@ -25,11 +33,14 @@ export function getBanner(id: string) {
 
 export async function saveBanner(input: SaveBannerInput) {
   const data = {
+    slot: input.slot ?? "banner",
     enabled: input.enabled,
     sortOrder: input.sortOrder,
     eyebrow: input.eyebrow,
     title: input.title,
     body: input.body,
+    cycleWords: input.cycleWords,
+    caption: input.caption,
     ctaLabel: input.ctaLabel,
     ctaHref: input.ctaHref,
     imageUrl: input.imageUrl,

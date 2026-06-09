@@ -40,10 +40,10 @@ export default async function AdminBannersPage() {
           <BannerList
             banners={banners.map((b) => ({
               id: b.id,
+              slot: b.slot,
               title: b.title,
               eyebrow: b.eyebrow,
               enabled: b.enabled,
-              layout: b.layout,
               imageUrl: b.imageUrl,
               imageAlt: b.imageAlt,
             }))}

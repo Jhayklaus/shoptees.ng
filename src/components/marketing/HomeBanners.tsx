@@ -11,14 +11,16 @@ export async function HomeBanners() {
   if (banners.length === 0) return null;
 
   return (
-    <div className="space-y-2 md:space-y-4">
-      {banners.map((b) => {
-        const imageRight = b.layout === "imageRight";
+    <div className="divide-y divide-line">
+      {banners.map((b, idx) => {
+        // Auto-alternate: even index → image left, odd → image right.
+        // Ignores the stored layout field so a stack of banners always zig-zags.
+        const imageRight = idx % 2 !== 0;
         const ctaHref = b.ctaHref || "/shop";
         const imageAlt = b.imageAlt || b.title || "Shoptees";
 
         return (
-          <section key={b.id} className="mx-auto max-w-[1400px] px-5 md:px-10 py-6 md:py-10">
+          <section key={b.id} className="mx-auto max-w-[1400px] px-5 md:px-10 py-16 md:py-24">
             <div className="relative grid grid-cols-12 bg-ink text-paper overflow-hidden">
               {/* Image side */}
               {b.imageUrl && (
