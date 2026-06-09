@@ -4,6 +4,7 @@ import { getOrderByNumber, getOrderByPaystackReference } from "@/lib/server/orde
 import { formatNaira } from "@/lib/utils";
 import { isPaystackConfigured, verifyTransaction } from "@/lib/paystack";
 import { markOrderPaid } from "@/lib/server/markOrderPaid";
+import { PaymentPoller } from "@/components/checkout/PaymentPoller";
 
 export const metadata = buildMetadata({
   title: "Order confirmed",
@@ -22,19 +23,30 @@ export default async function CheckoutSuccessPage({
   // Paystack appends ?reference=...&trxref=... when redirecting back. Verify
   // server-side before showing the receipt as PAID. Idempotent — re-runs are safe.
   const paystackRef = reference ?? trxref;
+
+  console.log(
+    `[checkout/success] params ref=${ref ?? "—"} paystackRef=${paystackRef ?? "—"} configured=${isPaystackConfigured()}`,
+  );
+
   if (paystackRef && isPaystackConfigured()) {
     await reconcilePaystack(paystackRef).catch((e) => {
-      console.error("[checkout/success] reconcile failed", e);
+      console.error("[checkout/success] reconcile threw:", e);
     });
+  } else if (paystackRef && !isPaystackConfigured()) {
+    console.warn("[checkout/success] paystackRef present but Paystack not configured — reconcile skipped");
   }
 
-  // Pay-later / Paystack-failed paths arrive with ?ref=ORDER_NUMBER. Coming back
-  // from Paystack we only have its reference, so recover the order by that.
+  // Prefer ref (pay-later / error path keeps ?ref= in the URL). After a normal
+  // Paystack redirect, only paystackRef is available so we look up by that.
   const order = ref
     ? await getOrderByNumber(ref)
     : paystackRef
       ? await getOrderByPaystackReference(paystackRef)
       : null;
+
+  console.log(
+    `[checkout/success] order=${order?.orderNumber ?? "not found"} status=${order?.status ?? "—"}`,
+  );
 
   if (!order) {
     return (
@@ -59,6 +71,11 @@ export default async function CheckoutSuccessPage({
     );
   }
 
+  // If the order is still PENDING after server-side reconcile, mount the
+  // client-side poller as a safety net. It retries /api/paystack/verify with
+  // exponential back-off and refreshes the page once PAID is confirmed.
+  const isPendingAfterPaystack = order.status !== "PAID" && Boolean(paystackRef);
+
   return (
     <main className="mx-auto max-w-3xl px-5 md:px-10 py-20">
       <div className="text-center">
@@ -75,7 +92,7 @@ export default async function CheckoutSuccessPage({
             timeStyle: "short",
           })}
         </p>
-        <p className="mt-3">
+        <div className="mt-3">
           <span
             className={`inline-block px-3 py-1 font-mono-tight text-xs uppercase tracking-wider ${
               order.status === "PAID"
@@ -85,7 +102,10 @@ export default async function CheckoutSuccessPage({
           >
             {order.status === "PAID" ? "Paid" : "Awaiting payment"}
           </span>
-        </p>
+          {isPendingAfterPaystack && paystackRef && (
+            <PaymentPoller paystackReference={paystackRef} />
+          )}
+        </div>
       </div>
 
       <section className="mt-10 border-t border-line pt-6">
@@ -147,7 +167,13 @@ export default async function CheckoutSuccessPage({
 // Paystack, then mark the order PAID and decrement stock if successful.
 // Idempotent — safe to call on every page load.
 async function reconcilePaystack(reference: string) {
+  console.log(`[reconcilePaystack] verifying reference=${reference}`);
   const verification = await verifyTransaction(reference);
-  if (verification.status !== "success") return;
-  await markOrderPaid({ reference, paidAmountKobo: verification.amount });
+  console.log(`[reconcilePaystack] verify response status=${verification.status} amount=${verification.amount}`);
+  if (verification.status !== "success") {
+    console.log(`[reconcilePaystack] payment not successful (${verification.status}) — not marking paid`);
+    return;
+  }
+  const result = await markOrderPaid({ reference, paidAmountKobo: verification.amount });
+  console.log(`[reconcilePaystack] markOrderPaid result=${JSON.stringify(result)}`);
 }
