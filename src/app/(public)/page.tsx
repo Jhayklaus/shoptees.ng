@@ -3,6 +3,7 @@ import { CampaignBanner } from "@/components/marketing/CampaignBanner";
 import { DropMarquee } from "@/components/marketing/DropMarquee";
 import { FeaturedGrid } from "@/components/marketing/FeaturedGrid";
 import { CollectionsGrid } from "@/components/marketing/CollectionsGrid";
+import { CategoriesGrid } from "@/components/marketing/CategoriesGrid";
 import { HomeBanners } from "@/components/marketing/HomeBanners";
 import { Manifesto } from "@/components/marketing/Manifesto";
 import { Newsletter } from "@/components/marketing/Newsletter";
@@ -52,10 +53,11 @@ export default async function HomePage() {
       <Hero content={hero} />
       <FeaturedGrid />
       <DropMarquee />
-      <CollectionsGrid />
-      <CampaignBanner />
+      {/* <CollectionsGrid /> */}
+      <CategoriesGrid />
       <HomeBanners />
-      <Manifesto />
+      <CampaignBanner />
+      {/* <Manifesto /> */}
       <Newsletter />
     </>
   );

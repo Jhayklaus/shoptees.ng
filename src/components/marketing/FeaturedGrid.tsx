@@ -2,9 +2,10 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { listActiveProducts, toDisplayProduct } from "@/lib/server/products";
 import { ProductCard } from "@/components/product/ProductCard";
+import { CarouselRail } from "@/components/marketing/CarouselRail";
 
-// "New in" rail — the latest active products. Horizontal snap-scroll on
-// mobile (storefront-app feel), clean 4-up grid on desktop.
+// "New in" rail — the latest active products on a horizontal carousel:
+// snap-scroll everywhere, arrow controls on desktop.
 export async function FeaturedGrid() {
   const rows = await listActiveProducts();
   const featured = rows.slice(0, 8).map(toDisplayProduct);
@@ -42,17 +43,16 @@ export async function FeaturedGrid() {
         </Link>
       </div>
 
-      {/* Mobile: horizontal snap rail. Desktop: 4-up grid. */}
-      <div className="flex gap-4 overflow-x-auto pb-4 -mx-5 px-5 snap-x snap-mandatory md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-4 md:gap-x-5 md:gap-y-14 md:overflow-visible">
+      <CarouselRail ariaLabel="New in" className="-mx-5 px-5 md:mx-0 md:px-0 md:gap-5">
         {featured.map((p, i) => (
           <div
             key={p.id}
-            className="min-w-[72vw] sm:min-w-[44vw] snap-start md:min-w-0"
+            className="min-w-[72vw] sm:min-w-[44vw] md:min-w-[300px] lg:min-w-[320px] snap-start"
           >
             <ProductCard product={p} index={i} />
           </div>
         ))}
-      </div>
+      </CarouselRail>
 
       <div className="md:hidden mt-8 text-center">
         <Link

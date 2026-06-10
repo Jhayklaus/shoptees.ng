@@ -58,6 +58,7 @@ model Session {
 // Catalog
 // ────────────────────────────────────────────────────────────────────
 
+// Product type: jerseys, hoodies, pants… Global — shared across collections.
 model Category {
   id        String    @id @default(cuid())
   slug      String    @unique
@@ -65,6 +66,21 @@ model Category {
   sortOrder Int       @default(0)
   products  Product[]
   createdAt DateTime  @default(now())
+}
+
+// Curated line / drop, e.g. "Urban Retro". A product belongs to at most one
+// collection; the categories shown inside a collection are derived from the
+// categories of its products, never assigned directly.
+model Collection {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String    @default("")
+  imageUrl    String    @default("") // banner image on /collections and /collections/[slug]
+  imageAlt    String    @default("")
+  sortOrder   Int       @default(0)
+  products    Product[]
+  createdAt   DateTime  @default(now())
 }
 
 // Homepage promotional banners. Fully admin-managed (create / edit / reorder /
@@ -93,22 +109,25 @@ model HomeBanner {
 
 // status: "DRAFT" | "ACTIVE" | "ARCHIVED"
 model Product {
-  id          String         @id @default(cuid())
-  slug        String         @unique
-  name        String
-  description String
-  priceNGN    Int
-  status      String         @default("DRAFT")
-  categoryId  String?
-  category    Category?      @relation(fields: [categoryId], references: [id])
-  variants    Variant[]
-  images      ProductImage[]
-  orderItems  OrderItem[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id           String         @id @default(cuid())
+  slug         String         @unique
+  name         String
+  description  String
+  priceNGN     Int
+  status       String         @default("DRAFT")
+  categoryId   String?
+  category     Category?      @relation(fields: [categoryId], references: [id])
+  collectionId String?
+  collection   Collection?    @relation(fields: [collectionId], references: [id])
+  variants     Variant[]
+  images       ProductImage[]
+  orderItems   OrderItem[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   @@index([status])
   @@index([categoryId])
+  @@index([collectionId])
 }
 
 model Variant {

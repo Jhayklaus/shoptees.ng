@@ -2,14 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { prisma } from "@/lib/db";
+import { CarouselRail } from "@/components/marketing/CarouselRail";
 
-// Editorial "Shop by collection" block for the homepage. One tile per curated
-// line ("Urban Retro"), anchored on the newest active product's image, with
-// the count of active pieces. Hidden entirely until the first collection is
-// created in the admin — the CategoriesGrid below carries the homepage until
-// then.
-export async function CollectionsGrid() {
-  const rows = await prisma.collection.findMany({
+// Editorial "Shop by category" block for the homepage. One tile per category
+// on a horizontal carousel, each anchored on the first active product's image.
+//
+// Categories with zero active products still render — clicking through leads
+// to the "Nothing in <category> right now" empty state. We surface the count
+// so the customer knows what to expect.
+export async function CategoriesGrid() {
+  const rows = await prisma.category.findMany({
     orderBy: { sortOrder: "asc" },
     include: {
       products: {
@@ -30,33 +32,36 @@ export async function CollectionsGrid() {
     <section className="mx-auto max-w-[1400px] px-5 md:px-10 pb-16">
       <div className="flex items-end justify-between mb-10 border-b border-line pb-4">
         <div>
-          <p className="font-mono-tight text-ink/55">Index · 02</p>
+          <p className="font-mono-tight text-ink/55">Index · 03</p>
           <h2 className="font-display text-5xl md:text-6xl tracking-tight mt-1">
-            Shop by <span className="font-italic-accent text-vermillion">collection</span>
+            Shop by <span className="font-italic-accent text-vermillion">category</span>
           </h2>
         </div>
         <Link
-          href="/collections"
+          href="/shop"
           className="hidden md:inline font-mono-tight underline-offset-4 hover:underline"
         >
           See all →
         </Link>
       </div>
 
-      <ul className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        {rows.map((col) => {
-          const cover = col.products[0]?.images[0];
-          const count = col._count.products;
+      <CarouselRail ariaLabel="Shop by category" className="-mx-5 px-5 md:mx-0 md:px-0">
+        {rows.map((cat) => {
+          const cover = cat.products[0]?.images[0];
+          const count = cat._count.products;
           return (
-            <li key={col.id}>
+            <div
+              key={cat.id}
+              className="min-w-[60vw] sm:min-w-[40vw] md:min-w-[280px] lg:min-w-[310px] snap-start"
+            >
               <Link
-                href={`/collections/${col.slug}`}
+                href={`/shop?c=${cat.slug}`}
                 className="group relative block aspect-[3/4] bg-ink overflow-hidden"
               >
                 {cover ? (
                   <Image
                     src={cover.url}
-                    alt={cover.alt || col.name}
+                    alt={cover.alt || cat.name}
                     fill
                     sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover opacity-90 transition-all duration-[900ms] ease-out group-hover:scale-[1.05] group-hover:opacity-100"
@@ -77,7 +82,7 @@ export async function CollectionsGrid() {
                 {/* Name burned straight into the image */}
                 <div className="absolute left-4 right-4 bottom-4 md:left-5 md:bottom-5 z-20">
                   <p className="font-display text-3xl md:text-4xl leading-none tracking-tight text-paper">
-                    {col.name}
+                    {cat.name}
                   </p>
                   <p className="mt-1.5 flex items-center gap-2 font-mono-tight text-paper/70 text-[0.68rem]">
                     {count} {count === 1 ? "piece" : "pieces"}
@@ -88,13 +93,13 @@ export async function CollectionsGrid() {
                   </p>
                 </div>
               </Link>
-            </li>
+            </div>
           );
         })}
-      </ul>
+      </CarouselRail>
 
       <div className="md:hidden mt-8 text-center">
-        <Link href="/collections" className="font-mono-tight underline">
+        <Link href="/shop" className="font-mono-tight underline">
           See all →
         </Link>
       </div>

@@ -7,9 +7,36 @@ import { CartButton } from "@/components/cart/CartButton";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, ChevronDown, ArrowUpRight } from "lucide-react";
 
-type Category = { slug: string; name: string };
+type NavLink = { slug: string; name: string };
 
-export function Header({ categories }: { categories: Category[] }) {
+// Dropdown content per nav `kind`. Collections are curated lines ("Urban
+// Retro") with dedicated pages; categories are product types ("Hoodies")
+// that filter /shop.
+function dropdownItems(
+  kind: "collections" | "categories",
+  collections: NavLink[],
+  categories: NavLink[],
+) {
+  return kind === "collections"
+    ? {
+        items: collections.map((c) => ({ name: c.name, href: `/collections/${c.slug}` })),
+        emptyLabel: "No collections yet",
+        footer: { label: "All collections →", href: "/collections" },
+      }
+    : {
+        items: categories.map((c) => ({ name: c.name, href: `/shop?c=${c.slug}` })),
+        emptyLabel: "No categories yet",
+        footer: { label: "See everything →", href: "/shop" },
+      };
+}
+
+export function Header({
+  collections,
+  categories,
+}: {
+  collections: NavLink[];
+  categories: NavLink[];
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -36,10 +63,10 @@ export function Header({ categories }: { categories: Category[] }) {
                 {item.label}
               </Link>
             ) : (
-              <CollectionsDropdown
+              <NavDropdown
                 key={`dd-${i}`}
                 label={item.label}
-                categories={categories}
+                {...dropdownItems(item.kind, collections, categories)}
               />
             ),
           )}
@@ -66,7 +93,12 @@ export function Header({ categories }: { categories: Category[] }) {
       </div>
 
       {menuOpen && (
-        <MobileMenu items={mainNav} categories={categories} onClose={() => setMenuOpen(false)} />
+        <MobileMenu
+          items={mainNav}
+          collections={collections}
+          categories={categories}
+          onClose={() => setMenuOpen(false)}
+        />
       )}
     </header>
   );
@@ -74,12 +106,16 @@ export function Header({ categories }: { categories: Category[] }) {
 
 // ── Desktop dropdown ────────────────────────────────────────────────────────
 
-function CollectionsDropdown({
+function NavDropdown({
   label,
-  categories,
+  items,
+  emptyLabel,
+  footer,
 }: {
   label: string;
-  categories: Category[];
+  items: { name: string; href: string }[];
+  emptyLabel: string;
+  footer: { label: string; href: string };
 }) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -157,20 +193,20 @@ function CollectionsDropdown({
           <span className="absolute top-0 left-0 w-6 h-px bg-vermillion" />
 
           <ul className="py-2">
-            {categories.length === 0 ? (
+            {items.length === 0 ? (
               <li className="px-4 py-2 font-italic-accent text-ink/55 text-sm">
-                No collections yet
+                {emptyLabel}
               </li>
             ) : (
-              categories.map((cat) => (
-                <li key={cat.slug}>
+              items.map((item) => (
+                <li key={item.href}>
                   <Link
-                    href={`/shop?c=${cat.slug}`}
+                    href={item.href}
                     onClick={() => setOpen(false)}
                     role="menuitem"
                     className="group flex items-center justify-between gap-4 px-4 py-2 font-mono-tight text-ink hover:bg-paper-deep transition-colors"
                   >
-                    <span>{cat.name}</span>
+                    <span>{item.name}</span>
                     <ArrowUpRight
                       size={14}
                       className="text-vermillion opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150"
@@ -182,12 +218,12 @@ function CollectionsDropdown({
           </ul>
           <div className="border-t border-line">
             <Link
-              href="/shop"
+              href={footer.href}
               onClick={() => setOpen(false)}
               role="menuitem"
               className="block px-4 py-2.5 font-mono-tight text-ink/70 hover:text-ink hover:bg-paper-deep transition-colors"
             >
-              See everything →
+              {footer.label}
             </Link>
           </div>
         </div>
@@ -200,14 +236,22 @@ function CollectionsDropdown({
 
 function MobileMenu({
   items,
+  collections,
   categories,
   onClose,
 }: {
   items: NavItem[];
-  categories: Category[];
+  collections: NavLink[];
+  categories: NavLink[];
   onClose: () => void;
 }) {
-  const [collectionsOpen, setCollectionsOpen] = useState(true);
+  // Track open state per dropdown kind so Collections and Categories
+  // expand independently. Collections starts open as the lead section.
+  const [openKinds, setOpenKinds] = useState<Record<string, boolean>>({
+    collections: true,
+  });
+  const toggleKind = (kind: string) =>
+    setOpenKinds((s) => ({ ...s, [kind]: !s[kind] }));
 
   return (
     <div className="md:hidden border-t border-line bg-paper">
@@ -226,37 +270,48 @@ function MobileMenu({
               </li>
             );
           }
+          const open = Boolean(openKinds[item.kind]);
+          const { items: links, emptyLabel, footer } = dropdownItems(item.kind, collections, categories);
           return (
             <li key={`m-dd-${i}`}>
               <button
                 type="button"
-                onClick={() => setCollectionsOpen((v) => !v)}
-                aria-expanded={collectionsOpen}
+                onClick={() => toggleKind(item.kind)}
+                aria-expanded={open}
                 className="inline-flex items-center gap-2 font-display text-2xl tracking-tight"
               >
                 {item.label}
                 <ChevronDown
                   size={18}
-                  className={`transition-transform ${collectionsOpen ? "rotate-180" : ""}`}
+                  className={`transition-transform ${open ? "rotate-180" : ""}`}
                 />
               </button>
-              {collectionsOpen && (
+              {open && (
                 <ul className="mt-2 pl-3 border-l border-line space-y-2">
-                  {categories.length === 0 ? (
-                    <li className="font-italic-accent text-ink/55">No collections yet</li>
+                  {links.length === 0 ? (
+                    <li className="font-italic-accent text-ink/55">{emptyLabel}</li>
                   ) : (
-                    categories.map((cat) => (
-                      <li key={cat.slug}>
+                    links.map((link) => (
+                      <li key={link.href}>
                         <Link
-                          href={`/shop?c=${cat.slug}`}
+                          href={link.href}
                           onClick={onClose}
                           className="font-mono-tight text-ink hover:text-vermillion transition-colors"
                         >
-                          {cat.name}
+                          {link.name}
                         </Link>
                       </li>
                     ))
                   )}
+                  <li>
+                    <Link
+                      href={footer.href}
+                      onClick={onClose}
+                      className="font-mono-tight text-ink/55 hover:text-vermillion transition-colors"
+                    >
+                      {footer.label}
+                    </Link>
+                  </li>
                 </ul>
               )}
             </li>

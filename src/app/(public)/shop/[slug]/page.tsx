@@ -36,6 +36,9 @@ export default async function ProductDetailPage({
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: "/" },
     { name: "Shop", url: "/shop" },
+    ...(product.collection
+      ? [{ name: product.collection.name, url: `/collections/${product.collection.slug}` }]
+      : []),
     ...(product.category
       ? [{ name: product.category.name, url: `/shop?c=${product.category.slug}` }]
       : []),

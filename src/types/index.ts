@@ -21,6 +21,11 @@ export type DisplayCategory = {
   name: string;
 };
 
+export type DisplayCollection = {
+  slug: string;
+  name: string;
+};
+
 export type DisplayProduct = {
   id: string;
   slug: string;
@@ -28,6 +33,7 @@ export type DisplayProduct = {
   description: string;
   priceNGN: number;
   category: DisplayCategory | null;
+  collection: DisplayCollection | null;
   images: DisplayImage[];
   variants: DisplayVariant[];
 };

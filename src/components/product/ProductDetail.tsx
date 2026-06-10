@@ -40,6 +40,17 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-24">
       <p className="font-mono-tight text-ink/55 mb-6">
         <Link href="/shop" className="hover:text-vermillion">Shop</Link>
+        {product.collection && (
+          <>
+            {" "}/{" "}
+            <Link
+              href={`/collections/${product.collection.slug}`}
+              className="hover:text-vermillion"
+            >
+              {product.collection.name}
+            </Link>
+          </>
+        )}
         {product.category && (
           <>
             {" "}/{" "}

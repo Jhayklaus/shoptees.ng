@@ -28,6 +28,7 @@ export async function POST(req: Request) {
     where: { id: { in: productIds }, status: { not: "ARCHIVED" } },
     include: {
       category: true,
+      collection: true,
       images: { orderBy: { sortOrder: "asc" }, take: 1 },
       variants: true,
     },
