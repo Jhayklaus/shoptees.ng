@@ -15,11 +15,15 @@ export function CartButton() {
     <Link
       href="/cart"
       aria-label={`Cart, ${count} item${count === 1 ? "" : "s"}`}
-      className="relative inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-ink/5 transition-colors"
+      className="relative inline-flex items-center justify-center h-9 w-9 hover:bg-ink hover:text-paper transition-colors"
     >
-      <ShoppingBag size={18} strokeWidth={1.6} />
+      <ShoppingBag size={18} strokeWidth={1.8} />
       {hydrated && count > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 rounded-full bg-vermillion text-paper text-[10px] font-mono-tight flex items-center justify-center">
+        <span
+          // Re-keying on count replays the pop, so every add "ticks" the badge.
+          key={count}
+          className="pop-in absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-vermillion text-paper text-[10px] font-mono-tight flex items-center justify-center"
+        >
           {count}
         </span>
       )}

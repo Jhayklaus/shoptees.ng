@@ -40,7 +40,7 @@ export function Header({
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-paper/85 backdrop-blur-md border-b border-line">
+    <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md border-b-2 border-ink">
       <div className="mx-auto max-w-[1400px] px-5 md:px-10 h-16 flex items-center justify-between">
         <button
           type="button"
@@ -58,7 +58,7 @@ export function Header({
               <Link
                 key={item.href}
                 href={item.href}
-                className="font-mono-tight text-ink hover:text-vermillion transition-colors"
+                className="font-condensed text-[0.82rem] text-ink hover:text-vermillion transition-colors"
               >
                 {item.label}
               </Link>
@@ -161,7 +161,7 @@ function NavDropdown({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1 font-mono-tight text-ink hover:text-vermillion transition-colors"
+        className="inline-flex items-center gap-1 font-condensed text-[0.82rem] text-ink hover:text-vermillion transition-colors"
       >
         {label}
         <ChevronDown
@@ -182,15 +182,15 @@ function NavDropdown({
       >
         <div
           className={[
-            "min-w-[240px] bg-paper border border-line shadow-[0_18px_44px_-22px_rgba(0,0,0,0.25)] origin-top-left",
+            "min-w-[240px] bg-paper border-2 border-ink shadow-[5px_5px_0_0_var(--ink)] origin-top-left",
             "transition-all duration-200 ease-out",
             open
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-1",
           ].join(" ")}
         >
-          {/* Vermillion top tick — echoes Hero corner ticks */}
-          <span className="absolute top-0 left-0 w-6 h-px bg-vermillion" />
+          {/* Hazard top tick */}
+          <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
 
           <ul className="py-2">
             {items.length === 0 ? (

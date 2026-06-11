@@ -23,9 +23,12 @@ export function AnnouncementBar() {
         {reel.map((t, i) => (
           <span
             key={i}
-            className="font-mono-tight px-4 inline-flex items-center text-[0.68rem] text-paper/85"
+            className={[
+              "font-mono-tight px-4 inline-flex items-center text-[0.68rem]",
+              t === "·" ? "text-vermillion" : "text-paper/85",
+            ].join(" ")}
           >
-            {t}
+            {t === "·" ? "■" : t}
           </span>
         ))}
       </div>
