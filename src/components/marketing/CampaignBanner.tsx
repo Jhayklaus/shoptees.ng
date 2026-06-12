@@ -39,14 +39,14 @@ export async function CampaignBanner() {
                 </h2>
               )}
               {subcopy && (
-                <p className="mt-4 font-italic-accent text-lg md:text-2xl text-paper/85 max-w-lg">
+                <p className="mt-4 text-base md:text-xl text-paper/85 max-w-lg">
                   {subcopy}
                 </p>
               )}
               {ctaLabel && (
                 <Link
                   href={ctaHref}
-                  className="mt-7 inline-flex items-center gap-2 group/cta bg-paper text-ink px-6 py-3 font-mono-tight hover:bg-vermillion hover:text-paper transition-colors"
+                  className="btn-wipe btn-wipe-hazard mt-7 inline-flex items-center gap-2 group/cta bg-paper text-ink px-6 py-3 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
                 >
                   {ctaLabel}
                   <ArrowUpRight
@@ -59,11 +59,11 @@ export async function CampaignBanner() {
           </div>
         </div>
 
-        {/* Vermillion corner ticks to match the rest of the site */}
-        <span className="absolute top-0 left-0 w-8 h-px bg-vermillion z-10" />
-        <span className="absolute top-0 left-0 w-px h-8 bg-vermillion z-10" />
-        <span className="absolute bottom-0 right-0 w-8 h-px bg-vermillion z-10" />
-        <span className="absolute bottom-0 right-0 w-px h-8 bg-vermillion z-10" />
+        {/* Crate corner brackets */}
+        <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion z-10" />
+        <span className="absolute top-0 left-0 w-[3px] h-10 bg-vermillion z-10" />
+        <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-vermillion z-10" />
+        <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-vermillion z-10" />
       </div>
     </section>
   );
