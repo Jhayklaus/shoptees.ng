@@ -64,29 +64,31 @@ export function ProductCard({ product, index = 0, offset }: Props) {
             no image
           </div>
         )}
-        <span className="absolute top-3 left-3 font-mono-tight text-ink/70 bg-paper/80 px-2 py-0.5 z-10">
+        <span className="absolute top-3 left-3 font-mono-tight text-ink/70 bg-paper/85 px-2 py-0.5 z-10">
           № {number}
         </span>
         {isSoldOut && (
-          <span className="absolute top-3 right-3 font-mono-tight text-paper bg-ink px-2 py-0.5 z-10">
+          <span className="stamp absolute top-3 right-3 text-paper bg-ink border-ink z-10">
             sold out
           </span>
         )}
       </div>
 
-      <div className="mt-3 flex items-baseline justify-between gap-3">
-        <h3 className="font-display text-lg leading-tight tracking-tight">
-          {product.name}
-        </h3>
-        <p className="font-mono-tight text-ink/70 whitespace-nowrap">
+      <div className="mt-3 border-t-2 border-ink pt-2 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="font-display text-base md:text-lg leading-[1.05]">
+            {product.name}
+          </h3>
+          {product.category && (
+            <p className="font-mono-tight text-ink/50 mt-1">
+              {product.category.name}
+            </p>
+          )}
+        </div>
+        <p className="font-mono-tight text-ink whitespace-nowrap bg-paper-deep px-1.5 py-0.5 mt-0.5">
           {product.priceNGN > 0 ? formatNaira(product.priceNGN) : "—"}
         </p>
       </div>
-      {product.category && (
-        <p className="font-italic-accent text-ink/55 text-base mt-0.5">
-          {product.category.name}
-        </p>
-      )}
     </Link>
   );
 }

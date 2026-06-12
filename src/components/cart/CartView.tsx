@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useCart } from "@/store/cart";
 import { useHydratedCart } from "@/store/useHydratedCart";
 import { formatNaira } from "@/lib/utils";
-import { Trash2 } from "lucide-react";
+import { Trash2, ArrowUpRight } from "lucide-react";
 
+// Cart styled as a packing slip / waybill: numbered manifest lines, mono
+// metadata, hard rules, and a stamped summary panel.
 export function CartView() {
   const remove = useCart((s) => s.remove);
   const setQuantity = useCart((s) => s.setQuantity);
@@ -19,17 +21,18 @@ export function CartView() {
   if (state.status === "ready" && lines.length === 0) {
     return (
       <main className="mx-auto max-w-3xl px-5 md:px-10 py-24 text-center">
-        <p className="font-mono-tight text-ink/55 mb-3">Cart · empty</p>
-        <h1 className="font-display text-6xl tracking-tight">
+        <span className="stamp text-ink/50">Manifest · empty</span>
+        <h1 className="font-display text-6xl md:text-7xl leading-[0.92] mt-4">
           Nothing yet,
           <br />
-          <span className="font-italic-accent text-vermillion">go and look.</span>
+          <span className="text-vermillion">go and look.</span>
         </h1>
         <Link
           href="/shop"
-          className="inline-block mt-10 border border-ink px-6 py-3 font-mono-tight hover:bg-ink hover:text-paper transition-colors"
+          className="btn-wipe inline-flex items-center gap-2 mt-10 border-2 border-ink px-7 py-3.5 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
         >
-          Browse the collection →
+          Browse the collection
+          <ArrowUpRight size={14} className="text-vermillion" />
         </Link>
       </main>
     );
@@ -37,27 +40,35 @@ export function CartView() {
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 py-12">
-      <header className="mb-10 border-b border-line pb-6">
-        <p className="font-mono-tight text-ink/55">
-          Cart · {isLoading ? "—" : `${lines.length} item${lines.length === 1 ? "" : "s"}`}
-        </p>
-        <h1 className="font-display text-6xl md:text-7xl tracking-tight">
-          Your <span className="font-italic-accent text-vermillion">basket.</span>
+      <header className="mb-10 border-b-[3px] border-ink pb-6">
+        <span className="stamp text-vermillion">
+          Packing slip ·{" "}
+          {isLoading
+            ? "--"
+            : `${String(lines.length).padStart(2, "0")} item${lines.length === 1 ? "" : "s"}`}
+        </span>
+        <h1 className="font-display text-6xl md:text-7xl mt-3">
+          Your <span className="text-vermillion">basket.</span>
         </h1>
       </header>
 
       {state.status === "ready" && state.dropped.length > 0 && (
-        <p className="mb-6 bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+        <p className="mb-6 font-mono-tight bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 text-ink-soft">
           Some items were no longer available and have been removed from your cart.
         </p>
       )}
 
       <div className="grid grid-cols-12 gap-10">
-        <ul className="col-span-12 lg:col-span-8 divide-y divide-line border-y border-line">
-          {lines.map((l) => {
+        <ul className="col-span-12 lg:col-span-8 divide-y-2 divide-line border-y-2 border-ink">
+          {lines.map((l, idx) => {
             const hero = l.product.images[0];
             return (
               <li key={l.variantId} className="py-6 grid grid-cols-12 gap-4 items-center">
+                {/* Line number — waybill row index */}
+                <div className="hidden sm:block sm:col-span-1 font-mono-tight text-ink/40">
+                  {String(idx + 1).padStart(2, "0")}
+                </div>
+
                 <div className="col-span-3 sm:col-span-2 relative aspect-[4/5] bg-paper-deep">
                   {hero && (
                     <Image
@@ -68,51 +79,58 @@ export function CartView() {
                       className="object-cover"
                     />
                   )}
+                  <span className="absolute top-0 left-0 w-4 h-[2px] bg-vermillion" />
+                  <span className="absolute top-0 left-0 w-[2px] h-4 bg-vermillion" />
                 </div>
-                <div className="col-span-9 sm:col-span-5">
+
+                <div className="col-span-9 sm:col-span-4">
                   <Link
                     href={`/shop/${l.product.slug}`}
                     className="font-display text-2xl leading-tight hover:text-vermillion"
                   >
                     {l.product.name}
                   </Link>
-                  <p className="font-mono-tight text-ink/55 mt-1">
-                    {l.variant.size} · {l.variant.color}
+                  <p className="font-mono-tight text-ink/55 mt-1.5">
+                    SIZE {l.variant.size} · {l.variant.color}
                   </p>
-                  <p className="font-mono-tight text-ink/55">SKU {l.variant.sku}</p>
+                  <p className="font-mono-tight text-ink/40">SKU {l.variant.sku}</p>
                 </div>
+
                 <div className="col-span-6 sm:col-span-3 flex items-center">
-                  <div className="inline-flex items-center border border-line">
+                  <div className="inline-flex items-center border-2 border-ink">
                     <button
                       type="button"
                       onClick={() => setQuantity(l.variantId, Math.max(0, l.quantity - 1))}
                       aria-label={`Decrease quantity of ${l.product.name}`}
-                      className="px-3 py-1.5 hover:bg-ink hover:text-paper transition-colors"
+                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
                     >
                       −
                     </button>
-                    <span className="px-4 font-mono-tight">{l.quantity}</span>
+                    <span className="w-10 text-center font-mono-tight font-bold">
+                      {String(l.quantity).padStart(2, "0")}
+                    </span>
                     <button
                       type="button"
                       onClick={() =>
                         setQuantity(l.variantId, Math.min(l.variant.stock, l.quantity + 1))
                       }
                       aria-label={`Increase quantity of ${l.product.name}`}
-                      className="px-3 py-1.5 hover:bg-ink hover:text-paper transition-colors"
+                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
                     >
                       +
                     </button>
                   </div>
                 </div>
+
                 <div className="col-span-6 sm:col-span-2 flex items-center justify-end gap-3">
-                  <p className="font-display text-xl">
+                  <p className="font-mono-tight font-bold">
                     {l.lineTotalNGN > 0 ? formatNaira(l.lineTotalNGN) : "—"}
                   </p>
                   <button
                     type="button"
                     onClick={() => remove(l.variantId)}
                     aria-label={`Remove ${l.product.name}`}
-                    className="text-ink/40 hover:text-vermillion"
+                    className="text-ink/40 hover:text-vermillion transition-colors"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -121,45 +139,53 @@ export function CartView() {
             );
           })}
           {isLoading && (
-            <li className="py-12 text-center font-italic-accent text-ink/55">
-              Loading cart…
+            <li className="py-12 text-center">
+              <span className="stamp text-ink/40">Loading manifest…</span>
             </li>
           )}
         </ul>
 
         <aside className="col-span-12 lg:col-span-4 lg:sticky lg:top-24 self-start">
-          <div className="bg-paper-deep p-6">
-            <p className="font-mono-tight text-ink/55 mb-3">Summary</p>
-            <dl className="space-y-2">
-              <div className="flex justify-between font-display text-lg">
-                <dt>Subtotal</dt>
-                <dd>{subtotal > 0 ? formatNaira(subtotal) : "—"}</dd>
+          <div className="relative border-2 border-ink p-6 bg-paper shadow-[6px_6px_0_0_var(--ink)]">
+            <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
+            <span className="absolute top-0 left-0 w-[3px] h-8 bg-vermillion" />
+
+            <span className="stamp text-ink/60">Summary</span>
+            <dl className="mt-4 space-y-2.5">
+              <div className="flex justify-between font-mono-tight">
+                <dt className="text-ink/55">Subtotal</dt>
+                <dd className="font-bold">{subtotal > 0 ? formatNaira(subtotal) : "—"}</dd>
               </div>
-              <div className="flex justify-between text-ink-soft">
-                <dt>Shipping</dt>
-                <dd className="font-mono-tight">calculated at checkout</dd>
+              <div className="flex justify-between font-mono-tight">
+                <dt className="text-ink/55">Shipping</dt>
+                <dd className="text-ink/55">at checkout</dd>
               </div>
             </dl>
-            <div className="mt-5 pt-5 border-t border-ink/15 flex justify-between font-display text-2xl">
-              <p>Total</p>
-              <p>{subtotal > 0 ? formatNaira(subtotal) : "—"}</p>
+            <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
+              <p className="font-condensed text-[0.82rem]">Total</p>
+              <p className="font-display text-3xl">
+                {subtotal > 0 ? formatNaira(subtotal) : "—"}
+              </p>
             </div>
             <Link
               href="/checkout"
               aria-disabled={lines.length === 0}
-              className={`mt-6 block text-center py-4 font-mono-tight transition-colors ${
+              className={`btn-wipe btn-wipe-hazard mt-6 block text-center py-4 font-condensed text-[0.82rem] transition-colors duration-200 ${
                 lines.length === 0
                   ? "bg-ink/40 text-paper pointer-events-none"
-                  : "bg-ink text-paper hover:bg-vermillion"
+                  : "bg-ink text-paper"
               }`}
             >
               Proceed to checkout →
             </Link>
-            <Link href="/shop" className="block text-center mt-3 font-mono-tight underline-offset-4 hover:underline">
+            <Link
+              href="/shop"
+              className="block text-center mt-4 font-condensed text-[0.72rem] underline-offset-4 hover:underline hover:text-vermillion"
+            >
               Continue shopping
             </Link>
           </div>
-          <p className="mt-4 font-italic-accent text-sm text-ink/55">
+          <p className="mt-5 font-mono-tight text-ink/55 text-sm">
             We pack in paper. Lagos deliveries usually go out within 48h.
           </p>
         </aside>

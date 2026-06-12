@@ -54,7 +54,7 @@ export function FilterPanel({
         type="button"
         onClick={() => setOpen(true)}
         aria-expanded={open}
-        className="inline-flex items-center gap-2 border border-line px-4 py-2 font-mono-tight hover:border-ink transition-colors"
+        className="inline-flex items-center gap-2 border-2 border-ink px-4 py-2 font-condensed text-[0.78rem] hover:bg-ink hover:text-paper transition-colors"
       >
         <SlidersHorizontal size={14} />
         Filter
@@ -76,11 +76,11 @@ export function FilterPanel({
           />
 
           {/* Panel */}
-          <aside className="absolute right-0 top-0 h-full w-[88vw] max-w-[360px] bg-paper border-l border-line flex flex-col">
-            <span className="absolute top-0 left-0 w-6 h-px bg-vermillion" />
-            <header className="flex items-center justify-between px-6 h-16 border-b border-line shrink-0">
-              <p className="font-display text-2xl tracking-tight">
-                Filter<span className="font-italic-accent text-vermillion">.</span>
+          <aside className="absolute right-0 top-0 h-full w-[88vw] max-w-[360px] bg-paper border-l-[3px] border-ink flex flex-col">
+            <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion" />
+            <header className="flex items-center justify-between px-6 h-16 border-b-2 border-ink shrink-0">
+              <p className="font-display text-2xl">
+                Filter<span className="text-vermillion">.</span>
               </p>
               <button
                 type="button"
@@ -139,11 +139,11 @@ export function FilterPanel({
             </div>
 
             {activeCount > 0 && (
-              <div className="border-t border-line p-6 shrink-0">
+              <div className="border-t-2 border-ink p-6 shrink-0">
                 <Link
                   href="/shop"
                   onClick={close}
-                  className="block w-full border border-ink py-3 text-center font-mono-tight hover:bg-ink hover:text-paper transition-colors"
+                  className="btn-wipe block w-full border-2 border-ink py-3 text-center font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
                 >
                   Clear all
                 </Link>
@@ -159,7 +159,7 @@ export function FilterPanel({
 function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="font-mono-tight text-ink/55 mb-3">{label}</p>
+      <span className="stamp text-ink/60 mb-3 inline-block">{label}</span>
       <div className="flex flex-wrap gap-2">{children}</div>
     </div>
   );
@@ -182,8 +182,10 @@ function FilterLink({
       scroll={false}
       onClick={onClick}
       className={[
-        "font-mono-tight px-3 py-1.5 border transition-colors",
-        selected ? "border-ink bg-ink text-paper" : "border-line hover:border-ink",
+        "font-condensed text-[0.78rem] px-3.5 py-2 border-2 transition-colors",
+        selected
+          ? "border-ink bg-ink text-paper"
+          : "border-line hover:border-ink hover:bg-ink hover:text-paper",
       ].join(" ")}
     >
       {children}

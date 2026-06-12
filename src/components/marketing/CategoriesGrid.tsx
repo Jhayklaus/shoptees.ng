@@ -30,16 +30,16 @@ export async function CategoriesGrid() {
 
   return (
     <section className="mx-auto max-w-[1400px] px-5 md:px-10 pb-16">
-      <div className="flex items-end justify-between mb-10 border-b border-line pb-4">
+      <div className="flex items-end justify-between mb-10 border-b-[3px] border-ink pb-4">
         <div>
-          <p className="font-mono-tight text-ink/55">Index · 03</p>
-          <h2 className="font-display text-5xl md:text-6xl tracking-tight mt-1">
-            Shop by <span className="font-italic-accent text-vermillion">category</span>
+          <span className="stamp text-vermillion">Manifest · 02</span>
+          <h2 className="font-display text-5xl md:text-6xl mt-2">
+            Shop by <span className="text-vermillion">category</span>
           </h2>
         </div>
         <Link
           href="/shop"
-          className="hidden md:inline font-mono-tight underline-offset-4 hover:underline"
+          className="hidden md:inline font-condensed text-[0.78rem] underline-offset-4 hover:underline hover:text-vermillion"
         >
           See all →
         </Link>
@@ -67,25 +67,30 @@ export async function CategoriesGrid() {
                     className="object-cover opacity-90 transition-all duration-[900ms] ease-out group-hover:scale-[1.05] group-hover:opacity-100"
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center font-italic-accent text-paper/30">
-                    coming soon
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="stamp text-paper/40">coming soon</span>
                   </div>
                 )}
 
                 {/* Bottom scrim for the overlaid name */}
                 <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent z-10" />
 
-                {/* Vermillion corner ticks */}
-                <span className="absolute top-0 left-0 w-5 h-px bg-vermillion z-10" />
-                <span className="absolute top-0 left-0 w-px h-5 bg-vermillion z-10" />
+                {/* Crate corner brackets */}
+                <span className="absolute top-0 left-0 w-7 h-[3px] bg-vermillion z-10" />
+                <span className="absolute top-0 left-0 w-[3px] h-7 bg-vermillion z-10" />
+
+                {/* Stock count stamped top-right like a crate label */}
+                <span className="stamp absolute top-3 right-3 z-20 text-paper/90 bg-ink/40 backdrop-blur-[2px]">
+                  QTY {String(count).padStart(2, "0")}
+                </span>
 
                 {/* Name burned straight into the image */}
                 <div className="absolute left-4 right-4 bottom-4 md:left-5 md:bottom-5 z-20">
-                  <p className="font-display text-3xl md:text-4xl leading-none tracking-tight text-paper">
+                  <p className="font-display text-3xl md:text-4xl leading-none text-paper">
                     {cat.name}
                   </p>
-                  <p className="mt-1.5 flex items-center gap-2 font-mono-tight text-paper/70 text-[0.68rem]">
-                    {count} {count === 1 ? "piece" : "pieces"}
+                  <p className="mt-2 flex items-center gap-2 font-mono-tight text-paper/70">
+                    Open crate
                     <ArrowUpRight
                       size={13}
                       className="text-vermillion transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
@@ -99,7 +104,7 @@ export async function CategoriesGrid() {
       </CarouselRail>
 
       <div className="md:hidden mt-8 text-center">
-        <Link href="/shop" className="font-mono-tight underline">
+        <Link href="/shop" className="font-condensed text-[0.78rem] underline underline-offset-4">
           See all →
         </Link>
       </div>

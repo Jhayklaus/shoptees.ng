@@ -17,15 +17,15 @@ export type HeroContent = {
   caption: string;
 };
 
-// Full-bleed campaign hero. The admin-managed hero image fills the viewport
-// with the headline, copy and CTA overlaid on a scrim — image-led rather than
-// typography-led. All content comes from the hero.* settings.
+// Full-bleed campaign hero. Admin-managed image fills the viewport with the
+// headline stacked on top like crate-stencil type. Signature moment: the
+// rotating rubber-stamp Lagos clock (see StampClock below).
 export function Hero({ content }: { content: HeroContent }) {
   const cyclingNouns = content.cycleWords;
   const longest =
     cyclingNouns.reduce((a, b) => (b.length > a.length ? b : a), "") || "long haul.";
 
-  // ── Cycling italic noun in the headline ──────────────────────────────
+  // ── Cycling headline word ────────────────────────────────────────────
   const [wordIdx, setWordIdx] = useState(0);
   useEffect(() => {
     if (cyclingNouns.length < 2) return;
@@ -35,21 +35,6 @@ export function Hero({ content }: { content: HeroContent }) {
     );
     return () => clearInterval(id);
   }, [cyclingNouns.length]);
-
-  // ── Live Lagos time ──────────────────────────────────────────────────
-  const [now, setNow] = useState<string | null>(null);
-  useEffect(() => {
-    const fmt = () =>
-      new Intl.DateTimeFormat("en-NG", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-        timeZone: "Africa/Lagos",
-      }).format(new Date());
-    const id = setInterval(() => setNow(fmt()), 1000);
-    return () => clearInterval(id);
-  }, []);
 
   const headlineLines = content.headline.split("\n");
 
@@ -67,35 +52,28 @@ export function Hero({ content }: { content: HeroContent }) {
         />
       )}
 
-      {/* Legibility scrims — heavier at the bottom where the copy sits */}
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/25 to-ink/30" />
+      {/* Legibility scrim — heavier at the bottom where the copy sits */}
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-ink/35" />
 
-      {/* Vermillion corner ticks */}
-      <span className="absolute top-0 left-0 w-8 h-px bg-vermillion z-10" />
-      <span className="absolute top-0 left-0 w-px h-8 bg-vermillion z-10" />
-      <span className="absolute bottom-0 right-0 w-8 h-px bg-vermillion z-10" />
-      <span className="absolute bottom-0 right-0 w-px h-8 bg-vermillion z-10" />
+      {/* Crate corner brackets */}
+      <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion z-10" />
+      <span className="absolute top-0 left-0 w-[3px] h-10 bg-vermillion z-10" />
+      <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-vermillion z-10" />
+      <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-vermillion z-10" />
 
-      {/* Top strip: eyebrow + live Lagos ticker */}
-      <div className="relative z-10 mx-auto w-full max-w-[1400px] px-5 md:px-10 pt-6">
-        <div
-          className="flex items-center justify-between gap-4 rise"
-          style={{ animationDelay: "0ms" }}
-        >
-          <p className="font-mono-tight text-paper/80">{content.eyebrow}</p>
-          <p className="hidden sm:flex items-center font-mono-tight text-paper/80 gap-1.5">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-vermillion animate-breathe" />
-            Lagos · {now ?? "—:—:—"} WAT
-            <span className="inline-block w-[1px] h-3 bg-paper animate-blink ml-0.5" />
-          </p>
-        </div>
+      {/* Top strip: eyebrow stamp + rotating stamp-clock */}
+      <div className="relative z-10 mx-auto w-full max-w-[1400px] px-5 md:px-10 pt-6 flex items-start justify-between gap-4">
+        <p className="stamp stamp-straight text-paper/90 rise" style={{ animationDelay: "0ms" }}>
+          {content.eyebrow}
+        </p>
+        <StampClock />
       </div>
 
       {/* Bottom block: headline, copy, CTAs */}
       <div className="relative z-10 mt-auto mx-auto w-full max-w-[1400px] px-5 md:px-10 pb-10 md:pb-16">
         <h1
-          className="font-display text-[13vw] md:text-[7.5rem] xl:text-[8.5rem] leading-[0.88] tracking-[-0.04em] rise"
-          style={{ animationDelay: "120ms" }}
+          className="font-display text-[12.5vw] md:text-[7rem] xl:text-[8rem] leading-[0.92] rise"
+          style={{ animationDelay: "100ms" }}
         >
           {headlineLines.map((line, i) => (
             <span key={i}>
@@ -110,15 +88,15 @@ export function Hero({ content }: { content: HeroContent }) {
               <span
                 aria-live="polite"
                 className="relative inline-block align-baseline"
-                style={{ minWidth: "6ch", perspective: "600px" }}
+                style={{ minWidth: "6ch" }}
               >
                 {cyclingNouns.map((w, i) => (
                   <span
                     key={w + i}
                     aria-hidden={i !== wordIdx}
-                    className="font-italic-accent text-vermillion absolute left-0 top-0 whitespace-nowrap"
+                    className="text-vermillion absolute left-0 top-0 whitespace-nowrap"
                     style={{
-                      animation: i === wordIdx ? "word-rise 2.6s ease both" : "none",
+                      animation: i === wordIdx ? "word-rise 2.6s var(--ease-snap) both" : "none",
                       opacity: i === wordIdx ? undefined : 0,
                     }}
                   >
@@ -126,7 +104,7 @@ export function Hero({ content }: { content: HeroContent }) {
                   </span>
                 ))}
                 {/* Reserve baseline space using the longest candidate */}
-                <span aria-hidden className="font-italic-accent invisible">
+                <span aria-hidden className="invisible">
                   {longest}
                 </span>
               </span>
@@ -136,16 +114,16 @@ export function Hero({ content }: { content: HeroContent }) {
 
         <div
           className="mt-7 md:mt-9 flex flex-col md:flex-row md:items-end md:justify-between gap-6 rise"
-          style={{ animationDelay: "260ms" }}
+          style={{ animationDelay: "220ms" }}
         >
-          <p className="font-italic-accent text-lg md:text-xl leading-snug text-paper/85 max-w-md">
+          <p className="text-base md:text-lg leading-snug text-paper/85 max-w-md font-medium">
             {content.body}
           </p>
 
           <div className="flex items-center gap-3 shrink-0">
             <Link
               href={content.ctaHref || "/shop"}
-              className="inline-flex items-center gap-2 group bg-paper text-ink px-6 py-3.5 md:px-7 md:py-4 font-mono-tight hover:bg-vermillion hover:text-paper transition-colors"
+              className="btn-wipe btn-wipe-hazard inline-flex items-center gap-2 group bg-paper text-ink px-6 py-3.5 md:px-7 md:py-4 font-condensed text-[0.8rem] hover:text-paper transition-colors duration-200"
             >
               {content.ctaLabel || "Shop now"}
               <ArrowUpRight
@@ -155,7 +133,7 @@ export function Hero({ content }: { content: HeroContent }) {
             </Link>
             <a
               href="#new-in"
-              className="hidden md:inline-flex items-center gap-2 group border border-paper/60 text-paper px-6 py-4 font-mono-tight hover:border-paper hover:bg-paper/10 transition-colors"
+              className="hidden md:inline-flex items-center gap-2 group border-2 border-paper/70 text-paper px-6 py-[0.85rem] font-condensed text-[0.8rem] hover:border-paper hover:bg-paper/10 transition-colors"
             >
               New in
               <ArrowDown
@@ -167,13 +145,76 @@ export function Hero({ content }: { content: HeroContent }) {
         </div>
 
         {content.caption && (
-          <p className="mt-6 rise" style={{ animationDelay: "380ms" }}>
-            <span className="inline-block font-mono-tight bg-paper/90 backdrop-blur-sm text-ink px-2.5 py-1">
+          <p className="mt-6 rise" style={{ animationDelay: "340ms" }}>
+            <span className="stamp bg-paper/90 text-ink backdrop-blur-sm">
               {content.caption}
             </span>
           </p>
         )}
       </div>
     </section>
+  );
+}
+
+// ── Signature moment: rotating rubber-stamp Lagos clock ───────────────────
+// Circular "SHOPTEES · LAGOS · NIGERIA" text spins slowly around a live WAT
+// clock. The time chip re-stamps (thunk) whenever the minute ticks over.
+function StampClock() {
+  const [now, setNow] = useState<{ hm: string; s: string } | null>(null);
+
+  useEffect(() => {
+    const fmt = () => {
+      const parts = new Intl.DateTimeFormat("en-NG", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        timeZone: "Africa/Lagos",
+      }).formatToParts(new Date());
+      const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "00";
+      return { hm: `${get("hour")}:${get("minute")}`, s: get("second") };
+    };
+    setNow(fmt());
+    const id = setInterval(() => setNow(fmt()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div
+      className="relative hidden sm:flex items-center justify-center w-24 h-24 md:w-28 md:h-28 shrink-0 rise"
+      aria-hidden
+    >
+      {/* Rotating circular text */}
+      <svg viewBox="0 0 100 100" className="absolute inset-0 animate-spin-slow text-paper/85">
+        <defs>
+          <path
+            id="stamp-circle"
+            d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+          />
+        </defs>
+        <circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="50" cy="50" r="29" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.6" />
+        <text
+          className="fill-current"
+          style={{
+            fontSize: "9.5px",
+            letterSpacing: "0.22em",
+            fontFamily: "var(--font-martian), monospace",
+            fontWeight: 700,
+          }}
+        >
+          <textPath href="#stamp-circle">SHOPTEES · LAGOS · NIGERIA ·</textPath>
+        </text>
+      </svg>
+
+      {/* Live WAT time — re-keys each minute so it "thunks" a re-stamp */}
+      <span
+        key={now?.hm ?? "--"}
+        className="stamp-in relative font-mono-tight text-paper text-[0.7rem] font-bold flex flex-col items-center leading-tight"
+      >
+        {now?.hm ?? "--:--"}
+        <span className="text-vermillion text-[0.55rem]">{now ? `:${now.s} WAT` : "WAT"}</span>
+      </span>
+    </div>
   );
 }

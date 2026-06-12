@@ -1,25 +1,20 @@
-import { Fraunces, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Archivo, Martian_Mono } from "next/font/google";
 import "./globals.css";
 import { rootMetadata } from "@/lib/seo";
 import { organizationJsonLd } from "@/lib/jsonld";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// One variable family carries the whole identity: the width axis spans
+// condensed ticker type (wdth 62) to ultra-expanded display (wdth 125).
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
-  axes: ["SOFT", "WONK", "opsz"],
+  axes: ["wdth"],
   display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  subsets: ["latin"],
-  weight: "400",
-  style: "italic",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+// Machine-printed mono for prices, SKUs, stamps and metadata.
+const martianMono = Martian_Mono({
+  variable: "--font-martian",
   subsets: ["latin"],
   display: "swap",
 });
@@ -34,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${archivo.variable} ${martianMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-paper text-ink flex flex-col">
         <script
