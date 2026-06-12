@@ -39,10 +39,16 @@ export async function POST(req: Request) {
     );
   }
 
-  // Fire-and-forget welcome email for new subscribers. Skip if Resend says
-  // they were already subscribed — they got this once.
+  // Welcome email for new subscribers. Must be awaited — on serverless the
+  // function is frozen once the response returns, so a fire-and-forget send
+  // gets killed before it reaches Resend. sendEmail swallows failures, so an
+  // email error can never block the signup itself. Skip if Resend says they
+  // were already subscribed — they got this once.
   if (!add.alreadySubscribed) {
-    void sendEmail({ to: parsed.data.email, ...newsletterWelcome() });
+    const sent = await sendEmail({ to: parsed.data.email, ...newsletterWelcome() });
+    if (!sent.ok) {
+      console.error("[newsletter] welcome email failed:", sent.reason, "to:", parsed.data.email);
+    }
   }
 
   return NextResponse.json({ ok: true, alreadySubscribed: add.alreadySubscribed });

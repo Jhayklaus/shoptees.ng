@@ -47,13 +47,13 @@ function shell(body: string): string {
 <body style="margin:0;padding:0;background:${C.paperDeep};font-family:Arial,Helvetica,sans-serif;color:${C.ink};-webkit-font-smoothing:antialiased;">
   <div style="max-width:580px;margin:0 auto;padding:24px 16px;">
 
-    <!-- Logo header -->
+    <!-- Logo header — light so the black logo reads -->
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:0;">
       <tr>
-        <td style="background:${C.ink};padding:20px 28px;">
+        <td style="background:${C.paper};border:3px solid ${C.ink};border-bottom:2px solid ${C.ink};padding:20px 28px;">
           <img src="${LOGO_URL}" alt="Shoptees" height="32" style="display:block;border:0;max-height:32px;width:auto;" />
         </td>
-        <td style="background:${C.ink};padding:20px 28px;text-align:right;vertical-align:middle;">
+        <td style="background:${C.paper};border:3px solid ${C.ink};border-left:0;border-bottom:2px solid ${C.ink};padding:20px 28px;text-align:right;vertical-align:middle;">
           <span style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:${C.vermillion};font-weight:700;">Lagos, NG</span>
         </td>
       </tr>
