@@ -53,7 +53,7 @@ export function Hero({ content }: { content: HeroContent }) {
       )}
 
       {/* Legibility scrim — heavier at the bottom where the copy sits */}
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-ink/35" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-ink/20" />
 
       {/* Crate corner brackets */}
       <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion z-10" />
@@ -71,9 +71,9 @@ export function Hero({ content }: { content: HeroContent }) {
 
       {/* Bottom block: headline, copy, CTAs — centered and moderate so the
           campaign image stays the star */}
-      <div className="relative z-10 mt-auto mx-auto w-full max-w-3xl px-5 md:px-10 pb-10 md:pb-16 text-center">
+      <div className="relative z-10 mt-auto mx-auto w-full max-w-2xl px-5 md:px-10 pb-10 md:pb-14 text-center">
         <h1
-          className="font-display text-4xl sm:text-5xl md:text-6xl leading-[0.95] rise"
+          className="font-display text-3xl sm:text-4xl md:text-5xl leading-[0.95] rise"
           style={{ animationDelay: "100ms" }}
         >
           {headlineLines.map((line, i) => (
@@ -116,7 +116,7 @@ export function Hero({ content }: { content: HeroContent }) {
           className="mt-6 md:mt-8 flex flex-col items-center gap-6 rise"
           style={{ animationDelay: "220ms" }}
         >
-          <p className="text-base md:text-lg leading-snug text-paper/85 max-w-md font-medium">
+          <p className="text-sm md:text-base leading-snug text-paper/85 max-w-sm font-medium">
             {content.body}
           </p>
 
