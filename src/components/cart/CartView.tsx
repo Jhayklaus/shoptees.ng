@@ -58,7 +58,7 @@ export function CartView() {
         </p>
       )}
 
-      <div className="grid grid-cols-12 gap-10">
+      <div className="grid grid-cols-12 gap-y-10 gap-x-2 lg:gap-10">
         <ul className="col-span-12 lg:col-span-8 divide-y-2 divide-line border-y-2 border-ink">
           {lines.map((l, idx) => {
             const hero = l.product.images[0];

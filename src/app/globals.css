@@ -49,6 +49,9 @@ html,
 body {
   background: var(--paper);
   color: var(--ink);
+  /* Hard stop on horizontal scroll — wide display type or marquees must
+     never widen the page on mobile. */
+  overflow-x: clip;
 }
 
 body {

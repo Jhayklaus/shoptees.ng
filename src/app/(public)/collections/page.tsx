@@ -21,26 +21,27 @@ export default async function CollectionsPage() {
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 pb-24">
-      <header className="mb-12 border-b border-line pb-8">
-        <p className="font-mono-tight text-ink/55">
-          {collections.length} {collections.length === 1 ? "line" : "lines"}
-        </p>
-        <h1 className="font-display text-6xl md:text-8xl tracking-tight leading-[0.95] mt-1">
-          Collections<span className="font-italic-accent text-vermillion">.</span>
+      <header className="mb-12 border-b-[3px] border-ink pb-8">
+        <span className="stamp text-vermillion">
+          {String(collections.length).padStart(2, "0")}{" "}
+          {collections.length === 1 ? "line" : "lines"}
+        </span>
+        <h1 className="font-display text-4xl sm:text-6xl md:text-8xl leading-[0.92] mt-3">
+          Collections<span className="text-vermillion">.</span>
         </h1>
       </header>
 
       {collections.length === 0 ? (
-        <div className="border border-dashed border-line p-16 text-center">
-          <p className="font-italic-accent text-2xl text-ink/55">
-            No collections yet — the studio is curating.
+        <div className="border-2 border-dashed border-ink/30 p-16 text-center">
+          <span className="stamp text-ink/50">The studio is curating — check back soon</span>
+          <p className="mt-5">
+            <Link
+              href="/shop"
+              className="font-condensed text-[0.78rem] underline underline-offset-4 hover:text-vermillion"
+            >
+              Browse everything →
+            </Link>
           </p>
-          <Link
-            href="/shop"
-            className="inline-block mt-4 font-mono-tight text-ink underline-offset-4 hover:underline"
-          >
-            Browse everything →
-          </Link>
         </div>
       ) : (
         <div className="space-y-20">
@@ -58,7 +59,7 @@ export default async function CollectionsPage() {
                 />
 
                 {display.length === 0 ? (
-                  <p className="font-italic-accent text-ink/55 mt-6">
+                  <p className="font-mono-tight text-ink/55 mt-2">
                     Nothing in {col.name.toLowerCase()} yet — coming soon.
                   </p>
                 ) : (
@@ -76,10 +77,10 @@ export default async function CollectionsPage() {
                         </div>
                       ))}
                     </CarouselRail>
-                    <div className="mt-4 text-right">
+                    <div className="mt-5 text-right">
                       <Link
                         href={`/collections/${col.slug}`}
-                        className="font-mono-tight text-ink/70 hover:text-ink underline-offset-4 hover:underline"
+                        className="font-condensed text-[0.78rem] underline-offset-4 hover:underline hover:text-vermillion"
                       >
                         View all {col._count.products}{" "}
                         {col._count.products === 1 ? "piece" : "pieces"} →

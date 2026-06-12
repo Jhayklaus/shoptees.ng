@@ -21,7 +21,7 @@ export async function FeaturedGrid() {
   }
 
   return (
-    <section id="new-in" className="mx-auto max-w-[1400px] px-5 md:px-10 pt-20 md:pt-28 scroll-mt-20">
+    <section id="new-in" className="mx-auto max-w-[1400px] px-5 md:px-10 pt-20 md:pt-28 pb-16 md:pb-24 scroll-mt-20">
       <div className="flex items-end justify-between mb-10 md:mb-12 border-b-[3px] border-ink pb-4">
         <div>
           <span className="stamp text-vermillion">Manifest · 01</span>
