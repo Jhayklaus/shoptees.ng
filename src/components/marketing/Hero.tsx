@@ -69,10 +69,11 @@ export function Hero({ content }: { content: HeroContent }) {
         <StampClock />
       </div>
 
-      {/* Bottom block: headline, copy, CTAs */}
-      <div className="relative z-10 mt-auto mx-auto w-full max-w-[1400px] px-5 md:px-10 pb-10 md:pb-16">
+      {/* Bottom block: headline, copy, CTAs — centered and moderate so the
+          campaign image stays the star */}
+      <div className="relative z-10 mt-auto mx-auto w-full max-w-3xl px-5 md:px-10 pb-10 md:pb-16 text-center">
         <h1
-          className="font-display text-[12.5vw] md:text-[7rem] xl:text-[8rem] leading-[0.92] rise"
+          className="font-display text-4xl sm:text-5xl md:text-6xl leading-[0.95] rise"
           style={{ animationDelay: "100ms" }}
         >
           {headlineLines.map((line, i) => (
@@ -88,13 +89,12 @@ export function Hero({ content }: { content: HeroContent }) {
               <span
                 aria-live="polite"
                 className="relative inline-block align-baseline"
-                style={{ minWidth: "6ch" }}
               >
                 {cyclingNouns.map((w, i) => (
                   <span
                     key={w + i}
                     aria-hidden={i !== wordIdx}
-                    className="text-vermillion absolute left-0 top-0 whitespace-nowrap"
+                    className="text-vermillion absolute inset-x-0 top-0 whitespace-nowrap"
                     style={{
                       animation: i === wordIdx ? "word-rise 2.6s var(--ease-snap) both" : "none",
                       opacity: i === wordIdx ? undefined : 0,
@@ -113,14 +113,14 @@ export function Hero({ content }: { content: HeroContent }) {
         </h1>
 
         <div
-          className="mt-7 md:mt-9 flex flex-col md:flex-row md:items-end md:justify-between gap-6 rise"
+          className="mt-6 md:mt-8 flex flex-col items-center gap-6 rise"
           style={{ animationDelay: "220ms" }}
         >
           <p className="text-base md:text-lg leading-snug text-paper/85 max-w-md font-medium">
             {content.body}
           </p>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center justify-center gap-3 shrink-0">
             <Link
               href={content.ctaHref || "/shop"}
               className="btn-wipe btn-wipe-hazard inline-flex items-center gap-2 group bg-paper text-ink px-6 py-3.5 md:px-7 md:py-4 font-condensed text-[0.8rem] hover:text-paper transition-colors duration-200"

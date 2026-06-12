@@ -1,6 +1,5 @@
 import { Hero, type HeroContent } from "@/components/marketing/Hero";
 import { CampaignBanner } from "@/components/marketing/CampaignBanner";
-import { DropMarquee } from "@/components/marketing/DropMarquee";
 import { FeaturedGrid } from "@/components/marketing/FeaturedGrid";
 import { CollectionsGrid } from "@/components/marketing/CollectionsGrid";
 import { CategoriesGrid } from "@/components/marketing/CategoriesGrid";
@@ -52,7 +51,6 @@ export default async function HomePage() {
     <>
       <Hero content={hero} />
       <FeaturedGrid />
-      <DropMarquee />
       {/* <CollectionsGrid /> */}
       <CategoriesGrid />
       <HomeBanners />

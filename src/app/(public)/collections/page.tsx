@@ -26,7 +26,7 @@ export default async function CollectionsPage() {
           {String(collections.length).padStart(2, "0")}{" "}
           {collections.length === 1 ? "line" : "lines"}
         </span>
-        <h1 className="font-display text-6xl md:text-8xl leading-[0.92] mt-3">
+        <h1 className="font-display text-4xl sm:text-6xl md:text-8xl leading-[0.92] mt-3">
           Collections<span className="text-vermillion">.</span>
         </h1>
       </header>

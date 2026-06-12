@@ -39,7 +39,7 @@ export default function PrivacyPage() {
       <header className="mb-16 border-b-[3px] border-ink pb-8 grid grid-cols-12 gap-6">
         <div className="col-span-12 md:col-span-8">
           <span className="stamp text-vermillion">Legal</span>
-          <h1 className="font-display text-6xl md:text-8xl leading-[0.92] mt-3">
+          <h1 className="font-display text-4xl sm:text-6xl md:text-8xl leading-[0.92] mt-3">
             Privacy <span className="text-vermillion">policy.</span>
           </h1>
         </div>

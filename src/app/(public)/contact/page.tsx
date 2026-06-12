@@ -10,13 +10,13 @@ export default function ContactPage() {
       <header className="grid grid-cols-12 gap-6 mb-16 border-b-[3px] border-ink pb-10">
         <div className="col-span-12 md:col-span-9">
           <span className="stamp text-vermillion">Open line</span>
-          <h1 className="font-display text-7xl md:text-9xl leading-[0.9] mt-3">
+          <h1 className="font-display text-5xl sm:text-7xl md:text-9xl leading-[0.9] mt-3">
             Write to <span className="text-vermillion">us.</span>
           </h1>
         </div>
       </header>
 
-      <section className="grid grid-cols-12 gap-10">
+      <section className="grid grid-cols-12 gap-y-10 gap-x-2 md:gap-10">
         <div className="col-span-12 md:col-span-5">
           <p className="text-xl text-ink-soft leading-snug max-w-sm">
             We answer everything ourselves — restocks, custom orders, press,

@@ -9,7 +9,7 @@ export default function AboutPage() {
       <header className="grid grid-cols-12 gap-6 mb-16 border-b-[3px] border-ink pb-10">
         <div className="col-span-12 md:col-span-8">
           <span className="stamp text-vermillion">A studio note</span>
-          <h1 className="font-display text-7xl md:text-[9rem] leading-[0.88] mt-3">
+          <h1 className="font-display text-5xl sm:text-7xl md:text-[9rem] leading-[0.88] mt-3">
             Built <span className="text-vermillion">here,</span>
             <br />
             worn everywhere.

@@ -97,7 +97,7 @@ export function CheckoutForm() {
         </h1>
       </header>
 
-      <form onSubmit={onSubmit} className="grid grid-cols-12 gap-10">
+      <form onSubmit={onSubmit} className="grid grid-cols-12 gap-y-10 gap-x-2 lg:gap-10">
         <div className="col-span-12 lg:col-span-7 space-y-10">
           <fieldset>
             <legend className="stamp text-ink/60 mb-4">01 · Contact</legend>
