@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import type { DisplayProduct, DisplayImage } from "@/types";
 import { formatNaira } from "@/lib/utils";
 import { useCart } from "@/store/cart";
-import { Check } from "lucide-react";
+import { Check, ArrowUpRight } from "lucide-react";
 
 export function ProductDetail({ product }: { product: DisplayProduct }) {
   const router = useRouter();
@@ -37,7 +37,8 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
   };
 
   return (
-    <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-24">
+    <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-32 lg:pb-24">
+      {/* Breadcrumb as a routing slip */}
       <p className="font-mono-tight text-ink/55 mb-6">
         <Link href="/shop" className="hover:text-vermillion">Shop</Link>
         {product.collection && (
@@ -66,22 +67,20 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
 
       <div className="grid grid-cols-12 gap-6 lg:gap-12">
         <div className="col-span-12 lg:col-span-6 xl:col-span-7">
-          <div className="max-w-[520px] mx-auto lg:mx-0">
+          <div className="max-w-[560px] mx-auto lg:mx-0">
             <ProductGallery images={product.images} fallbackAlt={product.name} />
           </div>
         </div>
 
         <aside className="col-span-12 lg:col-span-6 xl:col-span-5 lg:sticky lg:top-24 self-start">
-          <h1 className="font-display text-5xl md:text-6xl leading-[0.95] tracking-tight">
+          {product.category && (
+            <span className="stamp text-vermillion">{product.category.name}</span>
+          )}
+          <h1 className="font-display text-5xl md:text-6xl leading-[0.92] mt-3">
             {product.name}
           </h1>
-          {product.category && (
-            <p className="font-italic-accent text-xl text-ink/55 mt-2">
-              {product.category.name}
-            </p>
-          )}
 
-          <p className="mt-6 font-display text-3xl">
+          <p className="mt-5 inline-block font-mono-tight text-xl bg-paper-deep px-3 py-1.5">
             {displayPrice > 0 ? formatNaira(displayPrice) : "Price on request"}
           </p>
 
@@ -89,9 +88,15 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
             {product.description}
           </p>
 
-          <div className="mt-8">
-            <p className="font-mono-tight text-ink/55 mb-3">Size</p>
-            <div className="flex flex-wrap gap-2">
+          {/* Size — jersey squad-number picker */}
+          <div className="mt-10">
+            <div className="flex items-baseline justify-between mb-3">
+              <span className="stamp text-ink/60">Pick your size</span>
+              {variant && !inStock && (
+                <span className="stamp stamp-in text-vermillion">Sold out</span>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2.5">
               {product.variants.map((v) => {
                 const selected = v.id === variantId;
                 const out = v.stock === 0;
@@ -101,88 +106,143 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
                     type="button"
                     disabled={out}
                     onClick={() => setVariantId(v.id)}
+                    aria-pressed={selected}
                     className={[
-                      "font-mono-tight px-4 py-2 border transition-colors",
-                      selected ? "bg-ink text-paper border-ink" : "border-line hover:border-ink",
-                      out && "opacity-40 line-through cursor-not-allowed",
+                      "relative w-16 h-16 md:w-[4.5rem] md:h-[4.5rem] border-2 font-display text-2xl md:text-3xl transition-colors duration-150",
+                      selected
+                        ? "border-ink bg-ink text-paper"
+                        : "border-line hover:border-ink",
+                      out && "opacity-35 cursor-not-allowed line-through decoration-2 decoration-vermillion hover:border-line",
                     ]
                       .filter(Boolean)
                       .join(" ")}
                   >
                     {v.size}
+                    {selected && (
+                      <span
+                        key={v.id}
+                        className="stamp-in absolute -top-1.5 -right-1.5 w-4 h-4 bg-vermillion flex items-center justify-center"
+                        aria-hidden
+                      >
+                        <Check size={11} strokeWidth={3.5} className="text-paper" />
+                      </span>
+                    )}
                   </button>
                 );
               })}
             </div>
-            {variant && !inStock && (
-              <p className="font-mono-tight text-vermillion mt-2">Sold out</p>
-            )}
           </div>
 
-          <div className="mt-6">
-            <p className="font-mono-tight text-ink/55 mb-3">Quantity</p>
-            <div className="inline-flex items-center border border-line">
-              <button
-                type="button"
-                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                aria-label="Decrease quantity"
-                className="px-4 py-2 hover:bg-ink hover:text-paper transition-colors"
-              >
-                −
-              </button>
-              <span className="px-5 font-mono-tight">{qty}</span>
-              <button
-                type="button"
-                onClick={() => setQty((q) => Math.min(variant?.stock ?? 99, q + 1))}
-                aria-label="Increase quantity"
-                className="px-4 py-2 hover:bg-ink hover:text-paper transition-colors"
-              >
-                +
-              </button>
-            </div>
-            {variant && inStock && variant.stock <= 5 && (
-              <p className="font-mono-tight text-vermillion mt-2 text-xs">
-                Only {variant.stock} left
-              </p>
-            )}
-          </div>
-
-          <div className="mt-8 flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={onAdd}
-              disabled={!inStock}
-              className="relative w-full bg-ink text-paper py-4 font-mono-tight hover:bg-vermillion transition-colors disabled:opacity-40 disabled:hover:bg-ink"
-            >
-              {added ? (
-                <span className="inline-flex items-center gap-2 justify-center">
-                  <Check size={16} /> Added to cart
+          {/* Quantity */}
+          <div className="mt-8">
+            <span className="stamp text-ink/60 mb-3 inline-block">Quantity</span>
+            <div className="flex items-center gap-4">
+              <div className="inline-flex items-center border-2 border-ink">
+                <button
+                  type="button"
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  aria-label="Decrease quantity"
+                  className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
+                >
+                  −
+                </button>
+                <span className="w-12 text-center font-mono-tight font-bold">
+                  {String(qty).padStart(2, "0")}
                 </span>
-              ) : (
-                "Add to cart"
+                <button
+                  type="button"
+                  onClick={() => setQty((q) => Math.min(variant?.stock ?? 99, q + 1))}
+                  aria-label="Increase quantity"
+                  className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
+                >
+                  +
+                </button>
+              </div>
+              {variant && inStock && variant.stock <= 5 && (
+                <span className="stamp stamp-in text-vermillion">
+                  Only {variant.stock} left
+                </span>
               )}
-            </button>
+            </div>
+          </div>
+
+          {/* Desktop CTAs */}
+          <div className="mt-10 hidden lg:flex flex-col gap-3">
+            <AddButton added={added} inStock={inStock} onClick={onAdd} />
             <button
               type="button"
               onClick={onBuyNow}
               disabled={!inStock}
-              className="w-full border border-ink py-4 font-mono-tight hover:bg-ink hover:text-paper transition-colors disabled:opacity-40"
+              className="btn-wipe w-full border-2 border-ink py-4 font-condensed text-[0.82rem] hover:text-paper transition-colors duration-200 disabled:opacity-40"
             >
               Buy now
             </button>
           </div>
 
-          <dl className="mt-10 border-t border-line pt-5 grid grid-cols-2 gap-y-3 text-sm">
+          {/* Spec sheet */}
+          <dl className="mt-10 border-t-2 border-ink pt-5 grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
             <dt className="font-mono-tight text-ink/55">SKU</dt>
             <dd className="font-mono-tight">{variant?.sku ?? "—"}</dd>
             <dt className="font-mono-tight text-ink/55">Made in</dt>
-            <dd>Nigeria</dd>
+            <dd className="font-mono-tight">Nigeria</dd>
             <dt className="font-mono-tight text-ink/55">Care</dt>
-            <dd>Cold wash, line dry</dd>
+            <dd className="font-mono-tight">Cold wash · line dry</dd>
+            <dt className="font-mono-tight text-ink/55">Dispatch</dt>
+            <dd className="font-mono-tight">Lagos, nationwide delivery</dd>
           </dl>
         </aside>
       </div>
+
+      {/* Sticky mobile add-to-cart bar */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-paper border-t-[3px] border-ink px-4 py-3 flex items-center gap-3">
+        <div className="min-w-0">
+          <p className="font-condensed text-[0.72rem] truncate">{product.name}</p>
+          <p className="font-mono-tight text-sm font-bold">
+            {displayPrice > 0 ? formatNaira(displayPrice * qty) : "—"}
+          </p>
+        </div>
+        <div className="ml-auto shrink-0 w-[55%] max-w-[240px]">
+          <AddButton added={added} inStock={inStock} onClick={onAdd} compact />
+        </div>
+      </div>
     </main>
+  );
+}
+
+function AddButton({
+  added,
+  inStock,
+  onClick,
+  compact,
+}: {
+  added: boolean;
+  inStock: boolean;
+  onClick: () => void;
+  compact?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={!inStock}
+      className={[
+        "btn-wipe btn-wipe-hazard w-full bg-ink text-paper font-condensed transition-colors duration-200 disabled:opacity-40",
+        compact ? "py-3.5 text-[0.78rem]" : "py-4 text-[0.82rem]",
+      ].join(" ")}
+    >
+      {!inStock ? (
+        "Sold out"
+      ) : added ? (
+        <span className="stamp-in inline-flex items-center gap-2 justify-center">
+          <Check size={15} strokeWidth={3} /> In the bag
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-2 justify-center">
+          Add to cart
+          <ArrowUpRight size={14} />
+        </span>
+      )}
+    </button>
   );
 }
 
@@ -197,8 +257,8 @@ function ProductGallery({
 
   if (images.length === 0) {
     return (
-      <div className="aspect-[4/5] bg-paper-deep flex items-center justify-center font-italic-accent text-ink/30">
-        no images
+      <div className="aspect-[4/5] bg-paper-deep border-2 border-dashed border-ink/25 flex items-center justify-center">
+        <span className="stamp text-ink/40">No images</span>
       </div>
     );
   }
@@ -219,7 +279,7 @@ function ProductGallery({
 
   return (
     <div onKeyDown={onKeyDown}>
-      {/* Hero — selected image */}
+      {/* Hero — selected image, framed like a crate face */}
       <div
         className="relative aspect-[4/5] bg-paper-deep overflow-hidden"
         role="region"
@@ -235,14 +295,21 @@ function ProductGallery({
           className="object-contain p-6 rise"
           priority
         />
+
+        {/* Crate corner brackets */}
+        <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion z-10" />
+        <span className="absolute top-0 left-0 w-[3px] h-8 bg-vermillion z-10" />
+        <span className="absolute bottom-0 right-0 w-8 h-[3px] bg-vermillion z-10" />
+        <span className="absolute bottom-0 right-0 w-[3px] h-8 bg-vermillion z-10" />
+
         {images.length > 1 && (
-          <span className="absolute bottom-3 right-3 font-mono-tight bg-paper/85 text-ink px-2 py-0.5 backdrop-blur-sm">
+          <span className="absolute bottom-3 right-3 font-mono-tight bg-ink text-paper px-2 py-1 z-10">
             {String(activeIdx + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
           </span>
         )}
       </div>
 
-      {/* Thumbnails — small fixed-size tiles, wrap if there are many */}
+      {/* Thumbnails */}
       {images.length > 1 && (
         <div
           className="mt-3 flex flex-wrap gap-2"
@@ -261,10 +328,8 @@ function ProductGallery({
                 onClick={() => setActiveIdx(i)}
                 onMouseEnter={() => setActiveIdx(i)}
                 className={[
-                  "relative w-16 h-16 shrink-0 bg-paper-deep overflow-hidden transition-all",
-                  isActive
-                    ? "outline outline-2 outline-offset-2 outline-vermillion"
-                    : "opacity-65 hover:opacity-100",
+                  "relative w-16 h-16 shrink-0 bg-paper-deep overflow-hidden border-2 transition-all",
+                  isActive ? "border-vermillion" : "border-transparent opacity-65 hover:opacity-100",
                 ].join(" ")}
               >
                 <Image

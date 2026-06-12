@@ -102,35 +102,33 @@ export default async function ShopPage({
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 pb-24">
-      <header className="grid grid-cols-12 gap-6 mb-12 border-b border-line pb-8">
+      <header className="grid grid-cols-12 gap-6 mb-12 border-b-[3px] border-ink pb-8">
         <div className="col-span-12 md:col-span-7">
-          <p className="font-mono-tight text-ink/55">
-            {filterActive
-              ? `${eyebrowLabel} · ${display.length} ${display.length === 1 ? "piece" : "pieces"}`
-              : `Catalogue · ${display.length} ${display.length === 1 ? "piece" : "pieces"}`}
-          </p>
-          <h1 className="font-display text-6xl md:text-8xl tracking-tight leading-[0.95] mt-1">
+          <span className="stamp text-vermillion">
+            {filterActive ? eyebrowLabel : "Full catalogue"} ·{" "}
+            {String(display.length).padStart(2, "0")}{" "}
+            {display.length === 1 ? "piece" : "pieces"}
+          </span>
+          <h1 className="font-display text-6xl md:text-8xl leading-[0.92] mt-3">
             {activeCollection ? (
               <>
                 {activeCollection.name}
-                <span className="font-italic-accent text-vermillion">.</span>
+                <span className="text-vermillion">.</span>
               </>
             ) : activeCategory ? (
               <>
-                {activeCategory.name.replace(/s$/, "")}
-                <span className="font-italic-accent text-vermillion">
-                  {activeCategory.name.endsWith("s") ? "s." : "."}
-                </span>
+                {activeCategory.name}
+                <span className="text-vermillion">.</span>
               </>
             ) : (
               <>
-                All <span className="font-italic-accent text-vermillion">cloth.</span>
+                All <span className="text-vermillion">cloth.</span>
               </>
             )}
           </h1>
         </div>
-        <div className="col-span-12 md:col-span-5 md:pt-3">
-          <p className="font-italic-accent text-xl md:text-2xl text-ink/70 max-w-md">
+        <div className="col-span-12 md:col-span-5 md:self-end">
+          <p className="text-base md:text-lg text-ink/70 max-w-md leading-snug">
             {activeCollection?.description ||
               "Streetwear and football jerseys for men and women. Sold by the piece or by the carton."}
           </p>
@@ -148,7 +146,7 @@ export default async function ShopPage({
           <Link
             href="/shop"
             scroll={false}
-            className="font-mono-tight text-ink/55 hover:text-vermillion transition-colors"
+            className="font-condensed text-[0.78rem] text-ink/60 hover:text-vermillion transition-colors"
           >
             Clear filters ×
           </Link>
@@ -156,22 +154,20 @@ export default async function ShopPage({
       </div>
 
       {display.length === 0 ? (
-        <div className="border border-dashed border-line p-16 text-center">
-          <p className="font-italic-accent text-2xl text-ink/55">
+        <div className="border-2 border-dashed border-ink/30 p-16 text-center">
+          <span className="stamp text-ink/50 text-sm">
             {filterActive
-              ? `Nothing in ${eyebrowLabel.toLowerCase()} right now.`
-              : "The studio is between drops."}
-          </p>
-          {filterActive ? (
-            <Link
-              href="/shop"
-              className="inline-block mt-4 font-mono-tight text-ink underline-offset-4 hover:underline"
-            >
-              See everything →
-            </Link>
-          ) : (
-            <p className="font-mono-tight text-ink/55 mt-2">
-              Add active products in the admin to populate this page.
+              ? `Nothing in ${eyebrowLabel.toLowerCase()} right now`
+              : "Between drops — check back soon"}
+          </span>
+          {filterActive && (
+            <p className="mt-5">
+              <Link
+                href="/shop"
+                className="font-condensed text-[0.78rem] underline underline-offset-4 hover:text-vermillion"
+              >
+                See everything →
+              </Link>
             </p>
           )}
         </div>
