@@ -1,46 +1,63 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { listActiveProducts, toDisplayProduct } from "@/lib/server/products";
 import { ProductCard } from "@/components/product/ProductCard";
+import { CarouselRail } from "@/components/marketing/CarouselRail";
 
+// "New in" rail — the latest active products on a horizontal carousel:
+// snap-scroll everywhere, arrow controls on desktop.
 export async function FeaturedGrid() {
   const rows = await listActiveProducts();
-  const featured = rows.slice(0, 4).map(toDisplayProduct);
+  const featured = rows.slice(0, 8).map(toDisplayProduct);
 
   if (featured.length === 0) {
     return (
-      <section className="mx-auto max-w-[1400px] px-5 md:px-10 pb-32">
-        <div className="border border-dashed border-line p-16 text-center">
-          <p className="font-italic-accent text-2xl text-ink/55">
-            The studio is between drops.
-          </p>
+      <section id="new-in" className="mx-auto max-w-[1400px] px-5 md:px-10 py-24">
+        <div className="border-2 border-dashed border-ink/30 p-16 text-center">
+          <span className="stamp text-ink/50 text-sm">Between drops — check back soon</span>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="mx-auto max-w-[1400px] px-5 md:px-10 pt-32 mb-12">
-      <div className="flex items-end justify-between mb-12 border-b border-line pb-4">
+    <section id="new-in" className="mx-auto max-w-[1400px] px-5 md:px-10 pt-20 md:pt-28 pb-16 md:pb-24 scroll-mt-20">
+      <div className="flex items-end justify-between mb-10 md:mb-12 border-b-[3px] border-ink pb-4">
         <div>
-          <p className="font-mono-tight text-ink/55">Selection · 01</p>
-          <h2 className="font-display text-5xl md:text-6xl tracking-tight mt-1">
-            On the table <span className="font-italic-accent text-vermillion">this week</span>
+          <span className="stamp text-vermillion">Manifest · 01</span>
+          <h2 className="font-display text-5xl md:text-7xl mt-2">
+            New <span className="text-vermillion">in</span>
           </h2>
         </div>
-        <Link href="/shop" className="hidden md:inline font-mono-tight underline-offset-4 hover:underline">
-          See all →
+        <Link
+          href="/shop"
+          className="btn-wipe hidden md:inline-flex items-center gap-2 group border-2 border-ink px-5 py-2.5 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
+        >
+          Shop all
+          <ArrowUpRight
+            size={14}
+            className="text-vermillion transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          />
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-12 md:gap-y-0">
+      <CarouselRail ariaLabel="New in" className="-mx-5 px-5 md:mx-0 md:px-0 md:gap-5">
         {featured.map((p, i) => (
-          <ProductCard key={p.id} product={p} index={i} offset={i % 2 === 1} />
+          <div
+            key={p.id}
+            className="min-w-[72vw] sm:min-w-[44vw] md:min-w-[300px] lg:min-w-[320px] snap-start"
+          >
+            <ProductCard product={p} index={i} />
+          </div>
         ))}
-      </div>
+      </CarouselRail>
 
-      <div className="md:hidden mt-10 text-center">
-        <Link href="/shop" className="font-mono-tight underline">
-          See all →
+      <div className="md:hidden mt-8 text-center">
+        <Link
+          href="/shop"
+          className="inline-flex items-center gap-2 border-2 border-ink px-6 py-3 font-condensed text-[0.78rem] hover:bg-ink hover:text-paper transition-colors"
+        >
+          Shop all <ArrowUpRight size={14} className="text-vermillion" />
         </Link>
       </div>
     </section>

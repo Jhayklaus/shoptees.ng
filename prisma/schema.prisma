@@ -58,6 +58,7 @@ model Session {
 // Catalog
 // ────────────────────────────────────────────────────────────────────
 
+// Product type: jerseys, hoodies, pants… Global — shared across collections.
 model Category {
   id        String    @id @default(cuid())
   slug      String    @unique
@@ -67,24 +68,66 @@ model Category {
   createdAt DateTime  @default(now())
 }
 
+// Curated line / drop, e.g. "Urban Retro". A product belongs to at most one
+// collection; the categories shown inside a collection are derived from the
+// categories of its products, never assigned directly.
+model Collection {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String    @default("")
+  imageUrl    String    @default("") // banner image on /collections and /collections/[slug]
+  imageAlt    String    @default("")
+  sortOrder   Int       @default(0)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+// Homepage promotional banners. Fully admin-managed (create / edit / reorder /
+// toggle) from /admin/banners. The storefront renders every enabled row in
+// sortOrder. Replaces the old single settings-driven announcement banner.
+model HomeBanner {
+  id         String   @id @default(cuid())
+  slot       String   @default("banner") // "hero" | "banner"
+  enabled    Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  eyebrow    String   @default("")
+  title      String
+  body       String   @default("")
+  cycleWords String   @default("") // comma-separated; hero slot only
+  caption    String   @default("")  // hero slot only
+  ctaLabel   String   @default("")
+  ctaHref    String   @default("/shop")
+  imageUrl   String   @default("")
+  imageAlt   String   @default("")
+  layout     String   @default("imageLeft") // "imageLeft" | "imageRight"; regular banners only
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([slot, enabled, sortOrder])
+}
+
 // status: "DRAFT" | "ACTIVE" | "ARCHIVED"
 model Product {
-  id          String         @id @default(cuid())
-  slug        String         @unique
-  name        String
-  description String
-  priceNGN    Int
-  status      String         @default("DRAFT")
-  categoryId  String?
-  category    Category?      @relation(fields: [categoryId], references: [id])
-  variants    Variant[]
-  images      ProductImage[]
-  orderItems  OrderItem[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id           String         @id @default(cuid())
+  slug         String         @unique
+  name         String
+  description  String
+  priceNGN     Int
+  status       String         @default("DRAFT")
+  categoryId   String?
+  category     Category?      @relation(fields: [categoryId], references: [id])
+  collectionId String?
+  collection   Collection?    @relation(fields: [collectionId], references: [id])
+  variants     Variant[]
+  images       ProductImage[]
+  orderItems   OrderItem[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   @@index([status])
   @@index([categoryId])
+  @@index([collectionId])
 }
 
 model Variant {

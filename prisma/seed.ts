@@ -18,16 +18,28 @@ const categorySeed = [
   { slug: "accessories", name: "Accessories", sortOrder: 4 },
 ];
 
+// Curated lines. Products opt in via collectionSlug below; the categories
+// shown inside a collection on /shop are derived from its products.
+const collectionSeed = [
+  {
+    slug: "the-classic",
+    name: "The Classic",
+    description: "[PLACEHOLDER: one short line about The Classic collection.]",
+    sortOrder: 1,
+  },
+];
+
 type ProductSeed = {
   slug: string;
   categorySlug: string;
+  collectionSlug?: string;
   imageIndex: number; // 1..6 → /placeholders/product-N.svg
 };
 
 const productSeed: ProductSeed[] = [
-  { slug: "harmattan-tee", categorySlug: "tees", imageIndex: 1 },
-  { slug: "ankara-shirt", categorySlug: "shirts", imageIndex: 2 },
-  { slug: "lagos-hoodie", categorySlug: "outerwear", imageIndex: 3 },
+  { slug: "harmattan-tee", categorySlug: "tees", collectionSlug: "the-classic", imageIndex: 1 },
+  { slug: "ankara-shirt", categorySlug: "shirts", collectionSlug: "the-classic", imageIndex: 2 },
+  { slug: "lagos-hoodie", categorySlug: "outerwear", collectionSlug: "the-classic", imageIndex: 3 },
   { slug: "studio-tote", categorySlug: "accessories", imageIndex: 4 },
   { slug: "field-cap", categorySlug: "accessories", imageIndex: 5 },
   { slug: "studio-tee-cream", categorySlug: "tees", imageIndex: 6 },
@@ -46,9 +58,20 @@ async function seedCategoriesAndProducts() {
     });
   }
 
+  for (const c of collectionSeed) {
+    await prisma.collection.upsert({
+      where: { slug: c.slug },
+      create: c,
+      update: { name: c.name, description: c.description, sortOrder: c.sortOrder },
+    });
+  }
+
   for (let i = 0; i < productSeed.length; i++) {
     const p = productSeed[i];
     const category = await prisma.category.findUnique({ where: { slug: p.categorySlug } });
+    const collection = p.collectionSlug
+      ? await prisma.collection.findUnique({ where: { slug: p.collectionSlug } })
+      : null;
     const productNumber = i + 1;
 
     const product = await prisma.product.upsert({
@@ -60,9 +83,11 @@ async function seedCategoriesAndProducts() {
         priceNGN: 0,
         status: "ACTIVE",
         categoryId: category?.id,
+        collectionId: collection?.id,
       },
       update: {
         categoryId: category?.id,
+        collectionId: collection?.id,
       },
     });
 
@@ -136,9 +161,58 @@ async function seedAdmin() {
   console.log(`✓ created admin user ${email}`);
 }
 
+async function seedStarterBanner() {
+  const existing = await prisma.homeBanner.count();
+  if (existing > 0) {
+    console.log(`ℹ ${existing} homepage banner(s) already present — skipping starter banners.`);
+    return;
+  }
+
+  // Hero slot — disabled until the admin sets an image and flips it on.
+  await prisma.homeBanner.create({
+    data: {
+      slot: "hero",
+      enabled: false,
+      sortOrder: 0,
+      eyebrow: "Issue 01 · Spring/Summer · Lagos",
+      title: "Threads for the\nculture,\nbuilt for the",
+      body: "Shoptees is a Nigerian streetwear label. Cut-and-sew apparel and football jerseys for the everyday and the matchday.",
+      cycleWords: "streets.,stands.,block.,pitch.,city.,long haul.",
+      caption: "· THE CLASSIC collection ·",
+      ctaLabel: "Shop the collection",
+      ctaHref: "/shop",
+      imageUrl: "",
+      imageAlt: "Shoptees — current collection banner",
+      layout: "imageLeft",
+    },
+  });
+
+  // Starter campaign banner.
+  await prisma.homeBanner.create({
+    data: {
+      slot: "banner",
+      enabled: false,
+      sortOrder: 0,
+      eyebrow: "New arrival · 01",
+      title: "[PLACEHOLDER: banner headline]",
+      body: "[PLACEHOLDER: one short line about the collection or restock.]",
+      cycleWords: "",
+      caption: "",
+      ctaLabel: "Shop the drop",
+      ctaHref: "/shop",
+      imageUrl: "",
+      imageAlt: "",
+      layout: "imageLeft",
+    },
+  });
+
+  console.log("✓ starter hero + campaign banner created (both disabled)");
+}
+
 async function main() {
   await seedCategoriesAndProducts();
   await seedSiteSettings();
+  await seedStarterBanner();
   await seedAdmin();
   console.log("✓ seed complete");
 }

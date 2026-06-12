@@ -37,6 +37,7 @@ const schema = z.object({
   priceNGN: z.number().int().nonnegative(),
   status: z.enum(PRODUCT_STATUSES),
   categoryId: z.string().nullable(),
+  collectionId: z.string().nullable(),
   variants: z.array(variantSchema).min(1),
   images: z.array(imageSchema),
 });

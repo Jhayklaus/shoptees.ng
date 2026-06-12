@@ -30,17 +30,17 @@ export function Newsletter() {
   };
 
   return (
-    <section className="bg-paper-deep py-24 my-24">
-      <div className="mx-auto max-w-[1400px] px-5 md:px-10 grid grid-cols-12 gap-6 items-end">
+    <section className="bg-ink text-paper py-20 md:py-24 mt-24 grain">
+      <div className="mx-auto max-w-[1400px] px-5 md:px-10 grid grid-cols-12 gap-y-8 gap-x-2 md:gap-8 items-end">
         <div className="col-span-12 md:col-span-7">
-          <p className="font-mono-tight text-ink/55 mb-3">Letters · 03</p>
-          <h2 className="font-display text-5xl md:text-7xl tracking-tight leading-[0.95]">
-            One short note
+          <span className="stamp text-vermillion">Dispatch list</span>
+          <h2 className="font-display text-5xl md:text-7xl leading-[0.95] mt-3">
+            First to know
             <br />
-            <span className="font-italic-accent text-vermillion">a season.</span>
+            <span className="text-vermillion">when it drops.</span>
           </h2>
-          <p className="mt-5 font-italic-accent text-xl text-ink/70 max-w-md">
-            Drops, restocks, a few photographs. Never more than four times a year.
+          <p className="mt-5 text-base md:text-lg text-paper/70 max-w-md">
+            Drops, restocks, nothing else. No spam — we&apos;re busy packing boxes.
           </p>
         </div>
 
@@ -49,23 +49,19 @@ export function Newsletter() {
             <p className="font-display text-2xl">
               {alreadySubscribed ? (
                 <>
-                  You&apos;re already on the list.{" "}
-                  <span className="font-italic-accent text-vermillion">
-                    See you at the next drop.
-                  </span>
+                  Already on the list.{" "}
+                  <span className="text-vermillion">See you at the next drop.</span>
                 </>
               ) : (
                 <>
-                  Thank you — saved.{" "}
-                  <span className="font-italic-accent text-vermillion">
-                    The next letter goes out at the next drop.
-                  </span>
+                  <span className="stamp stamp-in text-vermillion mr-2">Logged</span>
+                  You&apos;re on the list.
                 </>
               )}
             </p>
           ) : (
             <>
-              <div className="flex border-b-2 border-ink">
+              <div className="flex border-2 border-paper">
                 <label htmlFor="newsletter-email" className="sr-only">
                   Email address
                 </label>
@@ -75,15 +71,15 @@ export function Newsletter() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="flex-1 bg-transparent py-3 outline-none placeholder:text-ink/40 font-display text-xl"
+                  placeholder="YOUR@EMAIL.COM"
+                  className="flex-1 min-w-0 bg-transparent px-4 py-3.5 outline-none placeholder:text-paper/35 font-mono-tight text-sm"
                 />
                 <button
                   type="submit"
                   disabled={pending}
-                  className="font-mono-tight px-4 py-3 hover:text-vermillion transition-colors disabled:opacity-50"
+                  className="font-condensed text-[0.78rem] px-5 py-3.5 bg-paper text-ink hover:bg-vermillion hover:text-paper transition-colors duration-200 disabled:opacity-50 shrink-0"
                 >
-                  {pending ? "…" : "Subscribe →"}
+                  {pending ? "…" : "Sign up"}
                 </button>
               </div>
               {/* Honeypot. */}
@@ -98,7 +94,7 @@ export function Newsletter() {
                 />
               </div>
               {error && (
-                <p className="mt-3 font-mono-tight text-ink-soft bg-vermillion/10 border-l-2 border-vermillion px-3 py-2">
+                <p className="mt-3 font-mono-tight text-paper/85 bg-vermillion/20 border-l-[3px] border-vermillion px-3 py-2">
                   {error}
                 </p>
               )}

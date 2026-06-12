@@ -46,6 +46,7 @@ export default async function AdminProductsPage() {
                   <Th></Th>
                   <Th>Name</Th>
                   <Th>Status</Th>
+                  <Th>Collection</Th>
                   <Th>Category</Th>
                   <Th>Price</Th>
                   <Th>Stock</Th>
@@ -78,6 +79,9 @@ export default async function AdminProductsPage() {
                       </Td>
                       <Td>
                         <StatusBadge status={p.status} variant="product" />
+                      </Td>
+                      <Td className="font-italic-accent text-ink-soft">
+                        {p.collection?.name ?? "—"}
                       </Td>
                       <Td className="font-italic-accent text-ink-soft">
                         {p.category?.name ?? "—"}

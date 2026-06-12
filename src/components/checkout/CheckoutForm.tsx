@@ -90,23 +90,23 @@ export function CheckoutForm() {
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 py-12">
-      <header className="mb-10 border-b border-line pb-6">
-        <p className="font-mono-tight text-ink/55">Checkout · step 1 of 2</p>
-        <h1 className="font-display text-6xl md:text-7xl tracking-tight">
-          Almost <span className="font-italic-accent text-vermillion">there.</span>
+      <header className="mb-10 border-b-[3px] border-ink pb-6">
+        <span className="stamp text-vermillion">Waybill · step 1 of 2</span>
+        <h1 className="font-display text-6xl md:text-7xl mt-3">
+          Almost <span className="text-vermillion">there.</span>
         </h1>
       </header>
 
-      <form onSubmit={onSubmit} className="grid grid-cols-12 gap-10">
+      <form onSubmit={onSubmit} className="grid grid-cols-12 gap-y-10 gap-x-2 lg:gap-10">
         <div className="col-span-12 lg:col-span-7 space-y-10">
           <fieldset>
-            <legend className="font-mono-tight text-ink/55 mb-4">Contact</legend>
+            <legend className="stamp text-ink/60 mb-4">01 · Contact</legend>
             <Field id="email" label="Email" type="email" autoComplete="email" required />
             <Field id="phone" label="Phone (WhatsApp)" type="tel" autoComplete="tel" required />
           </fieldset>
 
           <fieldset>
-            <legend className="font-mono-tight text-ink/55 mb-4">Delivery</legend>
+            <legend className="stamp text-ink/60 mb-4">02 · Delivery</legend>
             <div className="grid grid-cols-2 gap-x-4">
               <Field id="firstName" label="First name" autoComplete="given-name" required />
               <Field id="lastName" label="Last name" autoComplete="family-name" required />
@@ -121,19 +121,21 @@ export function CheckoutForm() {
           </fieldset>
 
           <fieldset>
-            <legend className="font-mono-tight text-ink/55 mb-4">Payment</legend>
-            <div className="border border-line p-5">
+            <legend className="stamp text-ink/60 mb-4">03 · Payment</legend>
+            <div className="relative border-2 border-ink p-5">
+              <span className="absolute top-0 right-0 w-6 h-[3px] bg-vermillion" />
+              <span className="absolute top-0 right-0 w-[3px] h-6 bg-vermillion" />
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-display text-2xl">Paystack</p>
-                  <p className="font-italic-accent text-ink/55">
-                    Cards, bank transfer, USSD — secured by Paystack.
+                  <p className="font-mono-tight text-ink/55 mt-1">
+                    Cards · bank transfer · USSD
                   </p>
                 </div>
-                <div className="font-mono-tight text-ink/55">₦ &nbsp; NGN</div>
+                <div className="font-mono-tight text-ink/55">₦ NGN</div>
               </div>
               {!paystackReady && (
-                <p className="mt-4 bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+                <p className="mt-4 bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
                   Online payment is temporarily unavailable. Your order will be
                   recorded as <span className="font-mono-tight">PENDING</span>
                   &nbsp;and we&apos;ll reach out on WhatsApp to arrange payment.
@@ -143,23 +145,33 @@ export function CheckoutForm() {
           </fieldset>
 
           {error && (
-            <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+            <p className="bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
               {error}
             </p>
           )}
         </div>
 
         <aside className="col-span-12 lg:col-span-5 lg:sticky lg:top-24 self-start">
-          <div className="bg-paper-deep p-6">
-            <p className="font-mono-tight text-ink/55 mb-3">Order</p>
-            <ul className="divide-y divide-ink/10">
-              {lines.map((l) => (
+          <div className="relative border-2 border-ink p-6 bg-paper shadow-[6px_6px_0_0_var(--ink)]">
+            <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
+            <span className="absolute top-0 left-0 w-[3px] h-8 bg-vermillion" />
+
+            <span className="stamp text-ink/60">Order manifest</span>
+            <ul className="divide-y divide-line mt-3">
+              {lines.map((l, idx) => (
                 <li key={l.variantId} className="py-3 flex justify-between gap-4">
-                  <div>
-                    <p className="font-display text-lg leading-tight">{l.product.name}</p>
-                    <p className="font-mono-tight text-ink/55">
-                      {l.variant.size} × {l.quantity}
-                    </p>
+                  <div className="flex gap-3 min-w-0">
+                    <span className="font-mono-tight text-ink/40 shrink-0">
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-display text-lg leading-tight truncate">
+                        {l.product.name}
+                      </p>
+                      <p className="font-mono-tight text-ink/55">
+                        {l.variant.size} × {l.quantity}
+                      </p>
+                    </div>
                   </div>
                   <p className="font-mono-tight whitespace-nowrap">
                     {l.lineTotalNGN > 0 ? formatNaira(l.lineTotalNGN) : "—"}
@@ -167,24 +179,26 @@ export function CheckoutForm() {
                 </li>
               ))}
               {empty && (
-                <li className="py-3 font-italic-accent text-ink/55">
-                  Your cart is empty.
+                <li className="py-4 text-center">
+                  <span className="stamp text-ink/40">Cart is empty</span>
                 </li>
               )}
               {cart.status === "loading" && (
-                <li className="py-3 font-italic-accent text-ink/55">
-                  Loading cart…
+                <li className="py-4 text-center">
+                  <span className="stamp text-ink/40">Loading…</span>
                 </li>
               )}
             </ul>
-            <div className="mt-5 pt-5 border-t border-ink/15 flex justify-between font-display text-2xl">
-              <p>Total</p>
-              <p>{subtotal > 0 ? formatNaira(subtotal) : "—"}</p>
+            <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
+              <p className="font-condensed text-[0.82rem]">Total</p>
+              <p className="font-display text-3xl">
+                {subtotal > 0 ? formatNaira(subtotal) : "—"}
+              </p>
             </div>
             <button
               type="submit"
               disabled={pending || empty || cart.status === "loading"}
-              className="mt-6 w-full bg-ink text-paper py-4 font-mono-tight hover:bg-vermillion transition-colors disabled:opacity-40"
+              className="btn-wipe btn-wipe-hazard mt-6 w-full bg-ink text-paper py-4 font-condensed text-[0.82rem] transition-colors duration-200 disabled:opacity-40"
             >
               {pending
                 ? "Placing order…"
@@ -192,7 +206,7 @@ export function CheckoutForm() {
                   ? "Pay with Paystack →"
                   : "Place order (pay-later) →"}
             </button>
-            <p className="mt-3 font-mono-tight text-ink/55 text-center">
+            <p className="mt-4 font-mono-tight text-ink/55 text-center text-xs">
               By placing this order you agree to our terms.
             </p>
           </div>
@@ -216,7 +230,7 @@ function Field({
   autoComplete?: string;
 }) {
   return (
-    <div className="border-b border-line py-2">
+    <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
       <label htmlFor={id} className="block font-mono-tight text-ink/55">
         {label}
         {required && <span className="text-vermillion"> *</span>}
@@ -245,7 +259,7 @@ function SelectField({
   required?: boolean;
 }) {
   return (
-    <div className="border-b border-line py-2">
+    <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
       <label htmlFor={id} className="block font-mono-tight text-ink/55">
         {label}
         {required && <span className="text-vermillion"> *</span>}

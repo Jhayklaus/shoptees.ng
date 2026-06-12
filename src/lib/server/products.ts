@@ -14,6 +14,7 @@ type WithRelations = {
   description: string;
   priceNGN: number;
   category: { slug: string; name: string } | null;
+  collection: { slug: string; name: string } | null;
   images: { url: string; alt: string }[];
   variants: {
     id: string;
@@ -33,6 +34,7 @@ export function toDisplayProduct(p: WithRelations): DisplayProduct {
     description: p.description,
     priceNGN: p.priceNGN,
     category: p.category ? { slug: p.category.slug, name: p.category.name } : null,
+    collection: p.collection ? { slug: p.collection.slug, name: p.collection.name } : null,
     images: p.images.map((i) => ({ url: i.url, alt: i.alt })),
     variants: p.variants.map((v) => ({
       id: v.id,
@@ -50,6 +52,7 @@ export function listAdminProducts() {
     orderBy: { createdAt: "desc" },
     include: {
       category: true,
+      collection: true,
       images: { orderBy: { sortOrder: "asc" }, take: 1 },
       variants: true,
       _count: { select: { orderItems: true } },
@@ -57,14 +60,16 @@ export function listAdminProducts() {
   });
 }
 
-export function listActiveProducts(opts?: { categorySlug?: string }) {
+export function listActiveProducts(opts?: { categorySlug?: string; collectionSlug?: string }) {
   const where: Prisma.ProductWhereInput = { status: "ACTIVE" };
   if (opts?.categorySlug) where.category = { slug: opts.categorySlug };
+  if (opts?.collectionSlug) where.collection = { slug: opts.collectionSlug };
   return prisma.product.findMany({
     where,
     orderBy: { createdAt: "desc" },
     include: {
       category: true,
+      collection: true,
       images: { orderBy: { sortOrder: "asc" } },
       variants: true,
     },
@@ -76,6 +81,7 @@ export function getProductBySlug(slug: string) {
     where: { slug },
     include: {
       category: true,
+      collection: true,
       images: { orderBy: { sortOrder: "asc" } },
       variants: { orderBy: { size: "asc" } },
     },
@@ -104,6 +110,7 @@ export type SaveProductInput = {
   priceNGN: number;
   status: ProductStatus;
   categoryId: string | null;
+  collectionId: string | null;
   variants: {
     id?: string;
     size: string;
@@ -128,6 +135,7 @@ export async function saveProduct(input: SaveProductInput) {
     priceNGN: input.priceNGN,
     status: input.status,
     categoryId: input.categoryId,
+    collectionId: input.collectionId,
   };
 
   return prisma.$transaction(async (tx) => {

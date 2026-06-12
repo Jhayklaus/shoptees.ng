@@ -24,6 +24,7 @@ export type ProductFormInitial = {
   priceNGN: number;
   status: ProductStatus;
   categoryId: string | null;
+  collectionId: string | null;
   variants: Variant[];
   images: AdminImage[];
 };
@@ -31,11 +32,12 @@ export type ProductFormInitial = {
 type Props = {
   initial: ProductFormInitial;
   categories: { id: string; name: string }[];
+  collections: { id: string; name: string }[];
   action: (input: ProductFormInitial) => Promise<{ ok: true; id: string } | { ok: false; error: string }>;
   deleteAction?: () => Promise<{ ok: true } | { ok: false; error: string }>;
 };
 
-export function ProductForm({ initial, categories, action, deleteAction }: Props) {
+export function ProductForm({ initial, categories, collections, action, deleteAction }: Props) {
   const router = useRouter();
   const [state, setState] = useState<ProductFormInitial>(initial);
   const [error, setError] = useState<string | null>(null);
@@ -256,6 +258,20 @@ export function ProductForm({ initial, categories, action, deleteAction }: Props
             >
               <option value="">— None —</option>
               {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Collection" hint="The curated line this piece belongs to.">
+            <select
+              value={state.collectionId ?? ""}
+              onChange={(e) => update("collectionId", e.target.value || null)}
+              className="w-full bg-transparent border border-line py-2 px-3 outline-none focus:border-ink"
+            >
+              <option value="">— None —</option>
+              {collections.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>

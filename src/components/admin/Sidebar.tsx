@@ -6,10 +6,13 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
+  Layers,
+  Tags,
   ScrollText,
   Users,
   UserCog,
   Settings,
+  Images,
   LogOut,
   ExternalLink,
 } from "lucide-react";
@@ -24,6 +27,9 @@ type NavItem = {
 const nav: NavItem[] = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/admin/products", label: "Products", icon: Package },
+  { href: "/admin/collections", label: "Collections", icon: Layers },
+  { href: "/admin/categories", label: "Categories", icon: Tags },
+  { href: "/admin/banners", label: "Banners", icon: Images },
   { href: "/admin/orders", label: "Orders", icon: ScrollText },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/team", label: "Team", icon: UserCog },

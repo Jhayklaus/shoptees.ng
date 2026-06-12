@@ -51,19 +51,19 @@ export default async function CheckoutSuccessPage({
   if (!order) {
     return (
       <main className="mx-auto max-w-2xl px-5 md:px-10 py-24 text-center">
-        <p className="font-mono-tight text-ink/55 mb-3">Receipt</p>
-        <h1 className="font-display text-6xl tracking-tight leading-[0.95]">
+        <span className="stamp text-vermillion">Receipt</span>
+        <h1 className="font-display text-6xl md:text-7xl leading-[0.92] mt-4">
           Thank you,
           <br />
-          <span className="font-italic-accent text-vermillion">noted.</span>
+          <span className="text-vermillion">noted.</span>
         </h1>
-        <p className="mt-6 font-italic-accent text-xl text-ink-soft">
+        <p className="mt-6 text-lg text-ink-soft max-w-md mx-auto">
           We&apos;ve recorded your order. A confirmation will follow by email and a
           packing-time update by WhatsApp.
         </p>
         <Link
           href="/shop"
-          className="inline-block mt-10 border border-ink px-6 py-3 font-mono-tight hover:bg-ink hover:text-paper transition-colors"
+          className="btn-wipe inline-block mt-10 border-2 border-ink px-7 py-3.5 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
         >
           Back to the shop →
         </Link>
@@ -78,83 +78,109 @@ export default async function CheckoutSuccessPage({
 
   return (
     <main className="mx-auto max-w-3xl px-5 md:px-10 py-20">
-      <div className="text-center">
-        <p className="font-mono-tight text-ink/55">Receipt</p>
-        <h1 className="font-display text-6xl md:text-7xl tracking-tight leading-[0.95] mt-1">
-          Thank you,
-          <br />
-          <span className="font-italic-accent text-vermillion">{order.customer.firstName}.</span>
-        </h1>
-        <p className="font-mono-tight mt-4 text-ink-soft">
-          Order <span className="text-ink">{order.orderNumber}</span> · placed{" "}
-          {new Date(order.createdAt).toLocaleString("en-NG", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
-        </p>
-        <div className="mt-3">
+      {/* Receipt document — bordered like a waybill, with the big status stamp */}
+      <div className="relative border-2 border-ink bg-paper shadow-[8px_8px_0_0_var(--ink)] px-6 md:px-12 py-12">
+        <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion" />
+        <span className="absolute top-0 left-0 w-[3px] h-10 bg-vermillion" />
+        <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-vermillion" />
+        <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-vermillion" />
+
+        {/* Big status stamp — thunks in on load */}
+        <div className="absolute top-6 right-5 md:top-8 md:right-8 stamp-in" aria-hidden>
           <span
-            className={`inline-block px-3 py-1 font-mono-tight text-xs uppercase tracking-wider ${
+            className={`block border-[3px] px-4 py-2 md:px-5 md:py-2.5 font-display text-2xl md:text-4xl -rotate-[8deg] select-none ${
               order.status === "PAID"
-                ? "bg-ink text-paper"
-                : "bg-vermillion/10 text-vermillion border border-vermillion/40"
+                ? "border-olive text-olive"
+                : "border-vermillion text-vermillion"
             }`}
           >
-            {order.status === "PAID" ? "Paid" : "Awaiting payment"}
+            {order.status === "PAID" ? "PAID" : "PENDING"}
           </span>
+        </div>
+
+        <div>
+          <span className="stamp text-vermillion">Receipt</span>
+          <h1 className="font-display text-5xl md:text-7xl leading-[0.92] mt-3 pr-28 md:pr-40">
+            Thank you,
+            <br />
+            <span className="text-vermillion">{order.customer.firstName}.</span>
+          </h1>
+          <p className="font-mono-tight mt-5 text-ink-soft">
+            Order <span className="text-ink font-bold">{order.orderNumber}</span>
+            <br className="sm:hidden" />
+            <span className="hidden sm:inline"> · </span>
+            placed{" "}
+            {new Date(order.createdAt).toLocaleString("en-NG", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}
+          </p>
+          <p className="sr-only">
+            Order status: {order.status === "PAID" ? "Paid" : "Awaiting payment"}
+          </p>
           {isPendingAfterPaystack && paystackRef && (
             <PaymentPoller paystackReference={paystackRef} />
           )}
         </div>
+
+        <section className="mt-10 border-t-2 border-ink pt-6">
+          <span className="stamp text-ink/60">Manifest</span>
+          <ul className="divide-y divide-line mt-3">
+            {order.items.map((item, idx) => (
+              <li key={item.id} className="py-3 flex justify-between gap-4">
+                <div className="flex gap-3">
+                  <span className="font-mono-tight text-ink/40">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <p className="font-display text-xl leading-tight">{item.productName}</p>
+                    <p className="font-mono-tight text-ink/55">
+                      {item.variantSize} × {item.quantity}
+                    </p>
+                  </div>
+                </div>
+                <p className="font-mono-tight whitespace-nowrap">
+                  {formatNaira(item.unitPriceNGN * item.quantity)}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
+            <p className="font-condensed text-[0.82rem]">Total</p>
+            <p className="font-display text-3xl">{formatNaira(order.totalNGN)}</p>
+          </div>
+        </section>
+
+        {order.address && (
+          <section className="mt-10 border-t-2 border-ink pt-6">
+            <span className="stamp text-ink/60">Deliver to</span>
+            <div className="mt-3 font-mono-tight leading-relaxed">
+              <p className="font-bold">
+                {order.customer.firstName} {order.customer.lastName}
+              </p>
+              <p>{order.address.line1}</p>
+              {order.address.line2 && <p>{order.address.line2}</p>}
+              <p>
+                {order.address.city}, {order.address.state}
+                {order.address.postal && ` ${order.address.postal}`}
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* Perforated tear-off edge */}
+        <div className="mt-10 border-t-2 border-dashed border-ink/30 pt-6">
+          <p className="font-mono-tight text-ink/55 text-sm text-center">
+            Save this page or check your email for the same details. Lagos orders
+            usually leave the studio within 48 hours.
+          </p>
+        </div>
       </div>
 
-      <section className="mt-10 border-t border-line pt-6">
-        <p className="font-mono-tight text-ink/55 mb-3">Items</p>
-        <ul className="divide-y divide-line">
-          {order.items.map((item) => (
-            <li key={item.id} className="py-3 flex justify-between gap-4">
-              <div>
-                <p className="font-display text-xl leading-tight">{item.productName}</p>
-                <p className="font-mono-tight text-ink/55">
-                  {item.variantSize} × {item.quantity}
-                </p>
-              </div>
-              <p className="font-mono-tight whitespace-nowrap">
-                {formatNaira(item.unitPriceNGN * item.quantity)}
-              </p>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-5 pt-5 border-t border-line flex justify-between font-display text-2xl">
-          <p>Total</p>
-          <p>{formatNaira(order.totalNGN)}</p>
-        </div>
-      </section>
-
-      {order.address && (
-        <section className="mt-10 border-t border-line pt-6">
-          <p className="font-mono-tight text-ink/55 mb-2">Shipping to</p>
-          <p className="font-display text-xl">
-            {order.customer.firstName} {order.customer.lastName}
-          </p>
-          <p>{order.address.line1}</p>
-          {order.address.line2 && <p>{order.address.line2}</p>}
-          <p>
-            {order.address.city}, {order.address.state}
-            {order.address.postal && ` ${order.address.postal}`}
-          </p>
-        </section>
-      )}
-
-      <p className="mt-10 font-italic-accent text-ink-soft text-center">
-        Save this page or check your email for the same details. Lagos orders
-        usually leave the studio within 48 hours.
-      </p>
-
-      <div className="text-center mt-8">
+      <div className="text-center mt-12">
         <Link
           href="/shop"
-          className="inline-block border border-ink px-6 py-3 font-mono-tight hover:bg-ink hover:text-paper transition-colors"
+          className="btn-wipe inline-block border-2 border-ink px-7 py-3.5 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
         >
           Back to the shop →
         </Link>

@@ -1,5 +1,6 @@
 import "server-only";
 import { formatNaira } from "@/lib/utils";
+import { siteConfig } from "@/config/site";
 
 type OrderLine = {
   productName: string;
@@ -24,70 +25,156 @@ type OrderForEmail = {
   } | null;
 };
 
-// Plain-HTML templates. Kept inline (no external renderer) to avoid pulling
-// in @react-email/* just for two emails. Inline styles only — most email
-// clients strip <style> blocks.
-const WRAP_OPEN = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f4ee;font-family:Helvetica,Arial,sans-serif;color:#1a1a1a;">
-  <div style="max-width:560px;margin:0 auto;background:#fff;padding:32px 28px;">`;
-const WRAP_CLOSE = `  </div></body></html>`;
+// ─── Design tokens (inline only — email clients strip <style>) ─────────────
+const C = {
+  ink:       "#0d0d0c",
+  paper:     "#ffffff",
+  paperDeep: "#f2f2f2",
+  vermillion:"#ff3d00",
+  muted:     "#666666",
+  line:      "#e0e0e0",
+  lineLight: "#eeeeee",
+};
 
-function itemsTable(items: OrderLine[]) {
-  const rows = items
-    .map(
-      (i) => `
+const LOGO_URL = `${siteConfig.url}/logo.png`;
+
+// ─── Shell ─────────────────────────────────────────────────────────────────
+
+function shell(body: string): string {
+  return `<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:${C.paperDeep};font-family:Arial,Helvetica,sans-serif;color:${C.ink};-webkit-font-smoothing:antialiased;">
+  <div style="max-width:580px;margin:0 auto;padding:24px 16px;">
+
+    <!-- Logo header — light so the black logo reads -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:0;">
       <tr>
-        <td style="padding:10px 0;border-bottom:1px solid #eee;">
-          <div style="font-size:15px;">${escapeHtml(i.productName)}</div>
-          <div style="font-size:13px;color:#888;">${escapeHtml(i.variantSize)} × ${i.quantity}</div>
+        <td style="background:${C.paper};border:3px solid ${C.ink};border-bottom:2px solid ${C.ink};padding:20px 28px;">
+          <img src="${LOGO_URL}" alt="Shoptees" height="52" style="display:block;border:0;max-height:52px;width:auto;" />
         </td>
-        <td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;">
-          ${formatNaira(i.unitPriceNGN * i.quantity)}
+        <td style="background:${C.paper};border:3px solid ${C.ink};border-left:0;border-bottom:2px solid ${C.ink};padding:20px 28px;text-align:right;vertical-align:middle;">
+          <span style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:${C.vermillion};font-weight:700;">Lagos, NG</span>
         </td>
-      </tr>`,
-    )
-    .join("");
-  return `<table style="width:100%;border-collapse:collapse;">${rows}</table>`;
+      </tr>
+    </table>
+
+    <!-- Body card -->
+    <div style="background:${C.paper};border-left:3px solid ${C.ink};border-right:3px solid ${C.ink};border-bottom:3px solid ${C.ink};padding:32px 28px;">
+      ${body}
+    </div>
+
+    <!-- Footer strip -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:0;">
+      <tr>
+        <td style="background:${C.paperDeep};border-top:3px solid ${C.vermillion};padding:14px 28px;">
+          <p style="margin:0;font-size:11px;color:${C.muted};font-family:Arial,Helvetica,sans-serif;">
+            © ${new Date().getFullYear()} Shoptees · Lagos, Nigeria ·
+            <a href="${siteConfig.url}" style="color:${C.muted};text-decoration:underline;">shoptees.ng</a>
+          </p>
+        </td>
+      </tr>
+    </table>
+
+  </div>
+</body>
+</html>`;
 }
 
-function addressBlock(o: OrderForEmail) {
+// ─── Reusable pieces ────────────────────────────────────────────────────────
+
+function stamp(text: string): string {
+  return `<span style="display:inline-block;font-family:monospace,'Courier New',Courier;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:${C.vermillion};border:1.5px solid ${C.vermillion};padding:2px 7px;font-weight:700;">${escapeHtml(text)}</span>`;
+}
+
+function sectionLabel(text: string): string {
+  return `<p style="margin:28px 0 8px;font-family:monospace,'Courier New',Courier;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:${C.muted};font-weight:700;border-bottom:2px solid ${C.ink};padding-bottom:5px;">${escapeHtml(text)}</p>`;
+}
+
+function itemsTable(items: OrderLine[]): string {
+  const rows = items.map((item, idx) => `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid ${C.lineLight};font-family:monospace,'Courier New',Courier;font-size:11px;color:${C.muted};vertical-align:top;width:28px;">
+        ${String(idx + 1).padStart(2, "0")}
+      </td>
+      <td style="padding:10px 8px;border-bottom:1px solid ${C.lineLight};vertical-align:top;">
+        <div style="font-size:16px;font-weight:700;color:${C.ink};font-family:Arial,Helvetica,sans-serif;">${escapeHtml(item.productName)}</div>
+        <div style="font-size:12px;color:${C.muted};margin-top:2px;font-family:monospace,'Courier New',Courier;letter-spacing:0.05em;">SIZE ${escapeHtml(item.variantSize)} × ${item.quantity}</div>
+      </td>
+      <td style="padding:10px 0;border-bottom:1px solid ${C.lineLight};text-align:right;white-space:nowrap;font-family:monospace,'Courier New',Courier;font-size:13px;font-weight:700;vertical-align:top;">
+        ${formatNaira(item.unitPriceNGN * item.quantity)}
+      </td>
+    </tr>`).join("");
+
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${rows}</table>`;
+}
+
+function totalBlock(subtotal: number, total: number): string {
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:4px;">
+    <tr>
+      <td style="padding:6px 0;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">Subtotal</td>
+      <td style="padding:6px 0;text-align:right;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">${formatNaira(subtotal)}</td>
+    </tr>
+    <tr>
+      <td style="padding:6px 0;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">Shipping</td>
+      <td style="padding:6px 0;text-align:right;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">Paid on delivery</td>
+    </tr>
+    <tr>
+      <td style="padding:12px 0 0;border-top:2px solid ${C.ink};font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Total</td>
+      <td style="padding:12px 0 0;border-top:2px solid ${C.ink};text-align:right;font-family:monospace,'Courier New',Courier;font-size:20px;font-weight:700;">${formatNaira(total)}</td>
+    </tr>
+  </table>`;
+}
+
+function addressBlock(o: OrderForEmail): string {
   if (!o.address) return "";
-  const parts = [
+  const lines = [
     `${escapeHtml(o.customer.firstName)} ${escapeHtml(o.customer.lastName)}`,
     escapeHtml(o.address.line1),
     o.address.line2 ? escapeHtml(o.address.line2) : null,
-    `${escapeHtml(o.address.city)}, ${escapeHtml(o.address.state)}${
-      o.address.postal ? ` ${escapeHtml(o.address.postal)}` : ""
-    }`,
+    `${escapeHtml(o.address.city)}, ${escapeHtml(o.address.state)}${o.address.postal ? ` ${escapeHtml(o.address.postal)}` : ""}`,
   ].filter(Boolean);
-  return `<p style="margin:6px 0;line-height:1.5;">${parts.join("<br>")}</p>`;
+  return `<p style="margin:6px 0 0;line-height:1.7;font-family:monospace,'Courier New',Courier;font-size:13px;color:${C.ink};">${lines.join("<br>")}</p>`;
 }
+
+function ctaButton(label: string, href: string): string {
+  return `<a href="${href}" style="display:inline-block;background:${C.ink};color:${C.paper};text-decoration:none;padding:13px 22px;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-top:24px;">${escapeHtml(label)} →</a>`;
+}
+
+// ─── Templates ──────────────────────────────────────────────────────────────
 
 export function customerOrderConfirmation(o: OrderForEmail) {
   const subject = `Order ${o.orderNumber} confirmed — Shoptees`;
-  const html = `${WRAP_OPEN}
-    <p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:0 0 10px;">Receipt</p>
-    <h1 style="font-size:30px;margin:0 0 6px;letter-spacing:-0.02em;">Thank you, ${escapeHtml(o.customer.firstName)}.</h1>
-    <p style="color:#555;margin:0 0 24px;">Order <strong>${o.orderNumber}</strong> is confirmed.</p>
 
-    <h2 style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:24px 0 8px;">Items</h2>
+  const body = `
+    ${stamp("Receipt")}
+    <h1 style="margin:16px 0 4px;font-family:Arial,Helvetica,sans-serif;font-size:34px;font-weight:900;letter-spacing:-0.02em;line-height:1.1;color:${C.ink};">
+      Thank you,<br>${escapeHtml(o.customer.firstName)}.
+    </h1>
+    <p style="margin:8px 0 0;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">
+      ORDER ${escapeHtml(o.orderNumber)}
+    </p>
+
+    ${sectionLabel("Manifest")}
     ${itemsTable(o.items)}
-
-    <table style="width:100%;border-collapse:collapse;margin-top:12px;">
-      <tr><td style="padding:4px 0;color:#666;">Subtotal</td><td style="text-align:right;font-variant-numeric:tabular-nums;">${formatNaira(o.subtotalNGN)}</td></tr>
-      <tr><td style="padding:4px 0;color:#666;">Shipping</td><td style="text-align:right;color:#666;">Paid on delivery</td></tr>
-      <tr><td style="padding:10px 0 0;font-size:18px;font-weight:600;">Total</td><td style="padding:10px 0 0;text-align:right;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;">${formatNaira(o.totalNGN)}</td></tr>
-    </table>
+    <div style="margin-top:8px;">${totalBlock(o.subtotalNGN, o.totalNGN)}</div>
 
     ${o.address ? `
-      <h2 style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:28px 0 8px;">Delivery</h2>
+      ${sectionLabel("Deliver to")}
       ${addressBlock(o)}
     ` : ""}
 
-    <p style="margin:28px 0 0;color:#555;line-height:1.55;">
-      We'll reach out on WhatsApp once your order ships. Lagos orders usually leave the studio within 48 hours.
+    ${sectionLabel("What's next")}
+    <p style="margin:0;font-size:14px;color:${C.muted};line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+      We'll reach out on WhatsApp once your order is packed and ready to ship.
+      Lagos orders usually leave the studio within <strong style="color:${C.ink};">48 hours</strong>.
     </p>
-    <p style="margin:18px 0 0;color:#999;font-size:13px;">— The Shoptees team</p>
-  ${WRAP_CLOSE}`;
+
+    <p style="margin:28px 0 0;border-top:1px dashed ${C.line};padding-top:20px;font-family:monospace,'Courier New',Courier;font-size:11px;color:${C.muted};">
+      — The Shoptees team · <a href="${siteConfig.url}/shop" style="color:${C.vermillion};text-decoration:none;">shoptees.ng/shop</a>
+    </p>`;
+
+  const html = shell(body);
 
   const text = [
     `Order ${o.orderNumber} confirmed — Shoptees`,
@@ -95,22 +182,20 @@ export function customerOrderConfirmation(o: OrderForEmail) {
     `Thank you, ${o.customer.firstName}.`,
     ``,
     `Items:`,
-    ...o.items.map((i) => `  · ${i.productName} (${i.variantSize}) × ${i.quantity} — ${formatNaira(i.unitPriceNGN * i.quantity)}`),
+    ...o.items.map((i) => `  ${String(o.items.indexOf(i) + 1).padStart(2, "0")}  ${i.productName} (SIZE ${i.variantSize}) × ${i.quantity} — ${formatNaira(i.unitPriceNGN * i.quantity)}`),
     ``,
     `Subtotal: ${formatNaira(o.subtotalNGN)}`,
-    `Shipping: paid on delivery`,
+    `Shipping: Paid on delivery`,
     `Total:    ${formatNaira(o.totalNGN)}`,
     ``,
     o.address
       ? [
-          `Delivery to:`,
+          `Deliver to:`,
           `  ${o.customer.firstName} ${o.customer.lastName}`,
           `  ${o.address.line1}`,
           o.address.line2 ? `  ${o.address.line2}` : null,
           `  ${o.address.city}, ${o.address.state}${o.address.postal ? ` ${o.address.postal}` : ""}`,
-        ]
-          .filter(Boolean)
-          .join("\n")
+        ].filter(Boolean).join("\n")
       : ``,
     ``,
     `We'll reach out on WhatsApp once your order ships.`,
@@ -124,28 +209,29 @@ export function adminNewOrderNotification(o: OrderForEmail, opts: { siteUrl: str
   const subject = `New paid order: ${o.orderNumber} · ${formatNaira(o.totalNGN)}`;
   const orderLink = `${opts.siteUrl}/admin/orders`;
 
-  const html = `${WRAP_OPEN}
-    <p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:0 0 10px;">New order</p>
-    <h1 style="font-size:26px;margin:0 0 6px;letter-spacing:-0.02em;">${o.orderNumber}</h1>
-    <p style="color:#555;margin:0 0 24px;">
+  const body = `
+    ${stamp("New order")}
+    <h1 style="margin:16px 0 4px;font-family:monospace,'Courier New',Courier;font-size:28px;font-weight:700;color:${C.ink};">
+      ${escapeHtml(o.orderNumber)}
+    </h1>
+    <p style="margin:4px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:${C.muted};">
       ${escapeHtml(o.customer.firstName)} ${escapeHtml(o.customer.lastName)} ·
-      <a href="mailto:${escapeHtml(o.customer.email)}">${escapeHtml(o.customer.email)}</a>
-      ${o.customer.phone ? ` · ${escapeHtml(o.customer.phone)}` : ""}
+      <a href="mailto:${escapeHtml(o.customer.email)}" style="color:${C.vermillion};text-decoration:none;">${escapeHtml(o.customer.email)}</a>
+      ${o.customer.phone ? ` · <a href="https://wa.me/${o.customer.phone.replace(/\D/g, "")}" style="color:${C.muted};text-decoration:none;">${escapeHtml(o.customer.phone)}</a>` : ""}
     </p>
 
+    ${sectionLabel("Manifest")}
     ${itemsTable(o.items)}
-
-    <p style="margin:14px 0 0;font-size:18px;font-weight:600;">Total: ${formatNaira(o.totalNGN)}</p>
+    <p style="margin:12px 0 0;font-family:monospace,'Courier New',Courier;font-size:18px;font-weight:700;color:${C.ink};">Total: ${formatNaira(o.totalNGN)}</p>
 
     ${o.address ? `
-      <h2 style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:24px 0 8px;">Deliver to</h2>
+      ${sectionLabel("Deliver to")}
       ${addressBlock(o)}
     ` : ""}
 
-    <p style="margin:28px 0 0;">
-      <a href="${escapeHtml(orderLink)}" style="display:inline-block;background:#1a1a1a;color:#fff;text-decoration:none;padding:12px 18px;font-size:14px;letter-spacing:0.04em;">View in admin →</a>
-    </p>
-  ${WRAP_CLOSE}`;
+    ${ctaButton("View in admin", orderLink)}`;
+
+  const html = shell(body);
 
   const text = [
     `New paid order: ${o.orderNumber}`,
@@ -153,7 +239,7 @@ export function adminNewOrderNotification(o: OrderForEmail, opts: { siteUrl: str
     `${o.customer.firstName} ${o.customer.lastName} · ${o.customer.email}${o.customer.phone ? ` · ${o.customer.phone}` : ""}`,
     ``,
     `Items:`,
-    ...o.items.map((i) => `  · ${i.productName} (${i.variantSize}) × ${i.quantity} — ${formatNaira(i.unitPriceNGN * i.quantity)}`),
+    ...o.items.map((i) => `  ${i.productName} (SIZE ${i.variantSize}) × ${i.quantity} — ${formatNaira(i.unitPriceNGN * i.quantity)}`),
     ``,
     `Total: ${formatNaira(o.totalNGN)}`,
     ``,
@@ -164,9 +250,7 @@ export function adminNewOrderNotification(o: OrderForEmail, opts: { siteUrl: str
           `  ${o.address.line1}`,
           o.address.line2 ? `  ${o.address.line2}` : null,
           `  ${o.address.city}, ${o.address.state}${o.address.postal ? ` ${o.address.postal}` : ""}`,
-        ]
-          .filter(Boolean)
-          .join("\n")
+        ].filter(Boolean).join("\n")
       : ``,
     ``,
     `Admin: ${orderLink}`,
@@ -182,17 +266,26 @@ export function contactFormToAdmin(args: {
 }) {
   const subject = `Contact form — ${args.name}`;
   const safeMsg = escapeHtml(args.message).replace(/\n/g, "<br>");
-  const html = `${WRAP_OPEN}
-    <p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:0 0 10px;">New message</p>
-    <h1 style="font-size:22px;margin:0 0 6px;letter-spacing:-0.01em;">${escapeHtml(args.name)}</h1>
-    <p style="margin:0 0 20px;color:#555;">
-      <a href="mailto:${escapeHtml(args.email)}">${escapeHtml(args.email)}</a>
+
+  const body = `
+    ${stamp("New message")}
+    <h1 style="margin:16px 0 4px;font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:900;letter-spacing:-0.02em;color:${C.ink};">
+      ${escapeHtml(args.name)}
+    </h1>
+    <p style="margin:4px 0 0;font-family:monospace,'Courier New',Courier;font-size:12px;">
+      <a href="mailto:${escapeHtml(args.email)}" style="color:${C.vermillion};text-decoration:none;">${escapeHtml(args.email)}</a>
     </p>
-    <div style="border-left:3px solid #1a1a1a;padding:8px 14px;color:#222;line-height:1.55;">
+
+    ${sectionLabel("Message")}
+    <div style="border-left:3px solid ${C.vermillion};padding:10px 16px;color:${C.ink};line-height:1.65;font-family:Arial,Helvetica,sans-serif;font-size:14px;">
       ${safeMsg}
     </div>
-    <p style="margin:24px 0 0;font-size:13px;color:#999;">Reply directly to this email to respond.</p>
-  ${WRAP_CLOSE}`;
+
+    <p style="margin:24px 0 0;font-family:monospace,'Courier New',Courier;font-size:11px;color:${C.muted};">
+      Reply directly to this email to respond.
+    </p>`;
+
+  const html = shell(body);
 
   const text = [
     `New contact-form message`,
@@ -209,20 +302,40 @@ export function contactFormToAdmin(args: {
 
 export function newsletterWelcome() {
   const subject = "You're on the list — Shoptees";
-  const html = `${WRAP_OPEN}
-    <p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:0 0 10px;">Letters · 01</p>
-    <h1 style="font-size:30px;margin:0 0 6px;letter-spacing:-0.02em;">You're on the list.</h1>
-    <p style="color:#555;line-height:1.6;margin:14px 0 0;">
-      Drops, restocks, a few photographs. Never more than four times a year — and
-      no fluff in between.
+
+  const body = `
+    ${stamp("Dispatch list · 01")}
+    <h1 style="margin:16px 0 6px;font-family:Arial,Helvetica,sans-serif;font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1.1;color:${C.ink};">
+      You're on<br>the list.
+    </h1>
+
+    <p style="margin:18px 0 0;font-size:15px;line-height:1.7;color:${C.muted};font-family:Arial,Helvetica,sans-serif;">
+      Drops, restocks, a few photographs. Never more than four times a year —
+      and no fluff in between.
     </p>
-    <p style="margin:24px 0 0;color:#999;font-size:13px;">— The Shoptees team</p>
-  ${WRAP_CLOSE}`;
+
+    <div style="margin:28px 0;border-top:2px solid ${C.ink};border-bottom:2px solid ${C.ink};padding:14px 0;">
+      <p style="margin:0;font-family:monospace,'Courier New',Courier;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:${C.muted};">
+        What to expect: drops · restocks · limited releases
+      </p>
+    </div>
+
+    <a href="${siteConfig.url}/shop" style="display:inline-block;background:${C.vermillion};color:${C.paper};text-decoration:none;padding:13px 22px;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">
+      Browse the shop →
+    </a>
+
+    <p style="margin:28px 0 0;font-family:monospace,'Courier New',Courier;font-size:11px;color:${C.muted};">
+      — The Shoptees team
+    </p>`;
+
+  const html = shell(body);
 
   const text = [
     `You're on the list — Shoptees`,
     ``,
     `Drops, restocks, a few photographs. Never more than four times a year.`,
+    ``,
+    `Browse the shop: ${siteConfig.url}/shop`,
     ``,
     `— The Shoptees team`,
   ].join("\n");
@@ -236,20 +349,25 @@ export function adminInviteEmail(args: {
   brandName: string;
 }) {
   const subject = `You've been invited to the ${args.brandName} admin`;
-  const html = `${WRAP_OPEN}
-    <p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:0 0 10px;">Studio access</p>
-    <h1 style="font-size:26px;margin:0 0 6px;letter-spacing:-0.01em;">You're invited.</h1>
-    <p style="color:#555;line-height:1.6;margin:14px 0 0;">
-      ${escapeHtml(args.invitedByName)} has invited you to join the ${escapeHtml(args.brandName)}
-      admin. Click below to set your password and get started — the link expires in 7 days.
+
+  const body = `
+    ${stamp("Studio access")}
+    <h1 style="margin:16px 0 6px;font-family:Arial,Helvetica,sans-serif;font-size:32px;font-weight:900;letter-spacing:-0.02em;line-height:1.1;color:${C.ink};">
+      You're invited.
+    </h1>
+    <p style="margin:10px 0 0;font-size:14px;line-height:1.7;color:${C.muted};font-family:Arial,Helvetica,sans-serif;">
+      <strong style="color:${C.ink};">${escapeHtml(args.invitedByName)}</strong> has invited you to join
+      the <strong style="color:${C.ink};">${escapeHtml(args.brandName)}</strong> admin.
+      Click below to set your password and get started — the link expires in <strong style="color:${C.ink};">7 days</strong>.
     </p>
-    <p style="margin:28px 0 0;">
-      <a href="${escapeHtml(args.inviteUrl)}" style="display:inline-block;background:#1a1a1a;color:#fff;text-decoration:none;padding:14px 22px;font-size:14px;letter-spacing:0.04em;">Accept invitation →</a>
-    </p>
-    <p style="margin:24px 0 0;color:#999;font-size:12px;word-break:break-all;">
-      Or paste this link: ${escapeHtml(args.inviteUrl)}
-    </p>
-  ${WRAP_CLOSE}`;
+
+    ${ctaButton("Accept invitation", args.inviteUrl)}
+
+    <p style="margin:24px 0 0;font-family:monospace,'Courier New',Courier;font-size:11px;color:${C.muted};word-break:break-all;">
+      Or paste this link:<br>${escapeHtml(args.inviteUrl)}
+    </p>`;
+
+  const html = shell(body);
 
   const text = [
     `You're invited to the ${args.brandName} admin`,
@@ -261,6 +379,8 @@ export function adminInviteEmail(args: {
 
   return { subject, html, text };
 }
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
 
 function escapeHtml(s: string) {
   return s

@@ -21,16 +21,15 @@ export async function Footer() {
   const email = settings["contact.email"];
 
   return (
-    <footer className="mt-24 bg-ink text-paper">
+    <footer className="mt-24 bg-ink text-paper border-t-4 border-vermillion">
       <div className="border-b border-paper/15 py-5 overflow-hidden">
         <div className="flex animate-marquee-slow whitespace-nowrap will-change-transform">
           {items.map((t, i) => (
             <span
               key={i}
-              className="font-display text-[3.5rem] md:text-[5.5rem] leading-none px-6 text-paper/95"
-              style={{ fontVariationSettings: '"opsz" 144, "WONK" 1' }}
+              className="font-display text-[3.2rem] md:text-[5rem] leading-none px-6 text-paper/95"
             >
-              {t === "—" ? <span className="text-vermillion">—</span> : t}
+              {t === "—" ? <span className="text-vermillion">■</span> : t}
             </span>
           ))}
         </div>
@@ -92,15 +91,21 @@ export async function Footer() {
           <p className="font-mono-tight text-paper/55">
             © {new Date().getFullYear()} Shoptees. All rights reserved.
           </p>
-          {/* <ul className="flex gap-5">
-            {footerNav.legal.map((l) => (
+          <ul className="flex gap-5">
+            {[
+              { href: "/privacy", label: "Privacy" },
+              { href: "/terms", label: "Terms" },
+            ].map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="font-mono-tight text-paper/55 hover:text-vermillion">
+                <Link
+                  href={l.href}
+                  className="font-mono-tight text-paper/55 hover:text-vermillion transition-colors"
+                >
                   {l.label}
                 </Link>
               </li>
             ))}
-          </ul> */}
+          </ul>
         </div>
       </div>
     </footer>
