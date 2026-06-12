@@ -49,33 +49,33 @@ export function CollectionBanner({
       {/* Bottom scrim for the overlaid copy */}
       <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/35 to-transparent z-10" />
 
-      {/* Vermillion corner ticks */}
-      <span className="absolute top-0 left-0 w-6 h-px bg-vermillion z-10" />
-      <span className="absolute top-0 left-0 w-px h-6 bg-vermillion z-10" />
+      {/* Crate corner brackets */}
+      <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion z-10" />
+      <span className="absolute top-0 left-0 w-[3px] h-10 bg-vermillion z-10" />
 
       <div className="absolute left-5 right-5 bottom-5 md:left-8 md:bottom-7 z-20 flex items-end justify-between gap-6">
         <div>
-          <p className="font-mono-tight text-paper/70 text-[0.7rem]">
-            Collection · {count} {count === 1 ? "piece" : "pieces"}
-          </p>
+          <span className="stamp text-paper/70">
+            Collection · {String(count).padStart(2, "0")} {count === 1 ? "piece" : "pieces"}
+          </span>
           <p
             className={[
-              "font-display tracking-tight leading-none text-paper mt-1",
+              "font-display leading-[0.92] text-paper mt-2",
               isPage ? "text-5xl md:text-7xl" : "text-4xl md:text-6xl",
             ].join(" ")}
           >
             {name}
           </p>
           {description && (
-            <p className="font-italic-accent text-paper/75 mt-2 max-w-xl hidden md:block">
+            <p className="font-mono-tight text-paper/70 mt-3 max-w-xl hidden md:block text-sm">
               {description}
             </p>
           )}
         </div>
         {!isPage && (
-          <span className="hidden md:inline-flex items-center gap-2 font-mono-tight text-paper shrink-0 border border-paper/40 px-4 py-2 group-hover:bg-paper group-hover:text-ink transition-colors">
+          <span className="hidden md:inline-flex items-center gap-2 font-condensed text-[0.78rem] text-paper shrink-0 border-2 border-paper/50 px-4 py-2 group-hover:bg-paper group-hover:text-ink transition-colors duration-200">
             View collection
-            <ArrowUpRight size={14} className="text-vermillion" />
+            <ArrowUpRight size={13} />
           </span>
         )}
       </div>

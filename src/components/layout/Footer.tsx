@@ -91,15 +91,21 @@ export async function Footer() {
           <p className="font-mono-tight text-paper/55">
             © {new Date().getFullYear()} Shoptees. All rights reserved.
           </p>
-          {/* <ul className="flex gap-5">
-            {footerNav.legal.map((l) => (
+          <ul className="flex gap-5">
+            {[
+              { href: "/privacy", label: "Privacy" },
+              { href: "/terms", label: "Terms" },
+            ].map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="font-mono-tight text-paper/55 hover:text-vermillion">
+                <Link
+                  href={l.href}
+                  className="font-mono-tight text-paper/55 hover:text-vermillion transition-colors"
+                >
                   {l.label}
                 </Link>
               </li>
             ))}
-          </ul> */}
+          </ul>
         </div>
       </div>
     </footer>

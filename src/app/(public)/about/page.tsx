@@ -6,17 +6,17 @@ export const metadata = buildMetadata({ title: "About", path: "/about" });
 export default function AboutPage() {
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 pb-24">
-      <header className="grid grid-cols-12 gap-6 mb-16 border-b border-line pb-10">
+      <header className="grid grid-cols-12 gap-6 mb-16 border-b-[3px] border-ink pb-10">
         <div className="col-span-12 md:col-span-8">
-          <p className="font-mono-tight text-ink/55">A studio note</p>
-          <h1 className="font-display text-7xl md:text-[10rem] leading-[0.85] tracking-[-0.04em] mt-2">
-            Built <span className="font-italic-accent text-vermillion">here,</span>
+          <span className="stamp text-vermillion">A studio note</span>
+          <h1 className="font-display text-7xl md:text-[9rem] leading-[0.88] mt-3">
+            Built <span className="text-vermillion">here,</span>
             <br />
             worn everywhere.
           </h1>
         </div>
-        <div className="col-span-12 md:col-span-4 md:pt-3">
-          <p className="font-italic-accent text-xl text-ink/70">
+        <div className="col-span-12 md:col-span-4 md:self-end">
+          <p className="text-lg text-ink/70 leading-snug max-w-sm">
             Shoptees is a Nigerian streetwear label working in apparel and
             football jerseys — for the everyday, the matchday, and the
             in-between. We sell by the piece, and by the carton.
@@ -36,8 +36,8 @@ export default function AboutPage() {
         </div>
 
         <div className="col-span-12 md:col-span-6 md:col-start-7 md:pt-12">
-          <h2 className="font-display text-4xl md:text-5xl leading-tight tracking-tight">
-            We make it <span className="font-italic-accent text-vermillion">to be worn.</span>
+          <h2 className="font-display text-4xl md:text-5xl leading-[0.95]">
+            We make it <span className="text-vermillion">to be worn.</span>
           </h2>
           <div className="mt-6 columns-1 md:columns-2 gap-8 text-ink-soft leading-relaxed">
             <p className="break-inside-avoid">
@@ -62,7 +62,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 border-y border-line py-10">
+      <section className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 border-y-[3px] border-ink py-10">
         {[
           ["Made in", "Lagos, NG"],
           ["Catalog", "Apparel + jerseys"],
@@ -70,8 +70,8 @@ export default function AboutPage() {
           ["Shipping", "Nationwide"],
         ].map(([k, v]) => (
           <div key={k}>
-            <p className="font-mono-tight text-ink/55">{k}</p>
-            <p className="font-display text-3xl mt-1">{v}</p>
+            <span className="stamp text-ink/60">{k}</span>
+            <p className="font-display text-3xl mt-2">{v}</p>
           </div>
         ))}
       </section>

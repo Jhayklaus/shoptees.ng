@@ -75,16 +75,18 @@ export default async function CollectionPage({
 
       <div className="mt-12">
         {display.length === 0 ? (
-          <div className="border border-dashed border-line p-16 text-center">
-            <p className="font-italic-accent text-2xl text-ink/55">
-              Nothing in {collection.name.toLowerCase()} right now.
+          <div className="border-2 border-dashed border-ink/30 p-16 text-center">
+            <span className="stamp text-ink/50">
+              Nothing in {collection.name.toLowerCase()} right now
+            </span>
+            <p className="mt-5">
+              <Link
+                href="/shop"
+                className="font-condensed text-[0.78rem] underline underline-offset-4 hover:text-vermillion"
+              >
+                See everything →
+              </Link>
             </p>
-            <Link
-              href="/shop"
-              className="inline-block mt-4 font-mono-tight text-ink underline-offset-4 hover:underline"
-            >
-              See everything →
-            </Link>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-14">
@@ -98,7 +100,7 @@ export default async function CollectionPage({
       {totalPages > 1 && (
         <nav
           aria-label="Pagination"
-          className="mt-16 flex items-center justify-center gap-6 border-t border-line pt-8"
+          className="mt-16 flex items-center justify-center gap-6 border-t-2 border-ink pt-8"
         >
           <PageLink
             href={`/collections/${slug}?page=${page - 1}`}
@@ -136,7 +138,7 @@ function PageLink({
 }) {
   if (disabled) {
     return (
-      <span className="flex h-10 w-10 items-center justify-center border border-line text-ink/25">
+      <span className="flex h-10 w-10 items-center justify-center border-2 border-line text-ink/25">
         {children}
       </span>
     );
@@ -145,7 +147,7 @@ function PageLink({
     <Link
       href={href}
       aria-label={label}
-      className="flex h-10 w-10 items-center justify-center border border-line hover:border-ink hover:text-vermillion transition-colors"
+      className="flex h-10 w-10 items-center justify-center border-2 border-ink hover:bg-ink hover:text-paper transition-colors"
     >
       {children}
     </Link>
