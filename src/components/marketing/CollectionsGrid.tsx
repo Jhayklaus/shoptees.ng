@@ -71,8 +71,8 @@ export async function CollectionsGrid() {
                 <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent z-10" />
 
                 {/* Vermillion corner ticks */}
-                <span className="absolute top-0 left-0 w-5 h-px bg-vermillion z-10" />
-                <span className="absolute top-0 left-0 w-px h-5 bg-vermillion z-10" />
+                <span className="absolute top-0 left-0 w-5 h-px bg-tan z-10" />
+                <span className="absolute top-0 left-0 w-px h-5 bg-tan z-10" />
 
                 {/* Name burned straight into the image */}
                 <div className="absolute left-4 right-4 bottom-4 md:left-5 md:bottom-5 z-20">
@@ -83,7 +83,7 @@ export async function CollectionsGrid() {
                     {count} {count === 1 ? "piece" : "pieces"}
                     <ArrowUpRight
                       size={13}
-                      className="text-vermillion transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      className="text-tan transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                     />
                   </p>
                 </div>

@@ -21,7 +21,7 @@ export async function Footer() {
   const email = settings["contact.email"];
 
   return (
-    <footer className="mt-24 bg-ink text-paper border-t-4 border-vermillion">
+    <footer className="mt-24 bg-ink text-paper border-t-4 border-tan">
       <div className="border-b border-paper/15 py-5 overflow-hidden">
         <div className="flex animate-marquee-slow whitespace-nowrap will-change-transform">
           {items.map((t, i) => (
@@ -29,7 +29,7 @@ export async function Footer() {
               key={i}
               className="font-display text-[3.2rem] md:text-[5rem] leading-none px-6 text-paper/95"
             >
-              {t === "—" ? <span className="text-vermillion">■</span> : t}
+              {t === "—" ? <span className="text-tan">■</span> : t}
             </span>
           ))}
         </div>
@@ -47,7 +47,7 @@ export async function Footer() {
           <ul className="space-y-2">
             {footerNav.shop.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="hover:text-vermillion transition-colors">
+                <Link href={l.href} className="hover:text-tan transition-colors">
                   {l.label}
                 </Link>
               </li>
@@ -60,7 +60,7 @@ export async function Footer() {
           <ul className="space-y-2">
             {footerNav.company.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="hover:text-vermillion transition-colors">
+                <Link href={l.href} className="hover:text-tan transition-colors">
                   {l.label}
                 </Link>
               </li>
@@ -72,12 +72,12 @@ export async function Footer() {
           <h3 className="font-mono-tight text-paper/55 mb-3">Elsewhere</h3>
           <ul className="space-y-2">
             <li>
-              <a href={siteConfig.social.instagram} className="hover:text-vermillion transition-colors">
+              <a href={siteConfig.social.instagram} className="hover:text-tan transition-colors">
                 Instagram ↗
               </a>
             </li>
             <li>
-              <a href={siteConfig.social.x} className="hover:text-vermillion transition-colors">
+              <a href={siteConfig.social.x} className="hover:text-tan transition-colors">
                 X / Twitter ↗
               </a>
             </li>
@@ -99,7 +99,7 @@ export async function Footer() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="font-mono-tight text-paper/55 hover:text-vermillion transition-colors"
+                  className="font-mono-tight text-paper/55 hover:text-tan transition-colors"
                 >
                   {l.label}
                 </Link>

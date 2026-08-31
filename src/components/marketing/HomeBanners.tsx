@@ -37,8 +37,8 @@ export async function HomeBanners() {
                     sizes="(max-width: 768px) 100vw, 60vw"
                     className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
                   />
-                  <span className="absolute top-3 left-3 w-7 h-[3px] bg-vermillion" />
-                  <span className="absolute top-3 left-3 w-[3px] h-7 bg-vermillion" />
+                  <span className="absolute top-3 left-3 w-7 h-[3px] bg-tan" />
+                  <span className="absolute top-3 left-3 w-[3px] h-7 bg-tan" />
                 </div>
               )}
 
@@ -50,7 +50,7 @@ export async function HomeBanners() {
                   b.imageUrl ? "col-span-12 md:col-span-5" : "col-span-12",
                 ].join(" ")}
               >
-                <span className="absolute top-0 right-0 w-1.5 h-16 bg-vermillion" />
+                <span className="absolute top-0 right-0 w-1.5 h-16 bg-tan" />
 
                 <div>
                   {b.eyebrow && (

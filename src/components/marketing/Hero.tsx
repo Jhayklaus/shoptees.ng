@@ -56,10 +56,10 @@ export function Hero({ content }: { content: HeroContent }) {
       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-ink/20" />
 
       {/* Crate corner brackets */}
-      <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion z-10" />
-      <span className="absolute top-0 left-0 w-[3px] h-10 bg-vermillion z-10" />
-      <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-vermillion z-10" />
-      <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-vermillion z-10" />
+      <span className="absolute top-0 left-0 w-10 h-[3px] bg-tan z-10" />
+      <span className="absolute top-0 left-0 w-[3px] h-10 bg-tan z-10" />
+      <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-tan z-10" />
+      <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-tan z-10" />
 
       {/* Top strip: eyebrow stamp + rotating stamp-clock */}
       <div className="relative z-10 mx-auto w-full max-w-[1400px] px-5 md:px-10 pt-6 flex items-start justify-between gap-4">
@@ -94,7 +94,7 @@ export function Hero({ content }: { content: HeroContent }) {
                   <span
                     key={w + i}
                     aria-hidden={i !== wordIdx}
-                    className="text-vermillion absolute inset-x-0 top-0 whitespace-nowrap"
+                    className="text-tan absolute inset-x-0 top-0 whitespace-nowrap"
                     style={{
                       animation: i === wordIdx ? "word-rise 2.6s var(--ease-snap) both" : "none",
                       opacity: i === wordIdx ? undefined : 0,
@@ -213,7 +213,7 @@ function StampClock() {
         className="stamp-in relative font-mono-tight text-paper text-[0.7rem] font-bold flex flex-col items-center leading-tight"
       >
         {now?.hm ?? "--:--"}
-        <span className="text-vermillion text-[0.55rem]">{now ? `:${now.s} WAT` : "WAT"}</span>
+        <span className="text-tan text-[0.55rem]">{now ? `:${now.s} WAT` : "WAT"}</span>
       </span>
     </div>
   );

@@ -2,19 +2,22 @@
 @import "tw-animate-css";
 
 :root {
-  /* "Industrial freight meets matchday" — see design-brief.md.
+  /* Brand palette — TAN + BURGUNDY.
      Token NAMES are kept from the previous theme so every component keeps
      working; their VALUES carry the new identity. New code may also use the
-     semantic aliases (chalk/tar/hazard/pitch) defined in @theme below. */
-  --paper: #ffffff; /* bright white */
-  --paper-deep: #f2f2f2;
-  --ink: #0d0d0c; /* tar */
-  --ink-soft: #3d3c38;
-  --vermillion: #ff3d00; /* hazard orange — THE accent */
-  --vermillion-deep: #d63300;
-  --olive: #0e7a3c; /* pitch green — stock/success, used sparingly */
-  --line: #e0e0e0;
-  --line-dark: #27261f;
+     semantic aliases (chalk/tar/burgundy/tan) defined in @theme below. */
+  --paper: #fdfbf8; /* warm off-white */
+  --paper-deep: #f4ece1; /* tan-tinted surface */
+  --ink: #16110f; /* warm near-black */
+  --ink-soft: #4a3b34;
+  --vermillion: #6d071a; /* BURGUNDY — THE accent (on light surfaces) */
+  --vermillion-deep: #4c0512;
+  --tan: #c19a6b; /* TAN — the accent on dark surfaces / warm surfaces */
+  --tan-soft: #e6d5bd;
+  --tan-deep: #a37c4f;
+  --olive: #2f6b3f; /* stock/success, used sparingly */
+  --line: #e6dbcc;
+  --line-dark: #33241f;
 
   /* Motion: snap, don't float. */
   --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
@@ -28,12 +31,17 @@
   --color-vermillion: var(--vermillion);
   --color-vermillion-deep: var(--vermillion-deep);
   --color-olive: var(--olive);
+  --color-tan: var(--tan);
+  --color-tan-soft: var(--tan-soft);
+  --color-tan-deep: var(--tan-deep);
   --color-line: var(--line);
   --color-line-dark: var(--line-dark);
 
   /* Semantic aliases for new code */
   --color-chalk: var(--paper);
   --color-tar: var(--ink);
+  --color-burgundy: var(--vermillion);
+  --color-burgundy-deep: var(--vermillion-deep);
   --color-hazard: var(--vermillion);
   --color-pitch: var(--olive);
 
@@ -176,6 +184,9 @@ body {
 }
 .btn-wipe-hazard::before {
   background: var(--vermillion);
+}
+.btn-wipe-tan::before {
+  background: var(--tan);
 }
 .btn-wipe-paper::before {
   background: var(--paper);

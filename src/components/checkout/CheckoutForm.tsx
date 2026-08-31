@@ -156,7 +156,7 @@ export function CheckoutForm() {
             <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
             <span className="absolute top-0 left-0 w-[3px] h-8 bg-vermillion" />
 
-            <span className="stamp text-ink/60">Order manifest</span>
+            <span className="stamp text-ink/60">Order summary</span>
             <ul className="divide-y divide-line mt-3">
               {lines.map((l, idx) => (
                 <li key={l.variantId} className="py-3 flex justify-between gap-4">

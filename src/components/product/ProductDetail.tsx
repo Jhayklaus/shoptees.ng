@@ -297,10 +297,10 @@ function ProductGallery({
         />
 
         {/* Crate corner brackets */}
-        <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion z-10" />
-        <span className="absolute top-0 left-0 w-[3px] h-8 bg-vermillion z-10" />
-        <span className="absolute bottom-0 right-0 w-8 h-[3px] bg-vermillion z-10" />
-        <span className="absolute bottom-0 right-0 w-[3px] h-8 bg-vermillion z-10" />
+        <span className="absolute top-0 left-0 w-8 h-[3px] bg-tan z-10" />
+        <span className="absolute top-0 left-0 w-[3px] h-8 bg-tan z-10" />
+        <span className="absolute bottom-0 right-0 w-8 h-[3px] bg-tan z-10" />
+        <span className="absolute bottom-0 right-0 w-[3px] h-8 bg-tan z-10" />
 
         {images.length > 1 && (
           <span className="absolute bottom-3 right-3 font-mono-tight bg-ink text-paper px-2 py-1 z-10">

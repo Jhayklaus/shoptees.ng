@@ -19,7 +19,7 @@ export default async function AdminLoginPage() {
         <h1 className="font-display text-7xl xl:text-8xl leading-[0.9] tracking-[-0.03em]">
           Plain
           <br />
-          <span className="font-italic-accent text-vermillion">cloth,</span>
+          <span className="font-italic-accent text-tan">cloth,</span>
           <br />
           back office.
         </h1>

@@ -124,7 +124,7 @@ export default async function CheckoutSuccessPage({
         </div>
 
         <section className="mt-10 border-t-2 border-ink pt-6">
-          <span className="stamp text-ink/60">Manifest</span>
+          <span className="stamp text-ink/60">Items</span>
           <ul className="divide-y divide-line mt-3">
             {order.items.map((item, idx) => (
               <li key={item.id} className="py-3 flex justify-between gap-4">

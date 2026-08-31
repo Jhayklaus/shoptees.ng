@@ -7,7 +7,7 @@ import { useHydratedCart } from "@/store/useHydratedCart";
 import { formatNaira } from "@/lib/utils";
 import { Trash2, ArrowUpRight } from "lucide-react";
 
-// Cart styled as a packing slip / waybill: numbered manifest lines, mono
+// Cart styled as a packing slip / waybill: numbered order lines, mono
 // metadata, hard rules, and a stamped summary panel.
 export function CartView() {
   const remove = useCart((s) => s.remove);
@@ -21,7 +21,7 @@ export function CartView() {
   if (state.status === "ready" && lines.length === 0) {
     return (
       <main className="mx-auto max-w-3xl px-5 md:px-10 py-24 text-center">
-        <span className="stamp text-ink/50">Manifest · empty</span>
+        <span className="stamp text-ink/50">Cart · empty</span>
         <h1 className="font-display text-6xl md:text-7xl leading-[0.92] mt-4">
           Nothing yet,
           <br />
@@ -140,7 +140,7 @@ export function CartView() {
           })}
           {isLoading && (
             <li className="py-12 text-center">
-              <span className="stamp text-ink/40">Loading manifest…</span>
+              <span className="stamp text-ink/40">Loading cart…</span>
             </li>
           )}
         </ul>

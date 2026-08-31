@@ -41,7 +41,7 @@ const fallback: Record<SettingKey, string> = {
   "order.year": new Date().getFullYear().toString(),
   // Hero — falls back to the original hardcoded copy so the page looks right
   // out of the box before anything is set in admin.
-  "hero.eyebrow": "Issue 01 · Spring/Summer · Lagos",
+  "hero.eyebrow": "Spring/Summer · Lagos",
   "hero.headline": "Threads for the\nculture,\nbuilt for the",
   "hero.cycle_words": "streets.,stands.,block.,pitch.,city.,long haul.",
   "hero.body":

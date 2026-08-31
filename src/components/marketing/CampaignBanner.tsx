@@ -60,10 +60,10 @@ export async function CampaignBanner() {
         </div>
 
         {/* Crate corner brackets */}
-        <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion z-10" />
-        <span className="absolute top-0 left-0 w-[3px] h-10 bg-vermillion z-10" />
-        <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-vermillion z-10" />
-        <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-vermillion z-10" />
+        <span className="absolute top-0 left-0 w-10 h-[3px] bg-tan z-10" />
+        <span className="absolute top-0 left-0 w-[3px] h-10 bg-tan z-10" />
+        <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-tan z-10" />
+        <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-tan z-10" />
       </div>
     </section>
   );

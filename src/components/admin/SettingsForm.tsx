@@ -22,7 +22,7 @@ const NOTIFICATION_FIELDS = [
 ] as const;
 
 const HERO_FIELDS = [
-  { key: "hero.eyebrow", label: "Eyebrow", hint: 'Small label above the headline. e.g. "Issue 01 · Spring/Summer · Lagos".' },
+  { key: "hero.eyebrow", label: "Eyebrow", hint: 'Small label above the headline. e.g. "Spring/Summer · Lagos".' },
   { key: "hero.headline", label: "Headline", hint: "Main display headline. Use line breaks for each line.", multiline: true },
   { key: "hero.cycle_words", label: "Cycling words", hint: "Comma-separated. They animate one after another at the end of the headline. Leave blank for none." },
   { key: "hero.body", label: "Body", hint: "Short paragraph in the right column.", multiline: true },

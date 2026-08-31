@@ -32,7 +32,7 @@ export async function CategoriesGrid() {
     <section className="mx-auto max-w-[1400px] px-5 md:px-10 pb-16">
       <div className="flex items-end justify-between mb-10 border-b-[3px] border-ink pb-4">
         <div>
-          <span className="stamp text-vermillion">Manifest · 02</span>
+          <span className="stamp text-vermillion">Categories · 02</span>
           <h2 className="font-display text-5xl md:text-6xl mt-2">
             Shop by <span className="text-vermillion">category</span>
           </h2>
@@ -76,8 +76,8 @@ export async function CategoriesGrid() {
                 <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent z-10" />
 
                 {/* Crate corner brackets */}
-                <span className="absolute top-0 left-0 w-7 h-[3px] bg-vermillion z-10" />
-                <span className="absolute top-0 left-0 w-[3px] h-7 bg-vermillion z-10" />
+                <span className="absolute top-0 left-0 w-7 h-[3px] bg-tan z-10" />
+                <span className="absolute top-0 left-0 w-[3px] h-7 bg-tan z-10" />
 
                 {/* Stock count stamped top-right like a crate label */}
                 <span className="stamp absolute top-3 right-3 z-20 text-paper/90 bg-ink/40 backdrop-blur-[2px]">
@@ -93,7 +93,7 @@ export async function CategoriesGrid() {
                     Open crate
                     <ArrowUpRight
                       size={13}
-                      className="text-vermillion transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      className="text-tan transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                     />
                   </p>
                 </div>
