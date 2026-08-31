@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/motion/TransitionLink";
 import { ArrowUpRight } from "lucide-react";
 import { getAllSettings } from "@/lib/server/settings";
 
@@ -17,7 +17,7 @@ export async function CampaignBanner() {
   const imageAlt = s["campaign.image_alt"] || headline || "Shoptees campaign";
 
   return (
-    <section className="relative w-full mt-12 md:mt-16">
+    <section className="reveal relative w-full mt-12 md:mt-16">
       <div className="relative w-full aspect-[4/5] sm:aspect-[16/10] lg:aspect-[16/7] overflow-hidden bg-paper-deep group">
         <Image
           src={s["campaign.image_url"]}

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/motion/TransitionLink";
 import { ArrowUpRight } from "lucide-react";
 import { prisma } from "@/lib/db";
 
@@ -27,7 +27,7 @@ export async function CollectionsGrid() {
   if (rows.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-[1400px] px-5 md:px-10 pb-16">
+    <section className="reveal mx-auto max-w-[1400px] px-5 md:px-10 pb-16">
       <div className="flex items-end justify-between mb-10 border-b border-line pb-4">
         <div>
           <p className="font-mono-tight text-ink/55">Index · 02</p>

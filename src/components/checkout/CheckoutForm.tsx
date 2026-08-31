@@ -238,7 +238,7 @@ export function CheckoutForm() {
             <button
               type="submit"
               disabled={pending || empty || cart.status === "loading"}
-              className="btn-wipe btn-wipe-hazard mt-6 w-full bg-ink text-paper py-4 font-condensed text-[0.82rem] transition-colors duration-200 disabled:opacity-40"
+              className="btn-wipe btn-wipe-hazard press mt-6 w-full bg-ink text-paper py-4 font-condensed text-[0.82rem] transition-colors duration-200 disabled:opacity-40"
             >
               {pending
                 ? "Placing order…"

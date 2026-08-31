@@ -172,7 +172,7 @@ export default async function ShopPage({
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-14">
+        <div className="reveal-stagger grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-14">
           {display.map((p, i) => (
             <ProductCard key={p.id} product={p} index={i} />
           ))}

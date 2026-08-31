@@ -17,7 +17,8 @@ export function AnnouncementBar() {
     <div
       role="region"
       aria-label="Site announcements"
-      className="bg-ink text-paper py-2 overflow-hidden border-b border-ink"
+      data-vt="announcement"
+      className="marquee-hover bg-ink text-paper py-2 overflow-hidden border-b border-ink"
     >
       <div className="flex animate-marquee whitespace-nowrap will-change-transform">
         {reel.map((t, i) => (

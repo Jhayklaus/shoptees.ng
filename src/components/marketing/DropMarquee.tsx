@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/motion/TransitionLink";
 
 const items = ["NEW DROP JUST LANDED", "■", "SHOP THE LATEST", "■", "LAGOS → EVERYWHERE", "■"];
 

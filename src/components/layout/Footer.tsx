@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/motion/TransitionLink";
 import { footerNav } from "@/config/nav";
 import { siteConfig } from "@/config/site";
 import { getAllSettings } from "@/lib/server/settings";
@@ -22,7 +22,7 @@ export async function Footer() {
 
   return (
     <footer className="mt-24 bg-ink text-paper border-t-4 border-tan">
-      <div className="border-b border-paper/15 py-5 overflow-hidden">
+      <div className="marquee-hover border-b border-paper/15 py-5 overflow-hidden">
         <div className="flex animate-marquee-slow whitespace-nowrap will-change-transform">
           {items.map((t, i) => (
             <span
@@ -47,7 +47,7 @@ export async function Footer() {
           <ul className="space-y-2">
             {footerNav.shop.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="hover:text-tan transition-colors">
+                <Link href={l.href} className="link-underline hover:text-tan transition-colors">
                   {l.label}
                 </Link>
               </li>
@@ -60,7 +60,7 @@ export async function Footer() {
           <ul className="space-y-2">
             {footerNav.company.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="hover:text-tan transition-colors">
+                <Link href={l.href} className="link-underline hover:text-tan transition-colors">
                   {l.label}
                 </Link>
               </li>
@@ -72,12 +72,12 @@ export async function Footer() {
           <h3 className="font-mono-tight text-paper/55 mb-3">Elsewhere</h3>
           <ul className="space-y-2">
             <li>
-              <a href={siteConfig.social.instagram} className="hover:text-tan transition-colors">
+              <a href={siteConfig.social.instagram} className="link-underline hover:text-tan transition-colors">
                 Instagram ↗
               </a>
             </li>
             <li>
-              <a href={siteConfig.social.x} className="hover:text-tan transition-colors">
+              <a href={siteConfig.social.x} className="link-underline hover:text-tan transition-colors">
                 X / Twitter ↗
               </a>
             </li>

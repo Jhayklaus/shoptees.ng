@@ -2,6 +2,7 @@
 
 import { CURRENCY_CODES, CURRENCY_META, type CurrencyCode } from "@/lib/currency";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
+import { cn } from "@/lib/utils";
 
 /**
  * Segmented ₦ NGN / $ USD control. Currency codes rather than flags — a flag
@@ -16,7 +17,9 @@ export function CurrencySwitcher({ className = "" }: { className?: string }) {
     <div
       role="group"
       aria-label="Currency"
-      className={`inline-flex border-2 border-ink ${className}`}
+      // cn() so a caller's display utility (e.g. `hidden sm:inline-flex`)
+      // actually overrides the default instead of racing it in the cascade.
+      className={cn("inline-flex border-2 border-ink", className)}
     >
       {CURRENCY_CODES.map((code: CurrencyCode) => {
         const on = ctx.code === code;
