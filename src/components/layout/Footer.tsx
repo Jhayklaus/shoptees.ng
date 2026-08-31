@@ -21,7 +21,7 @@ export async function Footer() {
   const email = settings["contact.email"];
 
   return (
-    <footer data-vt="footer" className="mt-24 bg-ink text-paper border-t-4 border-tan">
+    <footer className="mt-24 bg-ink text-paper border-t-4 border-tan">
       <div className="marquee-hover border-b border-paper/15 py-5 overflow-hidden">
         <div className="flex animate-marquee-slow whitespace-nowrap will-change-transform">
           {items.map((t, i) => (

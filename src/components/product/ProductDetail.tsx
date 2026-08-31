@@ -282,7 +282,11 @@ function ProductGallery({
     <div onKeyDown={onKeyDown}>
       {/* Hero — selected image, framed like a crate face */}
       <div
-        data-morph-active
+        // Marks where a card's image should land. The transition name is
+        // attached only while a morph is in flight (see ViewTransitions);
+        // leaving it on permanently makes this image fly across every page
+        // you navigate to next.
+        data-morph-target
         className="relative aspect-[4/5] bg-paper-deep overflow-hidden"
         role="region"
         aria-roledescription="product gallery"

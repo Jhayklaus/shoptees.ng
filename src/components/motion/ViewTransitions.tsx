@@ -22,6 +22,10 @@ import { usePathname, useRouter } from "next/navigation";
 type MorphTarget = { element: HTMLElement; attribute: string } | null;
 type Navigate = (href: string, morph?: MorphTarget) => void;
 
+/** Marks the element on the INCOMING page that the morph should land on. */
+const MORPH_TARGET = "data-morph-target";
+const MORPH_ACTIVE = "data-morph-active";
+
 const Ctx = createContext<{ navigate: Navigate }>({ navigate: () => {} });
 
 /** Longest we will hold the page under a transition snapshot. */
@@ -30,9 +34,11 @@ const COMMIT_TIMEOUT_MS = 700;
 export function ViewTransitions({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const pending = useRef<{ resolve: () => void; timer: ReturnType<typeof setTimeout> } | null>(
-    null,
-  );
+  const pending = useRef<{
+    resolve: () => void;
+    timer: ReturnType<typeof setTimeout>;
+    morphing: boolean;
+  } | null>(null);
 
   // The new route has rendered — let the transition capture it.
   useEffect(() => {
@@ -40,6 +46,15 @@ export function ViewTransitions({ children }: { children: React.ReactNode }) {
     if (!p) return;
     pending.current = null;
     clearTimeout(p.timer);
+
+    // Hand the shared name to the landing element, but only for a navigation
+    // that actually started from a morph. The name must NOT live on the
+    // product page permanently: it would then be a named element with no
+    // counterpart on every navigation away from that page, and the browser
+    // would fly the product image across the new page as a stray ghost.
+    if (p.morphing) {
+      document.querySelector(`[${MORPH_TARGET}]`)?.setAttribute(MORPH_ACTIVE, "");
+    }
     p.resolve();
   }, [pathname]);
 
@@ -63,9 +78,7 @@ export function ViewTransitions({ children }: { children: React.ReactNode }) {
       // interrupted navigation is cleared first: two elements sharing a
       // view-transition-name makes the browser drop the transition entirely.
       if (morph) {
-        document
-          .querySelectorAll(`[${morph.attribute}]`)
-          .forEach((el) => el.removeAttribute(morph.attribute));
+        clearMorphNames();
         morph.element.setAttribute(morph.attribute, "");
       }
 
@@ -76,20 +89,26 @@ export function ViewTransitions({ children }: { children: React.ReactNode }) {
               pending.current = null;
               resolve();
             }, COMMIT_TIMEOUT_MS);
-            pending.current = { resolve, timer };
+            pending.current = { resolve, timer, morphing: Boolean(morph) };
             router.push(href);
           }),
       );
 
-      // Always untag, whether the transition finished or was interrupted by
-      // another navigation — a stale name would collide with the next one.
-      const untag = () => morph?.element.removeAttribute(morph.attribute);
-      transition.finished.then(untag, untag);
+      // Always untag — both the card we left and the element we landed on —
+      // whether the transition finished or was interrupted by another
+      // navigation. A stale name collides with the next one.
+      transition.finished.then(clearMorphNames, clearMorphNames);
     },
     [router],
   );
 
   return <Ctx.Provider value={{ navigate }}>{children}</Ctx.Provider>;
+}
+
+function clearMorphNames() {
+  document
+    .querySelectorAll(`[${MORPH_ACTIVE}]`)
+    .forEach((el) => el.removeAttribute(MORPH_ACTIVE));
 }
 
 export function useViewTransitionRouter() {

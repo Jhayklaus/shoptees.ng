@@ -442,54 +442,73 @@ body {
 /* ── View transitions ────────────────────────────────────────────────── */
 
 /* Chrome/Edge/Safari animate between routes; everywhere else the navigation
-   is instant and nothing breaks. Kept fast — a shop that makes you wait for
-   a page to swoop feels slower than one that just changes. */
+   is instant and nothing breaks.
+
+   The new page is REVEALED, not cross-faded: a hard clip edge travels down
+   it while it rises into place — the same move .word-rise already makes on
+   the headlines, scaled up to a whole page. The outgoing page dims and
+   drifts up behind it instead of vanishing, so there is a moment where you
+   can see one sheet sliding over another. A cross-fade at 200ms reads as a
+   flicker; this reads as a transition. */
 ::view-transition-group(root) {
-  animation-duration: var(--dur-mid);
+  animation-duration: 460ms;
 }
 ::view-transition-old(root) {
-  animation: vt-out 180ms var(--ease-hard) both;
+  animation: page-out 460ms var(--ease-snap) both;
 }
 ::view-transition-new(root) {
-  animation: vt-in var(--dur-mid) var(--ease-snap) both;
+  animation: page-in 460ms var(--ease-snap) both;
 }
 
-@keyframes vt-out {
+@keyframes page-out {
   to {
-    opacity: 0;
-    transform: translateY(-6px);
+    opacity: 0.4;
+    transform: translateY(-28px) scale(0.985);
   }
 }
-@keyframes vt-in {
+@keyframes page-in {
   from {
-    opacity: 0;
-    transform: translateY(14px);
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(26px);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
   }
 }
 
-/* Chrome is the frame; it shouldn't cross-fade with the page. Naming these
-   lifts them out of the root snapshot so they hold still while content
-   changes underneath. */
+/* The chrome is the frame; it shouldn't slide with the page. Naming these
+   lifts them out of the root snapshot so they hold still while the content
+   changes underneath. The footer is deliberately NOT named: it sits at a
+   different point in every page's height, so a named footer flies across
+   the viewport on any navigation between pages of different lengths. */
 [data-vt="announcement"] {
   view-transition-name: site-announcement;
 }
 [data-vt="header"] {
   view-transition-name: site-header;
 }
-[data-vt="footer"] {
-  view-transition-name: site-footer;
-}
 
 /* The product image morphs from grid card to product page. The name is put
    on the clicked card at click time (see TransitionLink) and lives
    permanently on the product page's hero, so exactly one element carries it
-   in each snapshot — duplicates would break the whole transition. */
+   in each snapshot — duplicates would break the whole transition.
+
+   Slower than the page itself: this is the thing the eye is meant to
+   follow, and it has real distance to cover. */
 [data-morph-active] {
   view-transition-name: product-hero;
 }
 ::view-transition-group(product-hero) {
-  animation-duration: 340ms;
+  animation-duration: 520ms;
   animation-timing-function: var(--ease-snap);
+}
+/* Cross-fade the two images slowly across the whole morph, so it reads as
+   one object changing rather than a hard swap partway through. */
+::view-transition-old(product-hero),
+::view-transition-new(product-hero) {
+  animation-duration: 520ms;
+  animation-timing-function: linear;
 }
 
 @media (prefers-reduced-motion: reduce) {
