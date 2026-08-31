@@ -22,9 +22,12 @@ type Result =
 
 export async function markOrderPaid(args: {
   reference: string;
-  paidAmountKobo: number;
+  /** Amount Paystack confirmed, in the charge currency's subunit. */
+  paidAmountMinor: number;
 }): Promise<Result> {
-  console.log(`[markOrderPaid] start — reference=${args.reference} paidKobo=${args.paidAmountKobo}`);
+  console.log(
+    `[markOrderPaid] start — reference=${args.reference} paidMinor=${args.paidAmountMinor}`,
+  );
 
   const order = await prisma.order.findFirst({
     where: { paystackReference: args.reference },
@@ -38,8 +41,12 @@ export async function markOrderPaid(args: {
     return { ok: false, reason: "not_found" };
   }
 
+  // What we actually asked Paystack for, recorded at initialize time. Falls
+  // back to naira for orders created before multi-currency existed.
+  const expectedMinor = order.chargeAmountMinor ?? order.totalNGN * 100;
+
   console.log(
-    `[markOrderPaid] found order id=${order.id} number=${order.orderNumber} status=${order.status} totalNGN=${order.totalNGN} expectedKobo=${order.totalNGN * 100}`,
+    `[markOrderPaid] found order id=${order.id} number=${order.orderNumber} status=${order.status} totalNGN=${order.totalNGN} chargeCurrency=${order.chargeCurrency} expectedMinor=${expectedMinor}`,
   );
 
   if (order.status === "PAID") {
@@ -51,9 +58,9 @@ export async function markOrderPaid(args: {
   // verify response is the source of truth. A mismatch could be caused by
   // test/live mode rounding or a price that changed between order creation
   // and payment. Log it so we can investigate but proceed to mark as PAID.
-  if (args.paidAmountKobo !== order.totalNGN * 100) {
+  if (args.paidAmountMinor !== expectedMinor) {
     console.warn(
-      `[markOrderPaid] amount mismatch for ${args.reference}: paid=${args.paidAmountKobo} expected=${order.totalNGN * 100} — proceeding anyway (Paystack confirmed success)`,
+      `[markOrderPaid] amount mismatch for ${args.reference}: paid=${args.paidAmountMinor} expected=${expectedMinor} (${order.chargeCurrency}) — proceeding anyway (Paystack confirmed success)`,
     );
   }
 
@@ -108,11 +115,19 @@ async function sendPaidEmails(orderId: string) {
     totalNGN: full.totalNGN,
     subtotalNGN: full.subtotalNGN,
     shippingNGN: full.shippingNGN,
+    // Presentment: the receipt must repeat the figures the customer agreed
+    // to, not today's conversion of them.
+    currency: full.currency,
+    fxRateNgnPerUnit: full.fxRateNgnPerUnit,
+    totalMinor: full.totalMinor,
+    subtotalMinor: full.subtotalMinor,
+    shippingMinor: full.shippingMinor,
     items: full.items.map((i) => ({
       productName: i.productName,
       variantSize: i.variantSize,
       quantity: i.quantity,
       unitPriceNGN: i.unitPriceNGN,
+      unitPriceMinor: i.unitPriceMinor,
     })),
     customer: full.customer,
     address: full.address,

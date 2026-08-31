@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getOrderById } from "@/lib/server/orders";
 import { formatNaira } from "@/lib/utils";
+import { formatStored } from "@/lib/currency";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
@@ -124,6 +125,15 @@ export default async function AdminOrderDetailPage({
               <p>Total</p>
               <p>{formatNaira(order.totalNGN)}</p>
             </div>
+            {order.currency !== "NGN" && order.totalMinor != null && (
+              // Naira is the book; this is the figure the customer agreed to.
+              <p className="mt-2 font-mono-tight text-ink/55">
+                Customer paid{" "}
+                {formatStored(order.totalNGN, order.totalMinor, order.currency)} ·
+                rate ₦{order.fxRateNgnPerUnit?.toLocaleString()}/{order.currency} ·
+                charged in {order.chargeCurrency}
+              </p>
+            )}
           </div>
 
           {order.paystackReference && (

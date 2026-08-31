@@ -1,5 +1,6 @@
 import "server-only";
 import { formatNaira } from "@/lib/utils";
+import { formatStored } from "@/lib/currency";
 import { siteConfig } from "@/config/site";
 
 type OrderLine = {
@@ -7,6 +8,7 @@ type OrderLine = {
   variantSize: string;
   quantity: number;
   unitPriceNGN: number;
+  unitPriceMinor?: number | null;
 };
 
 type OrderForEmail = {
@@ -14,6 +16,13 @@ type OrderForEmail = {
   totalNGN: number;
   subtotalNGN: number;
   shippingNGN: number;
+  // Presentment currency and the figures the customer actually saw. Absent
+  // (or "NGN") means a naira order and the *NGN fields stand on their own.
+  currency?: string;
+  fxRateNgnPerUnit?: number | null;
+  totalMinor?: number | null;
+  subtotalMinor?: number | null;
+  shippingMinor?: number | null;
   items: OrderLine[];
   customer: { firstName: string; lastName: string; email: string; phone: string | null };
   address: {
@@ -92,7 +101,33 @@ function sectionLabel(text: string): string {
   return `<p style="margin:28px 0 8px;font-family:monospace,'Courier New',Courier;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:${C.muted};font-weight:700;border-bottom:2px solid ${C.ink};padding-bottom:5px;">${escapeHtml(text)}</p>`;
 }
 
-function itemsTable(items: OrderLine[]): string {
+/** Format an order amount in the currency the customer checked out in. */
+function money(o: OrderForEmail, amountNGN: number, amountMinor?: number | null): string {
+  return formatStored(amountNGN, amountMinor, o.currency ?? "NGN");
+}
+
+function lineTotal(o: OrderForEmail, item: OrderLine): string {
+  return money(
+    o,
+    item.unitPriceNGN * item.quantity,
+    item.unitPriceMinor == null ? null : item.unitPriceMinor * item.quantity,
+  );
+}
+
+function isForeign(o: OrderForEmail): boolean {
+  return Boolean(o.currency && o.currency !== "NGN" && o.totalMinor != null);
+}
+
+/** Merchant-facing note: naira is the book, this is what the customer saw. */
+function presentmentNote(o: OrderForEmail): string {
+  if (!isForeign(o)) return "";
+  return `<p style="margin:6px 0 0;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">
+    Customer paid ${money(o, o.totalNGN, o.totalMinor)} · rate ₦${o.fxRateNgnPerUnit}/${escapeHtml(o.currency ?? "")}
+  </p>`;
+}
+
+function itemsTable(o: OrderForEmail): string {
+  const items = o.items;
   const rows = items.map((item, idx) => `
     <tr>
       <td style="padding:10px 0;border-bottom:1px solid ${C.lineLight};font-family:monospace,'Courier New',Courier;font-size:11px;color:${C.muted};vertical-align:top;width:28px;">
@@ -103,18 +138,18 @@ function itemsTable(items: OrderLine[]): string {
         <div style="font-size:12px;color:${C.muted};margin-top:2px;font-family:monospace,'Courier New',Courier;letter-spacing:0.05em;">SIZE ${escapeHtml(item.variantSize)} × ${item.quantity}</div>
       </td>
       <td style="padding:10px 0;border-bottom:1px solid ${C.lineLight};text-align:right;white-space:nowrap;font-family:monospace,'Courier New',Courier;font-size:13px;font-weight:700;vertical-align:top;">
-        ${formatNaira(item.unitPriceNGN * item.quantity)}
+        ${lineTotal(o, item)}
       </td>
     </tr>`).join("");
 
   return `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${rows}</table>`;
 }
 
-function totalBlock(subtotal: number, total: number): string {
+function totalBlock(o: OrderForEmail): string {
   return `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:4px;">
     <tr>
       <td style="padding:6px 0;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">Subtotal</td>
-      <td style="padding:6px 0;text-align:right;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">${formatNaira(subtotal)}</td>
+      <td style="padding:6px 0;text-align:right;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">${money(o, o.subtotalNGN, o.subtotalMinor)}</td>
     </tr>
     <tr>
       <td style="padding:6px 0;font-family:monospace,'Courier New',Courier;font-size:12px;color:${C.muted};">Shipping</td>
@@ -122,7 +157,7 @@ function totalBlock(subtotal: number, total: number): string {
     </tr>
     <tr>
       <td style="padding:12px 0 0;border-top:2px solid ${C.ink};font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Total</td>
-      <td style="padding:12px 0 0;border-top:2px solid ${C.ink};text-align:right;font-family:monospace,'Courier New',Courier;font-size:20px;font-weight:700;">${formatNaira(total)}</td>
+      <td style="padding:12px 0 0;border-top:2px solid ${C.ink};text-align:right;font-family:monospace,'Courier New',Courier;font-size:20px;font-weight:700;">${money(o, o.totalNGN, o.totalMinor)}</td>
     </tr>
   </table>`;
 }
@@ -157,8 +192,8 @@ export function customerOrderConfirmation(o: OrderForEmail) {
     </p>
 
     ${sectionLabel("Items")}
-    ${itemsTable(o.items)}
-    <div style="margin-top:8px;">${totalBlock(o.subtotalNGN, o.totalNGN)}</div>
+    ${itemsTable(o)}
+    <div style="margin-top:8px;">${totalBlock(o)}</div>
 
     ${o.address ? `
       ${sectionLabel("Deliver to")}
@@ -183,11 +218,11 @@ export function customerOrderConfirmation(o: OrderForEmail) {
     `Thank you, ${o.customer.firstName}.`,
     ``,
     `Items:`,
-    ...o.items.map((i) => `  ${String(o.items.indexOf(i) + 1).padStart(2, "0")}  ${i.productName} (SIZE ${i.variantSize}) × ${i.quantity} — ${formatNaira(i.unitPriceNGN * i.quantity)}`),
+    ...o.items.map((i) => `  ${String(o.items.indexOf(i) + 1).padStart(2, "0")}  ${i.productName} (SIZE ${i.variantSize}) × ${i.quantity} — ${lineTotal(o, i)}`),
     ``,
-    `Subtotal: ${formatNaira(o.subtotalNGN)}`,
+    `Subtotal: ${money(o, o.subtotalNGN, o.subtotalMinor)}`,
     `Shipping: Paid on delivery`,
-    `Total:    ${formatNaira(o.totalNGN)}`,
+    `Total:    ${money(o, o.totalNGN, o.totalMinor)}`,
     ``,
     o.address
       ? [
@@ -222,8 +257,9 @@ export function adminNewOrderNotification(o: OrderForEmail, opts: { siteUrl: str
     </p>
 
     ${sectionLabel("Items")}
-    ${itemsTable(o.items)}
+    ${itemsTable(o)}
     <p style="margin:12px 0 0;font-family:monospace,'Courier New',Courier;font-size:18px;font-weight:700;color:${C.ink};">Total: ${formatNaira(o.totalNGN)}</p>
+    ${presentmentNote(o)}
 
     ${o.address ? `
       ${sectionLabel("Deliver to")}
@@ -240,9 +276,10 @@ export function adminNewOrderNotification(o: OrderForEmail, opts: { siteUrl: str
     `${o.customer.firstName} ${o.customer.lastName} · ${o.customer.email}${o.customer.phone ? ` · ${o.customer.phone}` : ""}`,
     ``,
     `Items:`,
-    ...o.items.map((i) => `  ${i.productName} (SIZE ${i.variantSize}) × ${i.quantity} — ${formatNaira(i.unitPriceNGN * i.quantity)}`),
+    ...o.items.map((i) => `  ${i.productName} (SIZE ${i.variantSize}) × ${i.quantity} — ${lineTotal(o, i)}`),
     ``,
     `Total: ${formatNaira(o.totalNGN)}`,
+    ...(isForeign(o) ? [`Customer paid: ${money(o, o.totalNGN, o.totalMinor)} at ₦${o.fxRateNgnPerUnit}/${o.currency}`] : []),
     ``,
     o.address
       ? [

@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
 async function handleChargeSuccess(data: ChargeData) {
   if (!data.reference || typeof data.amount !== "number") return;
-  await markOrderPaid({ reference: data.reference, paidAmountKobo: data.amount });
+  await markOrderPaid({ reference: data.reference, paidAmountMinor: data.amount });
 }
 
 function signaturesMatch(expectedHex: string, gotHex: string) {

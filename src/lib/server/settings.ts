@@ -28,6 +28,11 @@ export const SETTING_KEYS = [
   "campaign.image_alt",
   // Notifications
   "notifications.admin_email",
+  // Currency — naira is the source of truth; USD is derived from this rate.
+  "currency.usd_enabled",
+  "currency.ngn_per_usd",
+  "currency.usd_rounding",
+  "currency.charge_in_usd",
 ] as const;
 export type SettingKey = (typeof SETTING_KEYS)[number];
 
@@ -59,6 +64,13 @@ const fallback: Record<SettingKey, string> = {
   "campaign.image_url": "",
   "campaign.image_alt": "",
   "notifications.admin_email": "",
+  "currency.usd_enabled": "false",
+  "currency.ngn_per_usd": "1600",
+  "currency.usd_rounding": "charm",
+  // Off until Paystack has USD enabled on the business and a domiciliary
+  // account to settle into. Until then USD is display-only and the card is
+  // charged in naira.
+  "currency.charge_in_usd": "false",
 };
 
 export async function getAllSettings(): Promise<Record<SettingKey, string>> {
