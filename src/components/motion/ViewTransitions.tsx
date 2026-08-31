@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 /**
@@ -12,21 +12,31 @@ import { usePathname, useRouter } from "next/navigation";
  * business running an experimental React build. The native API is the same
  * underlying browser feature, and browsers without it simply navigate.
  *
+ * Every internal link is caught here, in one capture-phase listener, rather
+ * than by wrapping each <Link> in a custom component. Coverage was the whole
+ * problem with the wrapper approach: the header cart, shop filters,
+ * breadcrumbs and the collections pages all kept plain links, so most of the
+ * site navigated with no transition at all and the feature looked broken.
+ * A listener cannot be forgotten by the next link someone adds.
+ *
+ * Capture phase matters: it runs before React's own handlers, and Next's
+ * <Link> checks `e.defaultPrevented` and bails, so there is no double
+ * navigation. We deliberately do NOT stopPropagation — menus and dropdowns
+ * still get their click and close themselves.
+ *
  * The awkward part is that `startViewTransition` wants the DOM updated inside
  * its callback, while an App Router navigation is async. So the callback
- * returns a promise that this provider resolves once the new route has
- * committed — with a timeout, because a transition whose promise never
- * settles leaves the page frozen under a screenshot.
+ * returns a promise resolved once the new route has committed — with a
+ * timeout, because a transition whose promise never settles leaves the page
+ * frozen under a screenshot.
  */
 
-type MorphTarget = { element: HTMLElement; attribute: string } | null;
-type Navigate = (href: string, morph?: MorphTarget) => void;
-
-/** Marks the element on the INCOMING page that the morph should land on. */
+/** Marks the element on the INCOMING page a morph should land on. */
 const MORPH_TARGET = "data-morph-target";
+/** Carries the shared view-transition-name; only ever set while morphing. */
 const MORPH_ACTIVE = "data-morph-active";
-
-const Ctx = createContext<{ navigate: Navigate }>({ navigate: () => {} });
+/** Opt a single link out of transitions: <a data-no-transition>. */
+const OPT_OUT = "data-no-transition";
 
 /** Longest we will hold the page under a transition snapshot. */
 const COMMIT_TIMEOUT_MS = 700;
@@ -58,28 +68,19 @@ export function ViewTransitions({ children }: { children: React.ReactNode }) {
     p.resolve();
   }, [pathname]);
 
-  const navigate = useCallback<Navigate>(
-    (href, morph) => {
-      const supported =
-        typeof document !== "undefined" &&
-        typeof document.startViewTransition === "function";
-      const reduced =
-        typeof window !== "undefined" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      if (!supported || reduced) {
+  const navigate = useCallback(
+    (href: string, morphElement: HTMLElement | null) => {
+      if (!supportsViewTransitions() || prefersReducedMotion()) {
         router.push(href);
         return;
       }
 
-      // Tag the element that should morph across the navigation. Set as an
-      // attribute (styled in globals.css) rather than an inline style so the
-      // name lives in one place. Any element still tagged from an
-      // interrupted navigation is cleared first: two elements sharing a
-      // view-transition-name makes the browser drop the transition entirely.
-      if (morph) {
+      // Any element still tagged from an interrupted navigation is cleared
+      // first: two elements sharing a view-transition-name makes the browser
+      // drop the transition entirely.
+      if (morphElement) {
         clearMorphNames();
-        morph.element.setAttribute(morph.attribute, "");
+        morphElement.setAttribute(MORPH_ACTIVE, "");
       }
 
       const transition = document.startViewTransition(
@@ -89,12 +90,12 @@ export function ViewTransitions({ children }: { children: React.ReactNode }) {
               pending.current = null;
               resolve();
             }, COMMIT_TIMEOUT_MS);
-            pending.current = { resolve, timer, morphing: Boolean(morph) };
+            pending.current = { resolve, timer, morphing: Boolean(morphElement) };
             router.push(href);
           }),
       );
 
-      // Always untag — both the card we left and the element we landed on —
+      // Always untag — both the element we left and the one we landed on —
       // whether the transition finished or was interrupted by another
       // navigation. A stale name collides with the next one.
       transition.finished.then(clearMorphNames, clearMorphNames);
@@ -102,15 +103,72 @@ export function ViewTransitions({ children }: { children: React.ReactNode }) {
     [router],
   );
 
-  return <Ctx.Provider value={{ navigate }}>{children}</Ctx.Provider>;
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      const target = resolveInternalLink(event);
+      if (!target) return;
+
+      event.preventDefault();
+      // A card can nominate the element that should fly to the next page.
+      const morphElement = target.anchor.querySelector<HTMLElement>("[data-morph]");
+      navigate(target.href, morphElement);
+    };
+
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, [navigate]);
+
+  return <>{children}</>;
+}
+
+/**
+ * The click is ours only if it is a plain left-click on a same-origin link
+ * that actually changes the page. Everything else — new-tab clicks, downloads,
+ * external hosts, in-page anchors — keeps the browser's own behaviour.
+ */
+function resolveInternalLink(event: MouseEvent): { anchor: HTMLElement; href: string } | null {
+  if (event.defaultPrevented) return null;
+  if (event.button !== 0) return null;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return null;
+
+  const node = event.target as Element | null;
+  const anchor = node?.closest?.("a");
+  if (!anchor) return null;
+  if (anchor.hasAttribute("download") || anchor.hasAttribute(OPT_OUT)) return null;
+
+  const linkTarget = anchor.getAttribute("target");
+  if (linkTarget && linkTarget !== "_self") return null;
+
+  const raw = anchor.getAttribute("href");
+  if (!raw || raw.startsWith("#")) return null;
+
+  let url: URL;
+  try {
+    url = new URL((anchor as HTMLAnchorElement).href, location.href);
+  } catch {
+    return null;
+  }
+  // mailto:, tel:, and any other host.
+  if (url.origin !== location.origin) return null;
+  // Same page — either a pure hash jump or a no-op. Let the browser scroll.
+  if (url.pathname === location.pathname && url.search === location.search) return null;
+
+  return { anchor: anchor as HTMLElement, href: url.pathname + url.search };
+}
+
+function supportsViewTransitions() {
+  return typeof document !== "undefined" && typeof document.startViewTransition === "function";
+}
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
 }
 
 function clearMorphNames() {
   document
     .querySelectorAll(`[${MORPH_ACTIVE}]`)
     .forEach((el) => el.removeAttribute(MORPH_ACTIVE));
-}
-
-export function useViewTransitionRouter() {
-  return useContext(Ctx);
 }

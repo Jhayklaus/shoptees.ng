@@ -1,6 +1,6 @@
 "use client";
 
-import { TransitionLink as Link } from "@/components/motion/TransitionLink";
+import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, ArrowDown } from "lucide-react";
 import { useEffect, useState } from "react";

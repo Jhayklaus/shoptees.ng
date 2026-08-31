@@ -1,4 +1,4 @@
-import { TransitionLink as Link } from "@/components/motion/TransitionLink";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { listActiveProducts, toDisplayProduct } from "@/lib/server/products";
 import { ProductCard } from "@/components/product/ProductCard";

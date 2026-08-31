@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { TransitionLink as Link } from "@/components/motion/TransitionLink";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { prisma } from "@/lib/db";
 
