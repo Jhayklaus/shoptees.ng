@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { TransitionLink } from "@/components/motion/TransitionLink";
+import Link from "next/link";
 import type { DisplayProduct } from "@/types";
 import { Money } from "@/components/currency/Money";
 
@@ -18,9 +18,8 @@ export function ProductCard({ product, index = 0, offset }: Props) {
   const isSoldOut = totalStock === 0 && product.variants.length > 0;
 
   return (
-    <TransitionLink
+    <Link
       href={`/shop/${product.slug}`}
-      morph
       className={`group block ${offset ? "md:translate-y-16" : ""}`}
     >
       {/* data-morph: the box that flies into place as the product page's
@@ -92,6 +91,6 @@ export function ProductCard({ product, index = 0, offset }: Props) {
           <Money ngn={product.priceNGN} />
         </p>
       </div>
-    </TransitionLink>
+    </Link>
   );
 }

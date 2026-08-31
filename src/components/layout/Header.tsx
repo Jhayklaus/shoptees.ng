@@ -1,6 +1,6 @@
 "use client";
 
-import { TransitionLink as Link } from "@/components/motion/TransitionLink";
+import Link from "next/link";
 import Image from "next/image";
 import { mainNav, type NavItem } from "@/config/nav";
 import { CartButton } from "@/components/cart/CartButton";

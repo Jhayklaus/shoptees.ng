@@ -1,4 +1,4 @@
-import { TransitionLink as Link } from "@/components/motion/TransitionLink";
+import Link from "next/link";
 import { footerNav } from "@/config/nav";
 import { siteConfig } from "@/config/site";
 import { getAllSettings } from "@/lib/server/settings";
