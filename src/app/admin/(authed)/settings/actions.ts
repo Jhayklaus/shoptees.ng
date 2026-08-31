@@ -29,6 +29,10 @@ const allowedKeys = [
   "campaign.image_url",
   "campaign.image_alt",
   "notifications.admin_email",
+  "currency.usd_enabled",
+  "currency.ngn_per_usd",
+  "currency.usd_rounding",
+  "currency.charge_in_usd",
 ] as const;
 type AllowedKey = (typeof allowedKeys)[number];
 
@@ -49,6 +53,15 @@ export async function saveSettingsAction(
 
   const parsed = z.record(z.enum(allowedKeys), valueSchema).safeParse(filtered);
   if (!parsed.success) return { ok: false, error: "Invalid input" };
+
+  // A broken rate would silently reprice the whole catalogue, so refuse it
+  // here rather than letting resolveCurrency quietly fall back to naira.
+  if (parsed.data["currency.usd_enabled"] === "true") {
+    const rate = Number(parsed.data["currency.ngn_per_usd"]);
+    if (!Number.isFinite(rate) || rate <= 0) {
+      return { ok: false, error: "Enter a naira-per-dollar rate greater than zero." };
+    }
+  }
 
   for (const [key, value] of Object.entries(parsed.data)) {
     await setSetting(key, value as string);

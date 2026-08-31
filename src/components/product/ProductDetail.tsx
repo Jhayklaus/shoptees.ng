@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { DisplayProduct, DisplayImage } from "@/types";
-import { formatNaira } from "@/lib/utils";
+import { useMoney } from "@/components/currency/CurrencyProvider";
 import { useCart } from "@/store/cart";
 import { Check, ArrowUpRight } from "lucide-react";
 
@@ -21,6 +21,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
 
   const variant = product.variants.find((v) => v.id === variantId);
   const inStock = (variant?.stock ?? 0) > 0;
+  const money = useMoney();
   const displayPrice = variant?.priceOverrideNGN ?? product.priceNGN;
 
   const onAdd = () => {
@@ -81,7 +82,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
           </h1>
 
           <p className="mt-5 inline-block font-mono-tight text-xl bg-paper-deep px-3 py-1.5">
-            {displayPrice > 0 ? formatNaira(displayPrice) : "Price on request"}
+            {displayPrice > 0 ? money.format(displayPrice) : "Price on request"}
           </p>
 
           <p className="mt-6 text-ink-soft leading-relaxed whitespace-pre-line">
@@ -198,7 +199,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
         <div className="min-w-0">
           <p className="font-condensed text-[0.72rem] truncate">{product.name}</p>
           <p className="font-mono-tight text-sm font-bold">
-            {displayPrice > 0 ? formatNaira(displayPrice * qty) : "—"}
+            {displayPrice > 0 ? money.formatLine(displayPrice, qty) : "—"}
           </p>
         </div>
         <div className="ml-auto shrink-0 w-[55%] max-w-[240px]">

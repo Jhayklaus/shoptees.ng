@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
   const result = await markOrderPaid({
     reference,
-    paidAmountKobo: verification.amount,
+    paidAmountMinor: verification.amount,
   });
 
   if (!result.ok) {

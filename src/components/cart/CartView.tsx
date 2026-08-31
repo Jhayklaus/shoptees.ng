@@ -4,12 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/store/cart";
 import { useHydratedCart } from "@/store/useHydratedCart";
-import { formatNaira } from "@/lib/utils";
+import { useMoney } from "@/components/currency/CurrencyProvider";
 import { Trash2, ArrowUpRight } from "lucide-react";
 
 // Cart styled as a packing slip / waybill: numbered order lines, mono
 // metadata, hard rules, and a stamped summary panel.
 export function CartView() {
+  const money = useMoney();
   const remove = useCart((s) => s.remove);
   const setQuantity = useCart((s) => s.setQuantity);
   const state = useHydratedCart();
@@ -17,6 +18,12 @@ export function CartView() {
   const isLoading = state.status === "loading";
   const lines = state.lines;
   const subtotal = lines.reduce((s, l) => s + l.lineTotalNGN, 0);
+  // Presentment subtotal: sum the converted line totals rather than
+  // converting the naira subtotal, so it matches the lines shown above it.
+  const subtotalMajor = lines.reduce(
+    (s, l) => s + money.line(l.unitPriceNGN, l.quantity),
+    0,
+  );
 
   if (state.status === "ready" && lines.length === 0) {
     return (
@@ -124,7 +131,7 @@ export function CartView() {
 
                 <div className="col-span-6 sm:col-span-2 flex items-center justify-end gap-3">
                   <p className="font-mono-tight font-bold">
-                    {l.lineTotalNGN > 0 ? formatNaira(l.lineTotalNGN) : "—"}
+                    {l.lineTotalNGN > 0 ? money.formatLine(l.unitPriceNGN, l.quantity) : "—"}
                   </p>
                   <button
                     type="button"
@@ -154,7 +161,7 @@ export function CartView() {
             <dl className="mt-4 space-y-2.5">
               <div className="flex justify-between font-mono-tight">
                 <dt className="text-ink/55">Subtotal</dt>
-                <dd className="font-bold">{subtotal > 0 ? formatNaira(subtotal) : "—"}</dd>
+                <dd className="font-bold">{subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}</dd>
               </div>
               <div className="flex justify-between font-mono-tight">
                 <dt className="text-ink/55">Shipping</dt>
@@ -164,7 +171,7 @@ export function CartView() {
             <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
               <p className="font-condensed text-[0.82rem]">Total</p>
               <p className="font-display text-3xl">
-                {subtotal > 0 ? formatNaira(subtotal) : "—"}
+                {subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}
               </p>
             </div>
             <Link

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { DisplayProduct } from "@/types";
-import { formatNaira } from "@/lib/utils";
+import { Money } from "@/components/currency/Money";
 
 type Props = {
   product: DisplayProduct;
@@ -86,7 +86,7 @@ export function ProductCard({ product, index = 0, offset }: Props) {
           )}
         </div>
         <p className="font-mono-tight text-ink whitespace-nowrap bg-paper-deep px-1.5 py-0.5 mt-0.5">
-          {product.priceNGN > 0 ? formatNaira(product.priceNGN) : "—"}
+          <Money ngn={product.priceNGN} />
         </p>
       </div>
     </Link>

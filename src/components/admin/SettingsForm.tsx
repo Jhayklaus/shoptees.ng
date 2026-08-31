@@ -38,6 +38,12 @@ const CAMPAIGN_FIELDS = [
   { key: "campaign.cta_href", label: "Button link", hint: "Path or full URL." },
 ] as const;
 
+const ROUNDING_OPTIONS = [
+  { value: "charm", label: "Charm — $27.99" },
+  { value: "whole", label: "Whole dollars — $28" },
+  { value: "exact", label: "Exact conversion — $27.43" },
+] as const;
+
 const ALL_KEYS = [
   ...STOREFRONT_FIELDS.map((f) => f.key),
   ...NOTIFICATION_FIELDS.map((f) => f.key),
@@ -48,6 +54,10 @@ const ALL_KEYS = [
   "campaign.enabled",
   "campaign.image_url",
   "campaign.image_alt",
+  "currency.usd_enabled",
+  "currency.ngn_per_usd",
+  "currency.usd_rounding",
+  "currency.charge_in_usd",
 ] as const;
 
 type AnyKey = (typeof ALL_KEYS)[number];
@@ -67,6 +77,9 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
     setValues((s) => ({ ...s, [k]: v }));
 
   const campaignOn = values["campaign.enabled"] === "true";
+  const usdOn = values["currency.usd_enabled"] === "true";
+  const rate = Number(values["currency.ngn_per_usd"]);
+  const rateValid = Number.isFinite(rate) && rate > 0;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,6 +132,76 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
             type={"type" in f ? f.type : undefined}
           />
         ))}
+      </section>
+
+      {/* ── Currency ─────────────────────────────────────────────────── */}
+      <section className="space-y-5">
+        <header className="border-b border-line pb-2 flex items-center justify-between gap-4">
+          <div>
+            <h3 className="font-display text-2xl tracking-tight">Currency</h3>
+            <p className="font-italic-accent text-ink/55">
+              Products are always priced in naira. Turning this on shows a ₦ / $
+              switcher in the header and converts every price at the rate below.
+              Visitors outside Nigeria see dollars by default.
+            </p>
+          </div>
+          <Toggle
+            checked={usdOn}
+            onChange={(v) => set("currency.usd_enabled", v ? "true" : "false")}
+            label="USD on"
+          />
+        </header>
+
+        <div className={usdOn ? "space-y-5" : "space-y-5 opacity-60 pointer-events-none"}>
+          <Field
+            id="currency.ngn_per_usd"
+            label="Naira per US dollar"
+            hint="Your rate, not the market's — build in whatever buffer you want. Update it when the naira moves."
+            value={values["currency.ngn_per_usd"]}
+            onChange={(v) => set("currency.ngn_per_usd", v)}
+          />
+          {usdOn && !rateValid && (
+            <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+              Enter a rate greater than zero, or dollar prices stay switched off.
+            </p>
+          )}
+
+          <div>
+            <label htmlFor="currency.usd_rounding" className="block font-mono-tight text-ink/55 mb-1">
+              Price rounding
+            </label>
+            <select
+              id="currency.usd_rounding"
+              value={values["currency.usd_rounding"] || "charm"}
+              onChange={(e) => set("currency.usd_rounding", e.target.value)}
+              className="w-full border-2 border-line focus:border-vermillion outline-none px-3 py-2 font-display text-lg bg-paper"
+            >
+              {ROUNDING_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+            <p className="font-italic-accent text-ink/55 mt-1">
+              How converted prices land. {rateValid ? previewPrice(rate, values["currency.usd_rounding"]) : ""}
+            </p>
+          </div>
+
+          <div className="border-2 border-line p-4 flex items-start justify-between gap-4">
+            <div>
+              <p className="font-display text-lg">Charge cards in USD</p>
+              <p className="font-italic-accent text-ink/55">
+                Off: customers see dollars but Paystack charges the naira
+                equivalent and their bank converts. Only turn this on once
+                Paystack has USD enabled on your business and a domiciliary
+                account to settle into — otherwise payments will fail.
+              </p>
+            </div>
+            <Toggle
+              checked={values["currency.charge_in_usd"] === "true"}
+              onChange={(v) => set("currency.charge_in_usd", v ? "true" : "false")}
+              label="USD charge"
+            />
+          </div>
+        </div>
       </section>
 
       {/* ── Homepage hero ────────────────────────────────────────────── */}
@@ -289,4 +372,17 @@ function Toggle({
       />
     </button>
   );
+}
+
+// Shows the admin what a real product price becomes under the current rule.
+function previewPrice(rate: number, rounding: string): string {
+  const sample = 45000;
+  const raw = sample / rate;
+  const out =
+    rounding === "whole"
+      ? Math.ceil(raw)
+      : rounding === "exact"
+        ? Math.round(raw * 100) / 100
+        : Math.max(0.99, Math.ceil(raw) - 0.01);
+  return `A ₦${sample.toLocaleString()} product shows as $${out.toFixed(2)}.`;
 }

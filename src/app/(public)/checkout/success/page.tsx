@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
 import { getOrderByNumber, getOrderByPaystackReference } from "@/lib/server/orders";
-import { formatNaira } from "@/lib/utils";
+import { formatStored } from "@/lib/currency";
 import { isPaystackConfigured, verifyTransaction } from "@/lib/paystack";
 import { markOrderPaid } from "@/lib/server/markOrderPaid";
 import { PaymentPoller } from "@/components/checkout/PaymentPoller";
@@ -140,14 +140,20 @@ export default async function CheckoutSuccessPage({
                   </div>
                 </div>
                 <p className="font-mono-tight whitespace-nowrap">
-                  {formatNaira(item.unitPriceNGN * item.quantity)}
+                  {formatStored(
+                    item.unitPriceNGN * item.quantity,
+                    item.unitPriceMinor == null ? null : item.unitPriceMinor * item.quantity,
+                    order.currency,
+                  )}
                 </p>
               </li>
             ))}
           </ul>
           <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
             <p className="font-condensed text-[0.82rem]">Total</p>
-            <p className="font-display text-3xl">{formatNaira(order.totalNGN)}</p>
+            <p className="font-display text-3xl">
+              {formatStored(order.totalNGN, order.totalMinor, order.currency)}
+            </p>
           </div>
         </section>
 
@@ -200,6 +206,6 @@ async function reconcilePaystack(reference: string) {
     console.log(`[reconcilePaystack] payment not successful (${verification.status}) — not marking paid`);
     return;
   }
-  const result = await markOrderPaid({ reference, paidAmountKobo: verification.amount });
+  const result = await markOrderPaid({ reference, paidAmountMinor: verification.amount });
   console.log(`[reconcilePaystack] markOrderPaid result=${JSON.stringify(result)}`);
 }

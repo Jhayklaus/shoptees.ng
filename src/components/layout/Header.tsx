@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { mainNav, type NavItem } from "@/config/nav";
 import { CartButton } from "@/components/cart/CartButton";
+import { CurrencySwitcher } from "@/components/currency/CurrencySwitcher";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, ChevronDown, ArrowUpRight } from "lucide-react";
 
@@ -87,7 +88,8 @@ export function Header({
           />
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <CurrencySwitcher className="hidden sm:inline-flex" />
           <CartButton />
         </div>
       </div>
@@ -318,6 +320,11 @@ function MobileMenu({
           );
         })}
       </ul>
+
+      <div className="px-5 pb-5 sm:hidden">
+        <p className="font-mono-tight text-ink/55 mb-2">Currency</p>
+        <CurrencySwitcher />
+      </div>
     </div>
   );
 }

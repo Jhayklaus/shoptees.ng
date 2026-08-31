@@ -4,25 +4,35 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/store/cart";
 import { useHydratedCart } from "@/store/useHydratedCart";
-import { formatNaira } from "@/lib/utils";
+import { useMoney } from "@/components/currency/CurrencyProvider";
+import { formatMoney } from "@/lib/currency";
+import { SHIPPING_COUNTRIES, SHIPPING_COUNTRY_NAMES } from "@/lib/constants";
 
 const PAYSTACK_PUBLIC_KEY = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "";
 
-const NIGERIAN_STATES = [
-  "Lagos", "FCT - Abuja", "Rivers", "Oyo", "Kano", "Kaduna", "Enugu",
-  "Anambra", "Ogun", "Edo", "Delta", "Akwa Ibom", "Cross River", "Imo",
-  "Plateau", "Other",
-] as const;
-
 export function CheckoutForm() {
   const router = useRouter();
+  const money = useMoney();
   const cart = useHydratedCart();
+  // Destination drives the region/postal fields. Default to the country that
+  // matches the currency being browsed in — a US visitor shouldn't have to
+  // find "United States" in a list before the form makes sense.
+  const [country, setCountry] = useState(
+    money.code === "USD" ? "United States" : "Nigeria",
+  );
+  const destination = SHIPPING_COUNTRIES[country] ?? SHIPPING_COUNTRIES.Nigeria;
   const clearCart = useCart((s) => s.clear);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const lines = cart.lines;
   const subtotal = lines.reduce((s, l) => s + l.lineTotalNGN, 0);
+  // Presentment subtotal: sum the converted line totals rather than
+  // converting the naira subtotal, so it matches the lines shown above it.
+  const subtotalMajor = lines.reduce(
+    (s, l) => s + money.line(l.unitPriceNGN, l.quantity),
+    0,
+  );
   const paystackReady = Boolean(PAYSTACK_PUBLIC_KEY);
   const empty = cart.status === "ready" && lines.length === 0;
 
@@ -42,6 +52,7 @@ export function CheckoutForm() {
         city: String(fd.get("city") ?? ""),
         state: String(fd.get("state") ?? ""),
         postal: String(fd.get("postal") ?? "") || null,
+        country,
       },
       lines: lines.map((l) => ({
         productId: l.productId,
@@ -111,13 +122,32 @@ export function CheckoutForm() {
               <Field id="firstName" label="First name" autoComplete="given-name" required />
               <Field id="lastName" label="Last name" autoComplete="family-name" required />
             </div>
+            <SelectField
+              id="country"
+              label="Country"
+              required
+              options={SHIPPING_COUNTRY_NAMES}
+              value={country}
+              onChange={setCountry}
+            />
             <Field id="address1" label="Street address" autoComplete="address-line1" required />
             <Field id="address2" label="Apt, suite, etc. (optional)" autoComplete="address-line2" />
             <div className="grid grid-cols-2 gap-x-4">
               <Field id="city" label="City" autoComplete="address-level2" required />
-              <SelectField id="state" label="State" required options={[...NIGERIAN_STATES]} />
+              <SelectField
+                key={country}
+                id="state"
+                label={destination.stateLabel}
+                required
+                options={[...destination.states]}
+              />
             </div>
-            <Field id="postal" label="Postal code (optional)" autoComplete="postal-code" />
+            <Field
+              id="postal"
+              label={destination.postalLabel}
+              autoComplete="postal-code"
+              required={destination.postalRequired}
+            />
           </fieldset>
 
           <fieldset>
@@ -132,8 +162,18 @@ export function CheckoutForm() {
                     Cards · bank transfer · USSD
                   </p>
                 </div>
-                <div className="font-mono-tight text-ink/55">₦ NGN</div>
+                <div className="font-mono-tight text-ink/55">
+                  {money.code === "NGN" ? "₦ NGN" : `$ ${money.code}`}
+                </div>
               </div>
+              {money.code !== "NGN" && subtotal > 0 && (
+                <p className="mt-4 font-mono-tight text-ink/55 leading-relaxed">
+                  Prices are shown in {money.code} at ₦{money.rate.toLocaleString()}/
+                  {money.code}. Your card is charged{" "}
+                  <span className="text-ink">{formatMoney(subtotal, "NGN")}</span> and your
+                  bank converts at its own rate, so the final amount may differ by a little.
+                </p>
+              )}
               {!paystackReady && (
                 <p className="mt-4 bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
                   Online payment is temporarily unavailable. Your order will be
@@ -174,7 +214,7 @@ export function CheckoutForm() {
                     </div>
                   </div>
                   <p className="font-mono-tight whitespace-nowrap">
-                    {l.lineTotalNGN > 0 ? formatNaira(l.lineTotalNGN) : "—"}
+                    {l.lineTotalNGN > 0 ? money.formatLine(l.unitPriceNGN, l.quantity) : "—"}
                   </p>
                 </li>
               ))}
@@ -192,7 +232,7 @@ export function CheckoutForm() {
             <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
               <p className="font-condensed text-[0.82rem]">Total</p>
               <p className="font-display text-3xl">
-                {subtotal > 0 ? formatNaira(subtotal) : "—"}
+                {subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}
               </p>
             </div>
             <button
@@ -252,12 +292,17 @@ function SelectField({
   label,
   options,
   required,
+  value,
+  onChange,
 }: {
   id: string;
   label: string;
   options: string[];
   required?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
 }) {
+  const controlled = value !== undefined;
   return (
     <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
       <label htmlFor={id} className="block font-mono-tight text-ink/55">
@@ -269,9 +314,11 @@ function SelectField({
         name={id}
         required={required}
         className="w-full bg-transparent py-1 outline-none font-display text-lg"
-        defaultValue=""
+        {...(controlled
+          ? { value, onChange: (e) => onChange?.(e.target.value) }
+          : { defaultValue: "" })}
       >
-        <option value="" disabled>Select…</option>
+        {!controlled && <option value="" disabled>Select…</option>}
         {options.map((o) => (
           <option key={o} value={o}>
             {o}

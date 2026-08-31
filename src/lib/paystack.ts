@@ -15,7 +15,10 @@ export function isPaystackConfigured() {
 
 type InitInput = {
   email: string;
-  amountKobo: number;
+  /** Amount in the currency's subunit — kobo for NGN, cents for USD. */
+  amountMinor: number;
+  /** Paystack only accepts currencies enabled on the business. */
+  currency: "NGN" | "USD";
   reference: string;
   callbackUrl: string;
   metadata?: Record<string, unknown>;
@@ -36,10 +39,10 @@ export async function initializeTransaction(input: InitInput): Promise<InitRespo
     },
     body: JSON.stringify({
       email: input.email,
-      amount: input.amountKobo,
+      amount: input.amountMinor,
       reference: input.reference,
       callback_url: input.callbackUrl,
-      currency: "NGN",
+      currency: input.currency,
       metadata: input.metadata ?? {},
     }),
     cache: "no-store",
