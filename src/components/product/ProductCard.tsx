@@ -1,5 +1,5 @@
-import Link from "next/link";
 import Image from "next/image";
+import { TransitionLink } from "@/components/motion/TransitionLink";
 import type { DisplayProduct } from "@/types";
 import { Money } from "@/components/currency/Money";
 
@@ -18,11 +18,14 @@ export function ProductCard({ product, index = 0, offset }: Props) {
   const isSoldOut = totalStock === 0 && product.variants.length > 0;
 
   return (
-    <Link
+    <TransitionLink
       href={`/shop/${product.slug}`}
+      morph
       className={`group block ${offset ? "md:translate-y-16" : ""}`}
     >
-      <div className="relative overflow-hidden bg-paper-deep aspect-[4/5]">
+      {/* data-morph: the box that flies into place as the product page's
+          hero. Same 4:5 ratio on both ends, so it scales rather than warps. */}
+      <div data-morph className="relative overflow-hidden bg-paper-deep aspect-[4/5]">
         {hero ? (
           <>
             {/* Front (default). Stays put on solo-image products. */}
@@ -89,6 +92,6 @@ export function ProductCard({ product, index = 0, offset }: Props) {
           <Money ngn={product.priceNGN} />
         </p>
       </div>
-    </Link>
+    </TransitionLink>
   );
 }

@@ -19,8 +19,15 @@
   --line: #e6dbcc;
   --line-dark: #33241f;
 
-  /* Motion: snap, don't float. */
+  /* Motion: snap, don't float. One vocabulary, used everywhere.
+     --ease-snap  decelerating, the signature: things arrive and stop dead.
+     --ease-hard  symmetric, for state flips that shouldn't overshoot.
+     Durations stay short — this is a shop, not a showreel. */
   --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-hard: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur-mid: 260ms;
+  --dur-slow: 460ms;
 }
 
 @theme inline {
@@ -365,4 +372,205 @@ body {
   border: none;
   border-top: 2px dashed var(--line-dark);
   opacity: 0.5;
+}
+
+
+/* ── Scroll reveal ───────────────────────────────────────────────────── */
+
+/* Driven by the scroll position itself, not JavaScript: no observer, no
+   client island, and — crucially — no risk of content stranded invisible if
+   a script fails. Browsers without scroll-driven animations simply render
+   the section as-is, which is the correct fallback. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-rise linear both;
+      animation-timeline: view();
+      /* A fixed scroll LENGTH, not a percentage of the cover range. A
+         percentage scales with viewport height, so on a tall window the
+         range outruns the page's scrollable height and sections strand
+         half-faded, or never reveal at all. Anchoring to `entry` also means
+         a section already fully on screen is past the end of its range —
+         i.e. revealed — which is what a short page needs. */
+      animation-range: entry 0% entry 240px;
+    }
+    /* Stagger children of a revealing row (cards, list items). */
+    .reveal-stagger > * {
+      animation: reveal-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 200px;
+    }
+  }
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Sticky header, reacting to scroll ───────────────────────────────── */
+
+/* The bar earns its shadow as the page moves under it. Also scroll-driven,
+   so there is no scroll listener re-rendering React on every frame. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .header-scroll {
+      animation: header-lift linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 90px;
+    }
+  }
+}
+
+@keyframes header-lift {
+  from {
+    box-shadow: 0 0 0 0 rgb(0 0 0 / 0);
+    background-color: color-mix(in srgb, var(--paper) 90%, transparent);
+  }
+  to {
+    box-shadow: 0 6px 0 -3px color-mix(in srgb, var(--ink) 12%, transparent);
+    background-color: color-mix(in srgb, var(--paper) 97%, transparent);
+  }
+}
+
+/* ── View transitions ────────────────────────────────────────────────── */
+
+/* Chrome/Edge/Safari animate between routes; everywhere else the navigation
+   is instant and nothing breaks. Kept fast — a shop that makes you wait for
+   a page to swoop feels slower than one that just changes. */
+::view-transition-group(root) {
+  animation-duration: var(--dur-mid);
+}
+::view-transition-old(root) {
+  animation: vt-out 180ms var(--ease-hard) both;
+}
+::view-transition-new(root) {
+  animation: vt-in var(--dur-mid) var(--ease-snap) both;
+}
+
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* Chrome is the frame; it shouldn't cross-fade with the page. Naming these
+   lifts them out of the root snapshot so they hold still while content
+   changes underneath. */
+[data-vt="announcement"] {
+  view-transition-name: site-announcement;
+}
+[data-vt="header"] {
+  view-transition-name: site-header;
+}
+[data-vt="footer"] {
+  view-transition-name: site-footer;
+}
+
+/* The product image morphs from grid card to product page. The name is put
+   on the clicked card at click time (see TransitionLink) and lives
+   permanently on the product page's hero, so exactly one element carries it
+   in each snapshot — duplicates would break the whole transition. */
+[data-morph-active] {
+  view-transition-name: product-hero;
+}
+::view-transition-group(product-hero) {
+  animation-duration: 340ms;
+  animation-timing-function: var(--ease-snap);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ── Marquees pause when you want to read them ───────────────────────── */
+
+.marquee-hover:hover .animate-marquee,
+.marquee-hover:hover .animate-marquee-slow,
+.marquee-hover:focus-within .animate-marquee,
+.marquee-hover:focus-within .animate-marquee-slow {
+  animation-play-state: paused;
+}
+
+/* ── Mobile menu ─────────────────────────────────────────────────────── */
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+.sheet-in {
+  animation: sheet-in var(--dur-mid) var(--ease-snap) both;
+}
+
+/* Menu rows arrive in sequence rather than all at once. */
+.sheet-in > ul > li {
+  animation: reveal-rise 320ms var(--ease-snap) both;
+  animation-delay: calc(var(--i, 0) * 45ms + 60ms);
+}
+
+/* ── Interactive polish ──────────────────────────────────────────────── */
+
+/* Underline that draws from the left instead of appearing all at once. */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-mid) var(--ease-snap);
+}
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Pressed state for primary actions — a small, physical acknowledgement. */
+.press {
+  transition: transform var(--dur-fast) var(--ease-hard);
+}
+.press:active {
+  transform: translateY(1px) scale(0.995);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-in,
+  .sheet-in > ul > li {
+    animation: none !important;
+  }
+  .link-underline::after,
+  .press {
+    transition: none !important;
+  }
 }

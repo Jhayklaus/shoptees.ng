@@ -227,7 +227,7 @@ function AddButton({
       onClick={onClick}
       disabled={!inStock}
       className={[
-        "btn-wipe btn-wipe-hazard w-full bg-ink text-paper font-condensed transition-colors duration-200 disabled:opacity-40",
+        "btn-wipe btn-wipe-hazard press w-full bg-ink text-paper font-condensed transition-colors duration-200 disabled:opacity-40",
         compact ? "py-3.5 text-[0.78rem]" : "py-4 text-[0.82rem]",
       ].join(" ")}
     >
@@ -282,6 +282,7 @@ function ProductGallery({
     <div onKeyDown={onKeyDown}>
       {/* Hero — selected image, framed like a crate face */}
       <div
+        data-morph-active
         className="relative aspect-[4/5] bg-paper-deep overflow-hidden"
         role="region"
         aria-roledescription="product gallery"

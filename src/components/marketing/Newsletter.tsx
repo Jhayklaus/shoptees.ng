@@ -30,7 +30,7 @@ export function Newsletter() {
   };
 
   return (
-    <section className="bg-ink text-paper py-20 md:py-24 mt-24 grain">
+    <section className="reveal bg-ink text-paper py-20 md:py-24 mt-24 grain">
       <div className="mx-auto max-w-[1400px] px-5 md:px-10 grid grid-cols-12 gap-y-8 gap-x-2 md:gap-8 items-end">
         <div className="col-span-12 md:col-span-7">
           <span className="stamp text-tan">Dispatch list</span>

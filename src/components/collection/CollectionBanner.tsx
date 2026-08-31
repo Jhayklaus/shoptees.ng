@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/motion/TransitionLink";
 import { ArrowUpRight } from "lucide-react";
 
 // Wide editorial banner for a collection — used full-size at the top of

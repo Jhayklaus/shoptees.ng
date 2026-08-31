@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/motion/TransitionLink";
 import Image from "next/image";
 import { ArrowUpRight, ArrowDown } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -123,7 +123,7 @@ export function Hero({ content }: { content: HeroContent }) {
           <div className="flex items-center justify-center gap-3 shrink-0">
             <Link
               href={content.ctaHref || "/shop"}
-              className="btn-wipe btn-wipe-hazard inline-flex items-center gap-2 group bg-paper text-ink px-6 py-3.5 md:px-7 md:py-4 font-condensed text-[0.8rem] hover:text-paper transition-colors duration-200"
+              className="btn-wipe btn-wipe-hazard press inline-flex items-center gap-2 group bg-paper text-ink px-6 py-3.5 md:px-7 md:py-4 font-condensed text-[0.8rem] hover:text-paper transition-colors duration-200"
             >
               {content.ctaLabel || "Shop now"}
               <ArrowUpRight

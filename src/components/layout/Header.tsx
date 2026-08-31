@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/motion/TransitionLink";
 import Image from "next/image";
 import { mainNav, type NavItem } from "@/config/nav";
 import { CartButton } from "@/components/cart/CartButton";
@@ -41,7 +41,10 @@ export function Header({
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md border-b-2 border-ink">
+    <header
+      data-vt="header"
+      className="header-scroll sticky top-0 z-40 bg-paper/90 backdrop-blur-md border-b-2 border-ink"
+    >
       <div className="mx-auto max-w-[1400px] px-5 md:px-10 h-16 flex items-center justify-between">
         <button
           type="button"
@@ -59,7 +62,7 @@ export function Header({
               <Link
                 key={item.href}
                 href={item.href}
-                className="font-condensed text-[0.82rem] text-ink hover:text-vermillion transition-colors"
+                className="link-underline font-condensed text-[0.82rem] text-ink hover:text-vermillion transition-colors"
               >
                 {item.label}
               </Link>
@@ -163,7 +166,7 @@ function NavDropdown({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1 font-condensed text-[0.82rem] text-ink hover:text-vermillion transition-colors"
+        className="link-underline inline-flex items-center gap-1 font-condensed text-[0.82rem] text-ink hover:text-vermillion transition-colors"
       >
         {label}
         <ChevronDown
@@ -256,12 +259,12 @@ function MobileMenu({
     setOpenKinds((s) => ({ ...s, [kind]: !s[kind] }));
 
   return (
-    <div className="md:hidden border-t border-line bg-paper">
+    <div className="sheet-in md:hidden border-t border-line bg-paper">
       <ul className="px-5 py-4 space-y-3">
         {items.map((item, i) => {
           if (item.type === "link") {
             return (
-              <li key={item.href}>
+              <li key={item.href} style={{ "--i": i } as React.CSSProperties}>
                 <Link
                   href={item.href}
                   onClick={onClose}
@@ -275,7 +278,7 @@ function MobileMenu({
           const open = Boolean(openKinds[item.kind]);
           const { items: links, emptyLabel, footer } = dropdownItems(item.kind, collections, categories);
           return (
-            <li key={`m-dd-${i}`}>
+            <li key={`m-dd-${i}`} style={{ "--i": i } as React.CSSProperties}>
               <button
                 type="button"
                 onClick={() => toggleKind(item.kind)}

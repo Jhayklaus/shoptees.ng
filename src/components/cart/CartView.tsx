@@ -177,7 +177,7 @@ export function CartView() {
             <Link
               href="/checkout"
               aria-disabled={lines.length === 0}
-              className={`btn-wipe btn-wipe-hazard mt-6 block text-center py-4 font-condensed text-[0.82rem] transition-colors duration-200 ${
+              className={`btn-wipe btn-wipe-hazard press mt-6 block text-center py-4 font-condensed text-[0.82rem] transition-colors duration-200 ${
                 lines.length === 0
                   ? "bg-ink/40 text-paper pointer-events-none"
                   : "bg-ink text-paper"
