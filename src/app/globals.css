@@ -6,7 +6,7 @@
      Token NAMES are kept from the previous theme so every component keeps
      working; their VALUES carry the new identity. New code may also use the
      semantic aliases (chalk/tar/burgundy/tan) defined in @theme below. */
-  --paper: #fdfbf8; /* warm off-white */
+  --paper: #ffffff; /* bright white */
   --paper-deep: #f4ece1; /* tan-tinted surface */
   --ink: #16110f; /* warm near-black */
   --ink-soft: #4a3b34;
