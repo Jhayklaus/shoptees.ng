@@ -5,7 +5,7 @@
     <path d="M150 -160 Q150 -240 80 -240 Q80 -200 100 -160" fill="none" stroke="#0b0b0a" stroke-width="6"/>
     <rect x="-200" y="-160" width="400" height="380" fill="#0b0b0a"/>
     <text x="0" y="40" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="78" fill="#f4efe6">shoptees</text>
-    <text x="0" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" letter-spacing="6" fill="#d4441e">EST · LAGOS</text>
+    <text x="0" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" letter-spacing="6" fill="#6d071a">EST · LAGOS</text>
   </g>
   <text x="60" y="930" font-family="JetBrains Mono, monospace" font-size="20" letter-spacing="3" fill="#0b0b0a">[PLACEHOLDER · 04]</text>
 </svg>

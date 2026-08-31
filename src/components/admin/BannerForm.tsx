@@ -93,7 +93,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
           onAltChange={(alt) => set("imageAlt", alt)}
         />
 
-        <Field id="eyebrow" label="Eyebrow" hint='Small label above the headline. e.g. "Issue 01 · Spring/Summer".'
+        <Field id="eyebrow" label="Eyebrow" hint='Small label above the headline. e.g. "Spring/Summer".'
           value={v.eyebrow} onChange={(x) => set("eyebrow", x)} />
         <Field id="title" label="Headline" hint={isHero ? "Supports newlines (\\n) for line breaks." : undefined}
           value={v.title} onChange={(x) => set("title", x)} multiline={isHero} />

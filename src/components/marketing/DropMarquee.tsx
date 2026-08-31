@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const items = ["NEW DROP JUST LANDED", "■", "SHOP THE LATEST", "■", "LAGOS → EVERYWHERE", "■"];
 
-// Hazard-orange marquee strip between sections. The whole band links
+// Burgundy marquee strip between sections. The whole band links
 // through to the shop.
 export function DropMarquee() {
   // Repeat enough content for the seamless -50% translate loop.
@@ -20,7 +20,7 @@ export function DropMarquee() {
             key={i}
             className={[
               "font-condensed text-2xl md:text-4xl px-5 inline-flex items-center",
-              t === "■" ? "text-ink group-hover:text-vermillion transition-colors duration-200" : "",
+              t === "■" ? "text-tan transition-colors duration-200" : "",
             ].join(" ")}
           >
             {t}

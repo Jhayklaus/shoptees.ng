@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Placeholder product image — cap">
   <rect width="800" height="1000" fill="#ebe2cf"/>
   <g transform="translate(400 560)">
-    <path d="M-220 0 Q-220 -200 0 -200 Q220 -200 220 0 Z" fill="#d4441e"/>
+    <path d="M-220 0 Q-220 -200 0 -200 Q220 -200 220 0 Z" fill="#6d071a"/>
     <path d="M-260 0 Q-260 30 -240 40 L240 40 Q260 30 260 0 Z" fill="#0b0b0a"/>
     <circle cx="0" cy="-100" r="14" fill="#0b0b0a"/>
     <text x="0" y="-60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" letter-spacing="4" fill="#0b0b0a">SHPT</text>

@@ -27,13 +27,14 @@ type OrderForEmail = {
 
 // ─── Design tokens (inline only — email clients strip <style>) ─────────────
 const C = {
-  ink:       "#0d0d0c",
+  ink:       "#16110f",
   paper:     "#ffffff",
-  paperDeep: "#f2f2f2",
-  vermillion:"#ff3d00",
-  muted:     "#666666",
-  line:      "#e0e0e0",
-  lineLight: "#eeeeee",
+  paperDeep: "#f4ece1",
+  vermillion:"#6d071a", // burgundy — brand accent
+  tan:       "#c19a6b",
+  muted:     "#6b5b52",
+  line:      "#e6dbcc",
+  lineLight: "#f0e8dd",
 };
 
 const LOGO_URL = `${siteConfig.url}/logo.png`;
@@ -155,7 +156,7 @@ export function customerOrderConfirmation(o: OrderForEmail) {
       ORDER ${escapeHtml(o.orderNumber)}
     </p>
 
-    ${sectionLabel("Manifest")}
+    ${sectionLabel("Items")}
     ${itemsTable(o.items)}
     <div style="margin-top:8px;">${totalBlock(o.subtotalNGN, o.totalNGN)}</div>
 
@@ -220,7 +221,7 @@ export function adminNewOrderNotification(o: OrderForEmail, opts: { siteUrl: str
       ${o.customer.phone ? ` · <a href="https://wa.me/${o.customer.phone.replace(/\D/g, "")}" style="color:${C.muted};text-decoration:none;">${escapeHtml(o.customer.phone)}</a>` : ""}
     </p>
 
-    ${sectionLabel("Manifest")}
+    ${sectionLabel("Items")}
     ${itemsTable(o.items)}
     <p style="margin:12px 0 0;font-family:monospace,'Courier New',Courier;font-size:18px;font-weight:700;color:${C.ink};">Total: ${formatNaira(o.totalNGN)}</p>
 

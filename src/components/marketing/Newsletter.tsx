@@ -33,11 +33,11 @@ export function Newsletter() {
     <section className="bg-ink text-paper py-20 md:py-24 mt-24 grain">
       <div className="mx-auto max-w-[1400px] px-5 md:px-10 grid grid-cols-12 gap-y-8 gap-x-2 md:gap-8 items-end">
         <div className="col-span-12 md:col-span-7">
-          <span className="stamp text-vermillion">Dispatch list</span>
+          <span className="stamp text-tan">Dispatch list</span>
           <h2 className="font-display text-5xl md:text-7xl leading-[0.95] mt-3">
             First to know
             <br />
-            <span className="text-vermillion">when it drops.</span>
+            <span className="text-tan">when it drops.</span>
           </h2>
           <p className="mt-5 text-base md:text-lg text-paper/70 max-w-md">
             Drops, restocks, nothing else. No spam — we&apos;re busy packing boxes.
@@ -50,11 +50,11 @@ export function Newsletter() {
               {alreadySubscribed ? (
                 <>
                   Already on the list.{" "}
-                  <span className="text-vermillion">See you at the next drop.</span>
+                  <span className="text-tan">See you at the next drop.</span>
                 </>
               ) : (
                 <>
-                  <span className="stamp stamp-in text-vermillion mr-2">Logged</span>
+                  <span className="stamp stamp-in text-tan mr-2">Logged</span>
                   You&apos;re on the list.
                 </>
               )}
@@ -77,7 +77,7 @@ export function Newsletter() {
                 <button
                   type="submit"
                   disabled={pending}
-                  className="font-condensed text-[0.78rem] px-5 py-3.5 bg-paper text-ink hover:bg-vermillion hover:text-paper transition-colors duration-200 disabled:opacity-50 shrink-0"
+                  className="font-condensed text-[0.78rem] px-5 py-3.5 bg-paper text-ink hover:bg-tan hover:text-ink transition-colors duration-200 disabled:opacity-50 shrink-0"
                 >
                   {pending ? "…" : "Sign up"}
                 </button>
@@ -94,7 +94,7 @@ export function Newsletter() {
                 />
               </div>
               {error && (
-                <p className="mt-3 font-mono-tight text-paper/85 bg-vermillion/20 border-l-[3px] border-vermillion px-3 py-2">
+                <p className="mt-3 font-mono-tight text-paper/85 bg-tan/20 border-l-[3px] border-tan px-3 py-2">
                   {error}
                 </p>
               )}

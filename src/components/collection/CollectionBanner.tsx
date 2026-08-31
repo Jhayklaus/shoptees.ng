@@ -50,8 +50,8 @@ export function CollectionBanner({
       <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/35 to-transparent z-10" />
 
       {/* Crate corner brackets */}
-      <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion z-10" />
-      <span className="absolute top-0 left-0 w-[3px] h-10 bg-vermillion z-10" />
+      <span className="absolute top-0 left-0 w-10 h-[3px] bg-tan z-10" />
+      <span className="absolute top-0 left-0 w-[3px] h-10 bg-tan z-10" />
 
       <div className="absolute left-5 right-5 bottom-5 md:left-8 md:bottom-7 z-20 flex items-end justify-between gap-6">
         <div>

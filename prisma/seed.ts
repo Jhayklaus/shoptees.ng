@@ -174,7 +174,7 @@ async function seedStarterBanner() {
       slot: "hero",
       enabled: false,
       sortOrder: 0,
-      eyebrow: "Issue 01 · Spring/Summer · Lagos",
+      eyebrow: "Spring/Summer · Lagos",
       title: "Threads for the\nculture,\nbuilt for the",
       body: "Shoptees is a Nigerian streetwear label. Cut-and-sew apparel and football jerseys for the everyday and the matchday.",
       cycleWords: "streets.,stands.,block.,pitch.,city.,long haul.",

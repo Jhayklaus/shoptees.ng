@@ -25,7 +25,7 @@ export function AnnouncementBar() {
             key={i}
             className={[
               "font-mono-tight px-4 inline-flex items-center text-[0.68rem]",
-              t === "·" ? "text-vermillion" : "text-paper/85",
+              t === "·" ? "text-tan" : "text-paper/85",
             ].join(" ")}
           >
             {t === "·" ? "■" : t}
