@@ -7,6 +7,7 @@ type Report = {
   applied: boolean;
   designs: number;
   colourways: number;
+  categories: { slug: string; action: string }[];
   collections: { slug: string; action: string; status: string }[];
   products: {
     slug: string;
@@ -54,6 +55,8 @@ export function ImportArchivePanel({
   const created = report?.products.filter((p) => p.action === "created").length ?? 0;
   const updated = report?.products.filter((p) => p.action === "updated").length ?? 0;
   const skipped = report?.products.filter((p) => p.action === "skipped") ?? [];
+  const newCategories = report?.categories.filter((c) => c.action === "created") ?? [];
+  const newCollections = report?.collections.filter((c) => c.action === "created") ?? [];
 
   return (
     <div className="max-w-3xl space-y-8">
@@ -72,6 +75,7 @@ export function ImportArchivePanel({
           the description. Set real prices before publishing.
         </p>
         <p className="font-mono-tight text-ink/55">
+          Creates any missing categories and collections itself — nothing to run beforehand.
           Safe to run more than once: it matches on slug, so a second run updates rather than
           duplicating.
         </p>
@@ -126,7 +130,7 @@ export function ImportArchivePanel({
           {skipped.length > 0 && (
             <div className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2">
               <p className="font-mono-tight text-ink-soft mb-1">
-                Skipped — run the taxonomy sync first:
+                Skipped — these could not be placed:
               </p>
               <ul className="font-mono-tight text-ink-soft">
                 {skipped.map((p) => (
@@ -139,7 +143,27 @@ export function ImportArchivePanel({
           )}
 
           <div>
-            <p className="font-mono-tight text-ink/55 mb-2">Collections</p>
+            <p className="font-mono-tight text-ink/55 mb-2">
+              Categories — {newCategories.length} to create,{" "}
+              {report.categories.length - newCategories.length} already there
+            </p>
+            {newCategories.length > 0 && (
+              <ul className="font-mono-tight space-y-1 mb-4">
+                {newCategories.map((c) => (
+                  <li key={c.slug} className="flex justify-between border-b border-line py-1">
+                    <span>{c.slug}</span>
+                    <span className="text-ink/55">created</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div>
+            <p className="font-mono-tight text-ink/55 mb-2">
+              Collections — {newCollections.length} to create as drafts,{" "}
+              {report.collections.length - newCollections.length} already there
+            </p>
             <ul className="font-mono-tight space-y-1">
               {report.collections.map((c) => (
                 <li key={c.slug} className="flex justify-between border-b border-line py-1">

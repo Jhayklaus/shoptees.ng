@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@/lib/db";
 import { ARCHIVE_DESIGNS, type ArchiveDesign } from "@/lib/archive-catalogue";
-import { COLLECTIONS } from "@/lib/taxonomy";
+import { CATEGORIES, COLLECTIONS } from "@/lib/taxonomy";
 
 // Imports the Collection Archive as DRAFTS.
 //
@@ -25,6 +25,7 @@ export type ImportReport = {
   applied: boolean;
   designs: number;
   colourways: number;
+  categories: { slug: string; action: "created" | "exists" }[];
   collections: { slug: string; action: "created" | "exists"; status: string }[];
   products: {
     slug: string;
@@ -60,13 +61,40 @@ export async function importArchive({ apply }: { apply: boolean }): Promise<Impo
     applied: apply,
     designs: ARCHIVE_DESIGNS.length,
     colourways: ARCHIVE_DESIGNS.reduce((n, d) => n + d.colourways.length, 0),
+    categories: [],
     collections: [],
     products: [],
   };
 
+  // ── Categories ─────────────────────────────────────────────────────────
+  // Created here rather than left to the CLI taxonomy script. The whole
+  // reason this runs inside the deployment is that the database isn't
+  // reachable from anywhere else — so telling someone to "run the sync
+  // first" asks for the one thing they can't do. Only ever adds what the
+  // archive needs; removing stale rows stays with the CLI script, where a
+  // human is watching.
+  // Slugs that will be in place by the time products are imported — existing
+  // rows plus the ones this run creates. A preview writes nothing, so without
+  // this it would look up categories that don't exist yet and report every
+  // product as skipped, which is a lie about what --apply would do.
+  const availableCategories = new Set<string>();
+  const availableCollections = new Set<string>();
+
+  for (const c of CATEGORIES) {
+    const existing = await prisma.category.findUnique({ where: { slug: c.slug } });
+    availableCategories.add(c.slug);
+    if (existing) {
+      report.categories.push({ slug: c.slug, action: "exists" });
+      continue;
+    }
+    report.categories.push({ slug: c.slug, action: "created" });
+    if (apply) await prisma.category.create({ data: c });
+  }
+
   // ── Collections ────────────────────────────────────────────────────────
   for (const c of COLLECTIONS) {
     const existing = await prisma.collection.findUnique({ where: { slug: c.slug } });
+    availableCollections.add(c.slug);
     if (existing) {
       report.collections.push({ slug: c.slug, action: "exists", status: existing.status });
       continue;
@@ -87,11 +115,6 @@ export async function importArchive({ apply }: { apply: boolean }): Promise<Impo
 
   // ── Products ───────────────────────────────────────────────────────────
   for (const d of ARCHIVE_DESIGNS) {
-    const [collection, category] = await Promise.all([
-      prisma.collection.findUnique({ where: { slug: d.collection } }),
-      prisma.category.findUnique({ where: { slug: d.category } }),
-    ]);
-
     const variants = d.colourways.flatMap((c) =>
       d.sizes.map((size) => ({
         size,
@@ -109,13 +132,13 @@ export async function importArchive({ apply }: { apply: boolean }): Promise<Impo
       variants: variants.length,
     };
 
-    if (!collection || !category) {
+    if (!availableCollections.has(d.collection) || !availableCategories.has(d.category)) {
       report.products.push({
         ...base,
         action: "skipped",
-        reason: !collection
-          ? `collection "${d.collection}" missing`
-          : `category "${d.category}" missing`,
+        reason: !availableCollections.has(d.collection)
+          ? `collection "${d.collection}" is not in the taxonomy`
+          : `category "${d.category}" is not in the taxonomy`,
       });
       continue;
     }
@@ -123,6 +146,12 @@ export async function importArchive({ apply }: { apply: boolean }): Promise<Impo
     const existing = await prisma.product.findUnique({ where: { slug: d.slug } });
     report.products.push({ ...base, action: existing ? "updated" : "created" });
     if (!apply) continue;
+
+    // Only needed for the write — by now both rows are guaranteed to exist.
+    const [collection, category] = await Promise.all([
+      prisma.collection.findUniqueOrThrow({ where: { slug: d.collection } }),
+      prisma.category.findUniqueOrThrow({ where: { slug: d.category } }),
+    ]);
 
     const data = {
       slug: d.slug,
