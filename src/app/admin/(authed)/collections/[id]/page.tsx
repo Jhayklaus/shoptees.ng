@@ -31,6 +31,7 @@ export default async function EditCollectionPage({
         listHref="/admin/collections"
         withDescription
         withImage
+        withStatus
         action={saveCollectionAction}
         deleteAction={deleteAction}
         productCount={collection._count.products}
@@ -42,6 +43,7 @@ export default async function EditCollectionPage({
           imageUrl: collection.imageUrl,
           imageAlt: collection.imageAlt,
           sortOrder: collection.sortOrder,
+          status: collection.status,
         }}
       />
     </>

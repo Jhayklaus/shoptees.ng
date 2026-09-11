@@ -23,7 +23,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const collection = await getCollectionBySlug(slug);
-  if (!collection) {
+  // Drafts must not leak their name through the page title.
+  if (!collection || collection.status !== "ACTIVE") {
     return buildMetadata({ title: "Collections", description: "", path: "/collections" });
   }
   return buildMetadata({
@@ -47,7 +48,9 @@ export default async function CollectionPage({
   const [{ slug }, { page: pageParam }] = await Promise.all([params, searchParams]);
 
   const collection = await getCollectionBySlug(slug);
-  if (!collection) notFound();
+  // A draft collection has no public page — the admin can still reach it
+  // through /admin/collections while it is being put together.
+  if (!collection || collection.status !== "ACTIVE") notFound();
 
   const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
   const { products, total } = await getCollectionProductsPage(slug, page, PER_PAGE);

@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       orderBy: { sortOrder: "asc" },
     }),
     prisma.collection.findMany({
+      where: { status: "ACTIVE" },
       select: { slug: true },
       orderBy: { sortOrder: "asc" },
     }),

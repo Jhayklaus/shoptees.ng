@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/session";
 import { saveCollection, deleteCollection } from "@/lib/server/collections";
+import { PRODUCT_STATUSES } from "@/lib/constants";
 
 // Mirrors TaxonomyFormInitial — optional fields may be omitted by the form.
 type CollectionFormInput = {
@@ -14,6 +15,7 @@ type CollectionFormInput = {
   imageUrl?: string;
   imageAlt?: string;
   sortOrder: number;
+  status?: string;
 };
 
 const schema = z.object({
@@ -27,6 +29,7 @@ const schema = z.object({
   imageUrl: z.string().default(""),
   imageAlt: z.string().default(""),
   sortOrder: z.number().int(),
+  status: z.enum(PRODUCT_STATUSES).default("DRAFT"),
 });
 
 function revalidateStorefront() {

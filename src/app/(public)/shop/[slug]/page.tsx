@@ -13,7 +13,9 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const row = await getProductBySlug(slug);
-  if (!row || row.status === "ARCHIVED") return {};
+  // Drafts and archived products must not leak their name through the page
+  // title — the body is the 404, the <title> should match it.
+  if (!row || row.status !== "ACTIVE") return {};
   return buildMetadata({
     title: row.name,
     description: row.description,

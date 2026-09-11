@@ -69,8 +69,13 @@ async function syncCollections() {
     const row = existing.find((e) => e.slug === c.slug);
     const data = { name: c.name, description: c.description, sortOrder: c.sortOrder };
     if (!row) {
-      log(`  + add     ${c.slug} — ${c.name} (${c.code})`);
-      if (APPLY) await prisma.collection.create({ data: { slug: c.slug, ...data } });
+      // New collections arrive as drafts. A collection appearing on the
+      // storefront the instant it is created, before it has a banner or a
+      // single product, is never what anyone wants.
+      log(`  + add     ${c.slug} — ${c.name} (${c.code}) [draft]`);
+      if (APPLY) {
+        await prisma.collection.create({ data: { slug: c.slug, ...data, status: "DRAFT" } });
+      }
       continue;
     }
     const changes: string[] = [];

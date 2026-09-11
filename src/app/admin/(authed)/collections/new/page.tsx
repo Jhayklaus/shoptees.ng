@@ -13,8 +13,19 @@ export default function NewCollectionPage() {
         listHref="/admin/collections"
         withDescription
         withImage
+        withStatus
         action={saveCollectionAction}
-        initial={{ slug: "", name: "", description: "", imageUrl: "", imageAlt: "", sortOrder: 0 }}
+        initial={{
+          slug: "",
+          name: "",
+          description: "",
+          imageUrl: "",
+          imageAlt: "",
+          sortOrder: 0,
+          // New collections start hidden, so a half-built line never appears
+          // on the storefront mid-edit.
+          status: "DRAFT",
+        }}
       />
     </>
   );

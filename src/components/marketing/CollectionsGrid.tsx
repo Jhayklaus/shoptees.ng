@@ -10,6 +10,7 @@ import { prisma } from "@/lib/db";
 // then.
 export async function CollectionsGrid() {
   const rows = await prisma.collection.findMany({
+    where: { status: "ACTIVE" },
     orderBy: { sortOrder: "asc" },
     include: {
       products: {

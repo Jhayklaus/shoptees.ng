@@ -75,6 +75,12 @@ model Collection {
   id          String    @id @default(cuid())
   slug        String    @unique
   name        String
+  // "DRAFT" | "ACTIVE" | "ARCHIVED", same vocabulary as Product.
+  // Defaults to ACTIVE, NOT DRAFT: this column is being added to a database
+  // that already has live collections, and a DRAFT default would pull every
+  // one of them off the storefront the moment it is applied. New collections
+  // created in admin start as drafts via the form, not via this default.
+  status      String    @default("ACTIVE")
   description String    @default("")
   imageUrl    String    @default("") // banner image on /collections and /collections/[slug]
   imageAlt    String    @default("")

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { slugify } from "@/lib/utils";
 import { SingleImagePicker } from "@/components/admin/SingleImagePicker";
+import { PRODUCT_STATUSES } from "@/lib/constants";
 
 // One form for both catalogue groupings — collections ("Urban Retro") and
 // categories ("Hoodies"). Same fields either way; collections additionally
@@ -17,6 +18,8 @@ export type TaxonomyFormInitial = {
   imageUrl?: string;
   imageAlt?: string;
   sortOrder: number;
+  /** Collections only — categories are always live. */
+  status?: string;
 };
 
 type Props = {
@@ -24,6 +27,8 @@ type Props = {
   listHref: string;
   withDescription?: boolean;
   withImage?: boolean;
+  /** Show the Draft / Live control. */
+  withStatus?: boolean;
   initial: TaxonomyFormInitial;
   action: (
     input: TaxonomyFormInitial
@@ -33,6 +38,7 @@ type Props = {
 };
 
 export function TaxonomyForm({
+  withStatus,
   noun,
   listHref,
   withDescription,
@@ -141,6 +147,24 @@ export function TaxonomyForm({
             className="w-28 bg-transparent border-b border-line py-2 outline-none focus:border-ink font-mono-tight"
           />
         </Field>
+        {withStatus && (
+          <Field
+            label="Status"
+            hint="Drafts are invisible on the storefront — no listing, no page, not in the sitemap."
+          >
+            <select
+              value={state.status ?? "DRAFT"}
+              onChange={(e) => update("status", e.target.value)}
+              className="bg-transparent border-b border-line py-2 outline-none focus:border-ink font-mono-tight"
+            >
+              {PRODUCT_STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {s === "ACTIVE" ? "Live" : s === "DRAFT" ? "Draft" : "Archived"}
+                </option>
+              ))}
+            </select>
+          </Field>
+        )}
       </div>
 
       {error && (
