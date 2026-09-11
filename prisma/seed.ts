@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { resolveDatabaseUrls } from "../src/config/env";
+import { CATEGORIES, COLLECTIONS } from "../src/lib/taxonomy";
 
 const prisma = new PrismaClient({ datasourceUrl: resolveDatabaseUrls().databaseUrl });
 
@@ -11,23 +12,17 @@ const prisma = new PrismaClient({ datasourceUrl: resolveDatabaseUrls().databaseU
 // for real Shoptees copy.
 // ────────────────────────────────────────────────────────────────────
 
-const categorySeed = [
-  { slug: "tees", name: "Tees", sortOrder: 1 },
-  { slug: "shirts", name: "Shirts", sortOrder: 2 },
-  { slug: "outerwear", name: "Outerwear", sortOrder: 3 },
-  { slug: "accessories", name: "Accessories", sortOrder: 4 },
-];
+// Categories (garment types) and collections (chest graphics) both come from
+// the official Collection Archive — see src/lib/taxonomy.ts. Only the
+// products below are placeholders.
+const categorySeed = CATEGORIES;
 
-// Curated lines. Products opt in via collectionSlug below; the categories
-// shown inside a collection on /shop are derived from its products.
-const collectionSeed = [
-  {
-    slug: "the-classic",
-    name: "The Classic",
-    description: "[PLACEHOLDER: one short line about The Classic collection.]",
-    sortOrder: 1,
-  },
-];
+const collectionSeed = COLLECTIONS.map((c) => ({
+  slug: c.slug,
+  name: c.name,
+  description: c.description,
+  sortOrder: c.sortOrder,
+}));
 
 type ProductSeed = {
   slug: string;
@@ -37,14 +32,15 @@ type ProductSeed = {
 };
 
 const productSeed: ProductSeed[] = [
-  { slug: "harmattan-tee", categorySlug: "tees", collectionSlug: "the-classic", imageIndex: 1 },
-  { slug: "ankara-shirt", categorySlug: "shirts", collectionSlug: "the-classic", imageIndex: 2 },
-  { slug: "lagos-hoodie", categorySlug: "outerwear", collectionSlug: "the-classic", imageIndex: 3 },
-  { slug: "studio-tote", categorySlug: "accessories", imageIndex: 4 },
-  { slug: "field-cap", categorySlug: "accessories", imageIndex: 5 },
-  { slug: "studio-tee-cream", categorySlug: "tees", imageIndex: 6 },
-  { slug: "dispatch-shirt", categorySlug: "shirts", imageIndex: 1 },
-  { slug: "long-sleeve-mono", categorySlug: "tees", imageIndex: 6 },
+  { slug: "uc-polo-white-green", categorySlug: "polos", collectionSlug: "urban-classic", imageIndex: 1 },
+  { slug: "sw-polo-black-red", categorySlug: "polos", collectionSlug: "shptz-wrld", imageIndex: 2 },
+  { slug: "lll-polo-red-white", categorySlug: "polos", collectionSlug: "live-laugh-love", imageIndex: 3 },
+  { slug: "uc-tee-white-gold", categorySlug: "tees", collectionSlug: "urban-classic", imageIndex: 6 },
+  { slug: "ff-tee-black-front-hit", categorySlug: "tees", collectionSlug: "fight-or-flight", imageIndex: 6 },
+  { slug: "th-ls-royal-blue", categorySlug: "long-sleeves", collectionSlug: "trap-house", imageIndex: 1 },
+  { slug: "th-hoodie-black", categorySlug: "hoodies", collectionSlug: "trap-house", imageIndex: 3 },
+  { slug: "th-snapback-black-white", categorySlug: "caps", collectionSlug: "trap-house", imageIndex: 5 },
+  { slug: "ps-jersey-worldwide-white-green", categorySlug: "jerseys", collectionSlug: "previous-season", imageIndex: 4 },
 ];
 
 const sizes = ["S", "M", "L", "XL"] as const;

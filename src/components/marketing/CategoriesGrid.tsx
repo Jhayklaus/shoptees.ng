@@ -4,12 +4,17 @@ import { ArrowUpRight } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { CarouselRail } from "@/components/marketing/CarouselRail";
 
+/** How many unstocked categories to show as "coming soon" teasers. */
+const EMPTY_TEASERS = 2;
+
 // Editorial "Shop by category" block for the homepage. One tile per category
 // on a horizontal carousel, each anchored on the first active product's image.
 //
-// Categories with zero active products still render — clicking through leads
-// to the "Nothing in <category> right now" empty state. We surface the count
-// so the customer knows what to expect.
+// A couple of empty categories still render as "coming soon" teasers, which
+// is the original intent. But the archive taxonomy runs to thirteen garment
+// types and most will be unstocked at any given moment, so the empties are
+// capped — the homepage should lead with what can actually be bought, not a
+// wall of empty crates.
 export async function CategoriesGrid() {
   const rows = await prisma.category.findMany({
     orderBy: { sortOrder: "asc" },
@@ -26,7 +31,12 @@ export async function CategoriesGrid() {
     },
   });
 
-  if (rows.length === 0) return null;
+  // Stocked categories first, in archive order; then a couple of empties.
+  const stocked = rows.filter((r) => r._count.products > 0);
+  const empty = rows.filter((r) => r._count.products === 0).slice(0, EMPTY_TEASERS);
+  const categories = [...stocked, ...empty];
+
+  if (categories.length === 0) return null;
 
   return (
     <section className="reveal mx-auto max-w-[1400px] px-5 md:px-10 pb-16">
@@ -46,7 +56,7 @@ export async function CategoriesGrid() {
       </div>
 
       <CarouselRail ariaLabel="Shop by category" className="-mx-5 px-5 md:mx-0 md:px-0">
-        {rows.map((cat) => {
+        {categories.map((cat) => {
           const cover = cat.products[0]?.images[0];
           const count = cat._count.products;
           return (
