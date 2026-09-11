@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { listAdminCollections } from "@/lib/server/collections";
 import { PageHeader } from "@/components/admin/PageHeader";
+import { StatusBadge } from "@/components/admin/StatusBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,7 @@ export default async function AdminCollectionsPage() {
               <thead className="bg-paper-deep border-b border-line">
                 <tr className="text-left">
                   <Th>Name</Th>
+                  <Th>Status</Th>
                   <Th>Slug</Th>
                   <Th>Products</Th>
                   <Th>Sort</Th>
@@ -59,6 +61,9 @@ export default async function AdminCollectionsPage() {
                       >
                         {c.name}
                       </Link>
+                    </Td>
+                    <Td>
+                      <StatusBadge status={c.status} variant="product" />
                     </Td>
                     <Td className="font-mono-tight text-ink/55">/{c.slug}</Td>
                     <Td className="font-mono-tight">{c._count.products}</Td>

@@ -1,5 +1,11 @@
 import Link from "next/link";
 
+// This route streams behind the public layout, so Next has already flushed
+// the response headers by the time notFound() renders — the body is the 404
+// page but the status is 200. Until that is addressed, noindex is what stops
+// a missing or draft URL being indexed as a real page.
+export const metadata = { robots: { index: false, follow: false } };
+
 export default function NotFound() {
   return (
     <main className="mx-auto max-w-3xl px-5 md:px-10 py-32 text-center">

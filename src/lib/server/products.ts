@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { prisma } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { PRODUCT_STATUSES, type ProductStatus } from "@/lib/constants";
@@ -76,7 +77,9 @@ export function listActiveProducts(opts?: { categorySlug?: string; collectionSlu
   });
 }
 
-export function getProductBySlug(slug: string) {
+// `cache` so the segment layout's existence guard and the page itself share
+// a single query per request.
+export const getProductBySlug = cache((slug: string) => {
   return prisma.product.findUnique({
     where: { slug },
     include: {
@@ -86,7 +89,7 @@ export function getProductBySlug(slug: string) {
       variants: { orderBy: { size: "asc" } },
     },
   });
-}
+});
 
 export function getProductById(id: string) {
   return prisma.product.findUnique({

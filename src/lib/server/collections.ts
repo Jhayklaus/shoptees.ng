@@ -1,5 +1,7 @@
 import "server-only";
+import { cache } from "react";
 import { prisma } from "@/lib/db";
+import type { ProductStatus } from "@/lib/constants";
 
 // Collections are curated lines ("Urban Retro"). A collection's categories are
 // never assigned directly — they're derived from the products inside it, so
@@ -15,22 +17,29 @@ export function listAdminCollections() {
   });
 }
 
+/** Storefront: published collections only. Drafts are admin-visible only. */
 export function getActiveCollections() {
-  return prisma.collection.findMany({ orderBy: { sortOrder: "asc" } });
+  return prisma.collection.findMany({
+    where: { status: "ACTIVE" },
+    orderBy: { sortOrder: "asc" },
+  });
 }
 
 export function getCollectionById(id: string) {
   return prisma.collection.findUnique({ where: { id } });
 }
 
-export function getCollectionBySlug(slug: string) {
+// `cache` so the segment layout's existence guard and the page itself share
+// a single query per request.
+export const getCollectionBySlug = cache((slug: string) => {
   return prisma.collection.findUnique({ where: { slug } });
-}
+});
 
 // /collections index — every collection with a short rail of its newest
 // active products (carousel under each banner) plus the full count.
 export function listCollectionsWithProducts(perCollection = 10) {
   return prisma.collection.findMany({
+    where: { status: "ACTIVE" },
     orderBy: { sortOrder: "asc" },
     include: {
       products: {
@@ -51,7 +60,7 @@ export function listCollectionsWithProducts(perCollection = 10) {
 
 // /collections/[slug] — one page of the collection's active products.
 export async function getCollectionProductsPage(slug: string, page: number, perPage: number) {
-  const where = { status: "ACTIVE", collection: { slug } };
+  const where = { status: "ACTIVE", collection: { slug, status: "ACTIVE" } };
   const [products, total] = await Promise.all([
     prisma.product.findMany({
       where,
@@ -92,6 +101,7 @@ export type SaveCollectionInput = {
   imageUrl: string;
   imageAlt: string;
   sortOrder: number;
+  status: ProductStatus;
 };
 
 export function saveCollection(input: SaveCollectionInput) {
@@ -102,6 +112,7 @@ export function saveCollection(input: SaveCollectionInput) {
     imageUrl: input.imageUrl,
     imageAlt: input.imageAlt,
     sortOrder: input.sortOrder,
+    status: input.status,
   };
   return input.id
     ? prisma.collection.update({ where: { id: input.id }, data })
