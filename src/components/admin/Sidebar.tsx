@@ -15,6 +15,7 @@ import {
   Images,
   LogOut,
   ExternalLink,
+  Upload,
 } from "lucide-react";
 
 type NavItem = {
@@ -33,6 +34,7 @@ const nav: NavItem[] = [
   { href: "/admin/orders", label: "Orders", icon: ScrollText },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/team", label: "Team", icon: UserCog },
+  { href: "/admin/import", label: "Import archive", icon: Upload },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
