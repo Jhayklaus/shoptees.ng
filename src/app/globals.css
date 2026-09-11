@@ -593,3 +593,24 @@ body {
     transition: none !important;
   }
 }
+
+/* ── Skeletons ───────────────────────────────────────────────────────── */
+
+/* The sheen sweeps left to right across a placeholder. Paired with
+   `loading.tsx` files, this is what removes the dead pause before a route
+   transition: the router commits to a shaped skeleton immediately instead
+   of holding the old page frozen while the database answers. */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.animate-shimmer {
+  animation: shimmer 1.6s var(--ease-hard) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer {
+    animation: none !important;
+  }
+}
