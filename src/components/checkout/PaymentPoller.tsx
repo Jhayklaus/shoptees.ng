@@ -57,7 +57,7 @@ export function PaymentPoller({ paystackReference }: { paystackReference: string
   }
 
   return (
-    <p className="mt-4 font-mono-tight text-ink/55 text-sm animate-pulse">
+    <p className="mt-4 font-mono-tight text-muted text-sm animate-pulse">
       Verifying your payment…
     </p>
   );

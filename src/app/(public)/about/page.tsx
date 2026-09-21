@@ -70,7 +70,7 @@ export default function AboutPage() {
           ["Shipping", "Nationwide"],
         ].map(([k, v]) => (
           <div key={k}>
-            <span className="stamp text-ink/60">{k}</span>
+            <span className="stamp text-muted">{k}</span>
             <p className="font-display text-3xl mt-2">{v}</p>
           </div>
         ))}

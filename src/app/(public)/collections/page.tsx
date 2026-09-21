@@ -33,7 +33,7 @@ export default async function CollectionsPage() {
 
       {collections.length === 0 ? (
         <div className="border-2 border-dashed border-ink/30 p-16 text-center">
-          <span className="stamp text-ink/50">The studio is curating — check back soon</span>
+          <span className="stamp text-muted">The studio is curating — check back soon</span>
           <p className="mt-5">
             <Link
               href="/shop"
@@ -59,7 +59,7 @@ export default async function CollectionsPage() {
                 />
 
                 {display.length === 0 ? (
-                  <p className="font-mono-tight text-ink/55 mt-2">
+                  <p className="font-mono-tight text-muted mt-2">
                     Nothing in {col.name.toLowerCase()} yet — coming soon.
                   </p>
                 ) : (
@@ -73,7 +73,7 @@ export default async function CollectionsPage() {
                           key={p.id}
                           className="min-w-[72vw] sm:min-w-[44vw] md:min-w-[280px] lg:min-w-[310px] snap-start"
                         >
-                          <ProductCard product={p} index={i} />
+                          <ProductCard product={p} />
                         </div>
                       ))}
                     </CarouselRail>

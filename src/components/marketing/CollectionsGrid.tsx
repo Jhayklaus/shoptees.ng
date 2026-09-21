@@ -31,7 +31,7 @@ export async function CollectionsGrid() {
     <section className="reveal mx-auto max-w-[1400px] px-5 md:px-10 pb-16">
       <div className="flex items-end justify-between mb-10 border-b border-line pb-4">
         <div>
-          <p className="font-mono-tight text-ink/55">Index · 02</p>
+          <p className="font-mono-tight text-muted">Index · 02</p>
           <h2 className="font-display text-5xl md:text-6xl tracking-tight mt-1">
             Shop by <span className="font-italic-accent text-vermillion">collection</span>
           </h2>
@@ -63,7 +63,7 @@ export async function CollectionsGrid() {
                     className="object-cover opacity-90 transition-all duration-[900ms] ease-out group-hover:scale-[1.05] group-hover:opacity-100"
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center font-italic-accent text-paper/30">
+                  <div className="absolute inset-0 flex items-center justify-center font-italic-accent text-paper/60">
                     coming soon
                   </div>
                 )}

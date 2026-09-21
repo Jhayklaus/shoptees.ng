@@ -41,7 +41,7 @@ export function ContactForm() {
       <span className="absolute top-0 right-0 w-8 h-[3px] bg-vermillion" />
       <span className="absolute top-0 right-0 w-[3px] h-8 bg-vermillion" />
 
-      <span className="stamp text-ink/60">A note</span>
+      <span className="stamp text-muted">A note</span>
       <h2 className="font-display text-4xl mt-2">
         Or leave a message <span className="text-vermillion">here.</span>
       </h2>
@@ -57,7 +57,7 @@ export function ContactForm() {
             <Field id="c-name" label="Name" required />
             <Field id="c-email" label="Email" type="email" required />
             <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
-              <label htmlFor="c-msg" className="font-mono-tight text-ink/55">
+              <label htmlFor="c-msg" className="font-mono-tight text-muted">
                 Message
               </label>
               <textarea
@@ -108,7 +108,7 @@ function Field({
 }) {
   return (
     <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
-      <label htmlFor={id} className="font-mono-tight text-ink/55">
+      <label htmlFor={id} className="font-mono-tight text-muted">
         {label}
         {required && <span className="text-vermillion"> *</span>}
       </label>

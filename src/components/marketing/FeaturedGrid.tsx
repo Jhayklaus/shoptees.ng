@@ -14,7 +14,7 @@ export async function FeaturedGrid() {
     return (
       <section id="new-in" className="mx-auto max-w-[1400px] px-5 md:px-10 py-24">
         <div className="border-2 border-dashed border-ink/30 p-16 text-center">
-          <span className="stamp text-ink/50 text-sm">Between drops — check back soon</span>
+          <span className="stamp text-muted text-sm">Between drops — check back soon</span>
         </div>
       </section>
     );
@@ -47,7 +47,7 @@ export async function FeaturedGrid() {
             key={p.id}
             className="min-w-[72vw] sm:min-w-[44vw] md:min-w-[300px] lg:min-w-[320px] snap-start"
           >
-            <ProductCard product={p} index={i} />
+            <ProductCard product={p} />
           </div>
         ))}
       </CarouselRail>

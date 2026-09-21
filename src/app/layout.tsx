@@ -1,4 +1,4 @@
-import { Archivo, Martian_Mono } from "next/font/google";
+import { Archivo, Azeret_Mono } from "next/font/google";
 import "./globals.css";
 import { rootMetadata } from "@/lib/seo";
 import { organizationJsonLd } from "@/lib/jsonld";
@@ -12,10 +12,18 @@ const archivo = Archivo({
   display: "swap",
 });
 
-// Machine-printed mono for prices, SKUs, stamps and metadata.
-const martianMono = Martian_Mono({
-  variable: "--font-martian",
+// Machine-printed mono for prices, SKUs, archive refs and metadata.
+//
+// Azeret rather than the Martian Mono this replaces: Martian is an unusually
+// WIDE mono, which made every label run long on a 375px screen and turned to
+// mush at label sizes. Azeret is narrower and squarer, so the same metadata
+// fits and still reads. A swap, not an addition — fonts are already the
+// heaviest thing this site ships (138 KB, more than its imagery), so the
+// family count stays at two.
+const azeretMono = Azeret_Mono({
+  variable: "--font-azeret",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -29,7 +37,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${martianMono.variable} h-full antialiased`}
+      className={`${archivo.variable} ${azeretMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-paper text-ink flex flex-col">
         <script

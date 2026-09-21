@@ -28,7 +28,7 @@ export function CartView() {
   if (state.status === "ready" && lines.length === 0) {
     return (
       <main className="mx-auto max-w-3xl px-5 md:px-10 py-24 text-center">
-        <span className="stamp text-ink/50">Cart · empty</span>
+        <span className="stamp text-muted">Cart · empty</span>
         <h1 className="font-display text-6xl md:text-7xl leading-[0.92] mt-4">
           Nothing yet,
           <br />
@@ -72,7 +72,7 @@ export function CartView() {
             return (
               <li key={l.variantId} className="py-6 grid grid-cols-12 gap-4 items-center">
                 {/* Line number — waybill row index */}
-                <div className="hidden sm:block sm:col-span-1 font-mono-tight text-ink/40">
+                <div className="hidden sm:block sm:col-span-1 font-mono-tight text-muted">
                   {String(idx + 1).padStart(2, "0")}
                 </div>
 
@@ -97,10 +97,10 @@ export function CartView() {
                   >
                     {l.product.name}
                   </Link>
-                  <p className="font-mono-tight text-ink/55 mt-1.5">
+                  <p className="font-mono-tight text-muted mt-1.5">
                     SIZE {l.variant.size} · {l.variant.color}
                   </p>
-                  <p className="font-mono-tight text-ink/40">SKU {l.variant.sku}</p>
+                  <p className="font-mono-tight text-muted">SKU {l.variant.sku}</p>
                 </div>
 
                 <div className="col-span-6 sm:col-span-3 flex items-center">
@@ -137,7 +137,7 @@ export function CartView() {
                     type="button"
                     onClick={() => remove(l.variantId)}
                     aria-label={`Remove ${l.product.name}`}
-                    className="text-ink/40 hover:text-vermillion transition-colors"
+                    className="text-muted hover:text-vermillion transition-colors"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -147,7 +147,7 @@ export function CartView() {
           })}
           {isLoading && (
             <li className="py-12 text-center">
-              <span className="stamp text-ink/40">Loading cart…</span>
+              <span className="stamp text-muted">Loading cart…</span>
             </li>
           )}
         </ul>
@@ -157,15 +157,15 @@ export function CartView() {
             <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
             <span className="absolute top-0 left-0 w-[3px] h-8 bg-vermillion" />
 
-            <span className="stamp text-ink/60">Summary</span>
+            <span className="stamp text-muted">Summary</span>
             <dl className="mt-4 space-y-2.5">
               <div className="flex justify-between font-mono-tight">
-                <dt className="text-ink/55">Subtotal</dt>
+                <dt className="text-muted">Subtotal</dt>
                 <dd className="font-bold">{subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}</dd>
               </div>
               <div className="flex justify-between font-mono-tight">
-                <dt className="text-ink/55">Shipping</dt>
-                <dd className="text-ink/55">at checkout</dd>
+                <dt className="text-muted">Shipping</dt>
+                <dd className="text-muted">at checkout</dd>
               </div>
             </dl>
             <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
@@ -192,7 +192,7 @@ export function CartView() {
               Continue shopping
             </Link>
           </div>
-          <p className="mt-5 font-mono-tight text-ink/55 text-sm">
+          <p className="mt-5 font-mono-tight text-muted text-sm">
             We pack in paper. Lagos deliveries usually go out within 48h.
           </p>
         </aside>

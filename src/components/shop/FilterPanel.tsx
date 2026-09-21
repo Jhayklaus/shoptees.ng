@@ -159,7 +159,7 @@ export function FilterPanel({
 function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <span className="stamp text-ink/60 mb-3 inline-block">{label}</span>
+      <span className="stamp text-muted mb-3 inline-block">{label}</span>
       <div className="flex flex-wrap gap-2">{children}</div>
     </div>
   );

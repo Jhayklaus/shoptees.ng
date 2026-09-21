@@ -124,17 +124,17 @@ export default async function CheckoutSuccessPage({
         </div>
 
         <section className="mt-10 border-t-2 border-ink pt-6">
-          <span className="stamp text-ink/60">Items</span>
+          <span className="stamp text-muted">Items</span>
           <ul className="divide-y divide-line mt-3">
             {order.items.map((item, idx) => (
               <li key={item.id} className="py-3 flex justify-between gap-4">
                 <div className="flex gap-3">
-                  <span className="font-mono-tight text-ink/40">
+                  <span className="font-mono-tight text-muted">
                     {String(idx + 1).padStart(2, "0")}
                   </span>
                   <div>
                     <p className="font-display text-xl leading-tight">{item.productName}</p>
-                    <p className="font-mono-tight text-ink/55">
+                    <p className="font-mono-tight text-muted">
                       {item.variantSize} × {item.quantity}
                     </p>
                   </div>
@@ -159,7 +159,7 @@ export default async function CheckoutSuccessPage({
 
         {order.address && (
           <section className="mt-10 border-t-2 border-ink pt-6">
-            <span className="stamp text-ink/60">Deliver to</span>
+            <span className="stamp text-muted">Deliver to</span>
             <div className="mt-3 font-mono-tight leading-relaxed">
               <p className="font-bold">
                 {order.customer.firstName} {order.customer.lastName}
@@ -176,7 +176,7 @@ export default async function CheckoutSuccessPage({
 
         {/* Perforated tear-off edge */}
         <div className="mt-10 border-t-2 border-dashed border-ink/30 pt-6">
-          <p className="font-mono-tight text-ink/55 text-sm text-center">
+          <p className="font-mono-tight text-muted text-sm text-center">
             Save this page or check your email for the same details. Lagos orders
             usually leave the studio within 48 hours.
           </p>

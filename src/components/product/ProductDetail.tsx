@@ -40,7 +40,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-32 lg:pb-24">
       {/* Breadcrumb as a routing slip */}
-      <p className="font-mono-tight text-ink/55 mb-6">
+      <p className="font-mono-tight text-muted mb-6">
         <Link href="/shop" className="hover:text-vermillion">Shop</Link>
         {product.collection && (
           <>
@@ -92,7 +92,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
           {/* Size — jersey squad-number picker */}
           <div className="mt-10">
             <div className="flex items-baseline justify-between mb-3">
-              <span className="stamp text-ink/60">Pick your size</span>
+              <span className="stamp text-muted">Pick your size</span>
               {variant && !inStock && (
                 <span className="stamp stamp-in text-vermillion">Sold out</span>
               )}
@@ -136,7 +136,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
 
           {/* Quantity */}
           <div className="mt-8">
-            <span className="stamp text-ink/60 mb-3 inline-block">Quantity</span>
+            <span className="stamp text-muted mb-3 inline-block">Quantity</span>
             <div className="flex items-center gap-4">
               <div className="inline-flex items-center border-2 border-ink">
                 <button
@@ -182,13 +182,13 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
 
           {/* Spec sheet */}
           <dl className="mt-10 border-t-2 border-ink pt-5 grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
-            <dt className="font-mono-tight text-ink/55">SKU</dt>
+            <dt className="font-mono-tight text-muted">SKU</dt>
             <dd className="font-mono-tight">{variant?.sku ?? "—"}</dd>
-            <dt className="font-mono-tight text-ink/55">Made in</dt>
+            <dt className="font-mono-tight text-muted">Made in</dt>
             <dd className="font-mono-tight">Nigeria</dd>
-            <dt className="font-mono-tight text-ink/55">Care</dt>
+            <dt className="font-mono-tight text-muted">Care</dt>
             <dd className="font-mono-tight">Cold wash · line dry</dd>
-            <dt className="font-mono-tight text-ink/55">Dispatch</dt>
+            <dt className="font-mono-tight text-muted">Dispatch</dt>
             <dd className="font-mono-tight">Lagos, nationwide delivery</dd>
           </dl>
         </aside>
@@ -259,7 +259,7 @@ function ProductGallery({
   if (images.length === 0) {
     return (
       <div className="aspect-[4/5] bg-paper-deep border-2 border-dashed border-ink/25 flex items-center justify-center">
-        <span className="stamp text-ink/40">No images</span>
+        <span className="stamp text-muted">No images</span>
       </div>
     );
   }

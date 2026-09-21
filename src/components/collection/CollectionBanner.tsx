@@ -1,10 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { COLLECTION_CROP } from "@/lib/images";
 
 // Wide editorial banner for a collection — used full-size at the top of
 // /collections/[slug] and in a shorter variant for each section of the
-// /collections index. Falls back to an ink block when no image is set.
+// /collections index.
+//
+// With no banner set in admin it falls back to a detail crop of the
+// collection's defining chest graphic, because that is what the collection
+// IS — the archive files by graphic, not by garment. The old fallback was
+// the name set in 20%-opacity type over an empty ink block: 1.85:1, and it
+// looked like a broken image.
 export function CollectionBanner({
   name,
   slug,
@@ -23,12 +30,13 @@ export function CollectionBanner({
   variant?: "index" | "page";
 }) {
   const isPage = variant === "page";
+  const art = imageUrl || COLLECTION_CROP[slug] || null;
   const inner = (
     <>
-      {imageUrl ? (
+      {art ? (
         <Image
-          src={imageUrl}
-          alt={imageAlt || name}
+          src={art}
+          alt={imageUrl ? imageAlt || name : `${name} — defining graphic`}
           fill
           sizes="100vw"
           priority={isPage}
@@ -41,7 +49,7 @@ export function CollectionBanner({
             .join(" ")}
         />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center font-italic-accent text-paper/20 text-2xl">
+        <div className="absolute inset-0 flex items-center justify-center font-mono-tight text-paper/60">
           {name}
         </div>
       )}

@@ -25,7 +25,7 @@ export default function ContactPage() {
 
           <ul className="mt-10 space-y-8 border-l-[3px] border-ink pl-6">
             <li>
-              <span className="stamp text-ink/60">Email</span>
+              <span className="stamp text-muted">Email</span>
               <a
                 href={`mailto:${siteConfig.contact.email}`}
                 className="block font-display text-2xl mt-1 hover:text-vermillion"
@@ -34,11 +34,11 @@ export default function ContactPage() {
               </a>
             </li>
             <li>
-              <span className="stamp text-ink/60">WhatsApp</span>
+              <span className="stamp text-muted">WhatsApp</span>
               <p className="font-display text-2xl mt-1">{siteConfig.contact.phone}</p>
             </li>
             <li>
-              <span className="stamp text-ink/60">Instagram · DMs open</span>
+              <span className="stamp text-muted">Instagram · DMs open</span>
               <a
                 href={siteConfig.social.instagram}
                 className="block font-display text-2xl mt-1 hover:text-vermillion"

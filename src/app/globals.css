@@ -7,17 +7,31 @@
      working; their VALUES carry the new identity. New code may also use the
      semantic aliases (chalk/tar/burgundy/tan) defined in @theme below. */
   --paper: #ffffff; /* bright white */
-  --paper-deep: #f4ece1; /* tan-tinted surface */
+  --paper-deep: #f4ece1; /* tan-tinted surface — see --shot before using this */
   --ink: #16110f; /* warm near-black */
-  --ink-soft: #4a3b34;
+  --ink-soft: #4a3b34; /* body copy — 10.7:1 on white */
   --vermillion: #6d071a; /* BURGUNDY — THE accent (on light surfaces) */
   --vermillion-deep: #4c0512;
-  --tan: #c19a6b; /* TAN — the accent on dark surfaces / warm surfaces */
+  --tan: #c19a6b; /* TAN — DARK SURFACES ONLY. 2.59:1 on white, 7.23:1 on ink. */
   --tan-soft: #e6d5bd;
   --tan-deep: #a37c4f;
   --olive: #2f6b3f; /* stock/success, used sparingly */
   --line: #e6dbcc;
   --line-dark: #33241f;
+
+  /* Muted type. Replaces the ink/55 and ink/40 opacities that were carrying
+     metadata: at the sizes they were used (10px uppercase mono) those came
+     out at 4.14:1 and 2.60:1, both under AA. This is 6.1:1 and still reads
+     as secondary. Anything below this on white is decoration, not text. */
+  --muted: #6b5a52;
+
+  /* The product ground is the same bright white as the page; the step
+     between them is a SHADOW, not a tone. Tight and warm-tinted so a tile
+     reads as a sheet lifted off the page rather than a material card —
+     which, with square corners, is what keeps it out of template territory. */
+  --shot: #ffffff;
+  --lift: 0 1px 2px rgb(22 17 15 / 0.07), 0 12px 26px -12px rgb(22 17 15 / 0.3);
+  --lift-lg: 0 2px 4px rgb(22 17 15 / 0.07), 0 26px 52px -22px rgb(22 17 15 / 0.36);
 
   /* Motion: snap, don't float. One vocabulary, used everywhere.
      --ease-snap  decelerating, the signature: things arrive and stop dead.
@@ -43,6 +57,11 @@
   --color-tan-deep: var(--tan-deep);
   --color-line: var(--line);
   --color-line-dark: var(--line-dark);
+  --color-muted: var(--muted);
+  --color-shot: var(--shot);
+
+  --shadow-lift: var(--lift);
+  --shadow-lift-lg: var(--lift-lg);
 
   /* Semantic aliases for new code */
   --color-chalk: var(--paper);
@@ -56,7 +75,7 @@
   --color-foreground: var(--ink);
 
   --font-display: var(--font-archivo);
-  --font-mono: var(--font-martian);
+  --font-mono: var(--font-azeret);
   --font-sans: var(--font-archivo);
 }
 
@@ -78,13 +97,31 @@ body {
 
 /* ── Type voices ─────────────────────────────────────────────────────── */
 
-/* Display: ultra-expanded black, uppercase — crate-stencil headlines. */
+/* Display: COMPRESSED black, uppercase — a matchday-programme voice.
+   Deliberately not the expanded width this used to run at. One variable
+   file carries every voice on the site, so the width axis is the system,
+   and wide-and-even is both the least characterful end of that axis and
+   the house style of every generated streetwear mock. Compressed is the
+   idiom the brand actually sits in: team sheets, terrace fanzines, the
+   number on the back of a shirt. Costs nothing — same font file. */
 .font-display {
+  font-family: var(--font-archivo), "Arial Narrow", Arial, sans-serif;
+  font-variation-settings: "wdth" 76;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -0.015em;
+}
+
+/* Subheads and card titles: a shade wider than the display voice so short
+   strings don't read as cramped, still clearly the same family. */
+.font-sub {
   font-family: var(--font-archivo), Arial, sans-serif;
-  font-variation-settings: "wdth" 125;
+  font-variation-settings: "wdth" 80;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
+  line-height: 1.02;
+  letter-spacing: -0.005em;
 }
 
 /* Condensed: compressed grotesque for tickers, nav, stamps. */
@@ -106,13 +143,214 @@ body {
   letter-spacing: 0.01em;
 }
 
-/* Mono labels: prices, SKUs, counts, timestamps. Machine-printed. */
+/* Mono labels: prices, SKUs, refs, counts, timestamps. Machine-printed.
+   Size floor is 0.72rem, not the 0.65rem (≈10.4px) this used to be. Small,
+   uppercase and low-contrast at once was the site's worst legibility
+   problem, and it was on 110 elements — every price and category line. */
 .font-mono-tight {
-  font-family: var(--font-martian), ui-monospace, monospace;
-  letter-spacing: 0.04em;
+  font-family: var(--font-azeret), ui-monospace, monospace;
+  letter-spacing: 0.075em;
   text-transform: uppercase;
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-weight: 500;
+}
+
+/* Figures that line up in a column (prices in a grid, quantities, totals). */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Product surfaces ────────────────────────────────────────────────── */
+
+/* Every garment sits on one of these. Same white as the page, separated by
+   a shadow — so a grid of them reads as sheets on a table rather than a
+   grid of tinted boxes. Square, because nothing on this site has a radius. */
+.shot {
+  position: relative;
+  background: var(--shot);
+  overflow: hidden;
+  box-shadow: var(--lift);
+  transition: box-shadow var(--dur-mid) var(--ease-snap);
+}
+.shot-lg {
+  box-shadow: var(--lift-lg);
+}
+.group:hover .shot {
+  box-shadow: var(--lift-lg);
+}
+
+/* Print grain, on the product ground and on dark fields. Cheap: one inline
+   SVG turbulence, no image request, no per-element asset. */
+.grain {
+  position: relative;
+}
+.grain::after,
+.shot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+/* On dark fields multiply would do nothing — lighten the grain instead. */
+.grain-dark::after {
+  mix-blend-mode: normal;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shot {
+    transition: none;
+  }
+}
+
+/* ── Primitives ──────────────────────────────────────────────────────── */
+
+/* One button, four skins. Square, 2px border, wipe on hover — the wipe is
+   the site's one interaction signature, so it is defined once here instead
+   of being re-assembled from utilities at every call site. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.8rem 1.25rem;
+  cursor: pointer;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  font-family: var(--font-archivo), Arial, sans-serif;
+  font-variation-settings: "wdth" 64;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.055em;
+  font-size: 0.82rem;
+  line-height: 1.1;
+  transition: transform var(--dur-fast) var(--ease-hard), color var(--dur-mid) var(--ease-snap);
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--vermillion);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-mid) var(--ease-snap);
+  z-index: -1;
+}
+.btn:hover::before,
+.btn:focus-visible::before {
+  transform: scaleX(1);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn:disabled::before {
+  transform: scaleX(0);
+}
+
+/* Outlined on light. */
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+}
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
+  color: var(--paper);
+}
+.btn-ghost::before {
+  background: var(--ink);
+}
+
+/* Light button for dark fields. */
+.btn-light {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--paper);
+}
+.btn-light:hover,
+.btn-light:focus-visible {
+  color: var(--paper);
+}
+
+/* Outlined on dark. */
+.btn-outline-light {
+  background: transparent;
+  color: var(--paper);
+  border-color: var(--paper);
+}
+.btn-outline-light:hover,
+.btn-outline-light:focus-visible {
+  color: var(--ink);
+}
+.btn-outline-light::before {
+  background: var(--paper);
+}
+
+/* Chip: a selectable token — sizes, filters, colourways. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: 2px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0.6rem 0.85rem;
+  min-width: 3.1rem;
+  cursor: pointer;
+  font-family: var(--font-archivo), Arial, sans-serif;
+  font-variation-settings: "wdth" 88;
+  font-weight: 800;
+  font-size: 0.92rem;
+  line-height: 1;
+  transition: border-color var(--dur-fast) var(--ease-hard),
+    background-color var(--dur-fast) var(--ease-hard), color var(--dur-fast) var(--ease-hard);
+}
+.chip:hover:not([aria-pressed="true"]):not(:disabled) {
+  border-color: var(--ink);
+}
+.chip[aria-pressed="true"],
+.chip[data-selected="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.chip:disabled {
+  color: var(--muted);
+  border-style: dashed;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Field: underlined on light, boxed on dark. Never a rounded input. */
+.field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--line);
+  padding: 0.7rem 0;
+  color: var(--ink);
+  font-family: var(--font-azeret), ui-monospace, monospace;
+  font-size: 0.85rem;
+  transition: border-color var(--dur-fast) var(--ease-hard);
+}
+.field::placeholder {
+  color: var(--muted);
+}
+.field:focus {
+  outline: none;
+  border-bottom-color: var(--vermillion);
 }
 
 /* ── Rules & stamps ──────────────────────────────────────────────────── */
@@ -127,9 +365,9 @@ body {
 /* Waybill stamp chip: bordered mono, slightly rotated like a hand stamp. */
 .stamp {
   display: inline-block;
-  font-family: var(--font-martian), ui-monospace, monospace;
-  font-size: 0.62rem;
-  font-weight: 700;
+  font-family: var(--font-azeret), ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   border: 1.5px solid currentColor;
@@ -336,19 +574,7 @@ body {
   border-radius: 0;
 }
 
-/* Print-shop grain. Slightly stronger than before — texture is the brand. */
-.grain {
-  position: relative;
-}
-.grain::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-}
+/* Grain lives with the product surfaces, above. */
 
 /* Decorative diagonal slash used as section divider */
 .slash {

@@ -146,7 +146,7 @@ export default async function ShopPage({
           <Link
             href="/shop"
             scroll={false}
-            className="font-condensed text-[0.78rem] text-ink/60 hover:text-vermillion transition-colors"
+            className="font-condensed text-[0.78rem] text-muted hover:text-vermillion transition-colors"
           >
             Clear filters ×
           </Link>
@@ -155,7 +155,7 @@ export default async function ShopPage({
 
       {display.length === 0 ? (
         <div className="border-2 border-dashed border-ink/30 p-16 text-center">
-          <span className="stamp text-ink/50 text-sm">
+          <span className="stamp text-muted text-sm">
             {filterActive
               ? `Nothing in ${eyebrowLabel.toLowerCase()} right now`
               : "Between drops — check back soon"}
@@ -174,7 +174,7 @@ export default async function ShopPage({
       ) : (
         <div className="reveal-stagger grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-14">
           {display.map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
+            <ProductCard key={p.id} product={p} />
           ))}
         </div>
       )}

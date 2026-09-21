@@ -111,13 +111,13 @@ export function CheckoutForm() {
       <form onSubmit={onSubmit} className="grid grid-cols-12 gap-y-10 gap-x-2 lg:gap-10">
         <div className="col-span-12 lg:col-span-7 space-y-10">
           <fieldset>
-            <legend className="stamp text-ink/60 mb-4">01 · Contact</legend>
+            <legend className="stamp text-muted mb-4">01 · Contact</legend>
             <Field id="email" label="Email" type="email" autoComplete="email" required />
             <Field id="phone" label="Phone (WhatsApp)" type="tel" autoComplete="tel" required />
           </fieldset>
 
           <fieldset>
-            <legend className="stamp text-ink/60 mb-4">02 · Delivery</legend>
+            <legend className="stamp text-muted mb-4">02 · Delivery</legend>
             <div className="grid grid-cols-2 gap-x-4">
               <Field id="firstName" label="First name" autoComplete="given-name" required />
               <Field id="lastName" label="Last name" autoComplete="family-name" required />
@@ -151,23 +151,23 @@ export function CheckoutForm() {
           </fieldset>
 
           <fieldset>
-            <legend className="stamp text-ink/60 mb-4">03 · Payment</legend>
+            <legend className="stamp text-muted mb-4">03 · Payment</legend>
             <div className="relative border-2 border-ink p-5">
               <span className="absolute top-0 right-0 w-6 h-[3px] bg-vermillion" />
               <span className="absolute top-0 right-0 w-[3px] h-6 bg-vermillion" />
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-display text-2xl">Paystack</p>
-                  <p className="font-mono-tight text-ink/55 mt-1">
+                  <p className="font-mono-tight text-muted mt-1">
                     Cards · bank transfer · USSD
                   </p>
                 </div>
-                <div className="font-mono-tight text-ink/55">
+                <div className="font-mono-tight text-muted">
                   {money.code === "NGN" ? "₦ NGN" : `$ ${money.code}`}
                 </div>
               </div>
               {money.code !== "NGN" && subtotal > 0 && (
-                <p className="mt-4 font-mono-tight text-ink/55 leading-relaxed">
+                <p className="mt-4 font-mono-tight text-muted leading-relaxed">
                   Prices are shown in {money.code} at ₦{money.rate.toLocaleString()}/
                   {money.code}. Your card is charged{" "}
                   <span className="text-ink">{formatMoney(subtotal, "NGN")}</span> and your
@@ -196,19 +196,19 @@ export function CheckoutForm() {
             <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
             <span className="absolute top-0 left-0 w-[3px] h-8 bg-vermillion" />
 
-            <span className="stamp text-ink/60">Order summary</span>
+            <span className="stamp text-muted">Order summary</span>
             <ul className="divide-y divide-line mt-3">
               {lines.map((l, idx) => (
                 <li key={l.variantId} className="py-3 flex justify-between gap-4">
                   <div className="flex gap-3 min-w-0">
-                    <span className="font-mono-tight text-ink/40 shrink-0">
+                    <span className="font-mono-tight text-muted shrink-0">
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     <div className="min-w-0">
                       <p className="font-display text-lg leading-tight truncate">
                         {l.product.name}
                       </p>
-                      <p className="font-mono-tight text-ink/55">
+                      <p className="font-mono-tight text-muted">
                         {l.variant.size} × {l.quantity}
                       </p>
                     </div>
@@ -220,12 +220,12 @@ export function CheckoutForm() {
               ))}
               {empty && (
                 <li className="py-4 text-center">
-                  <span className="stamp text-ink/40">Cart is empty</span>
+                  <span className="stamp text-muted">Cart is empty</span>
                 </li>
               )}
               {cart.status === "loading" && (
                 <li className="py-4 text-center">
-                  <span className="stamp text-ink/40">Loading…</span>
+                  <span className="stamp text-muted">Loading…</span>
                 </li>
               )}
             </ul>
@@ -246,7 +246,7 @@ export function CheckoutForm() {
                   ? "Pay with Paystack →"
                   : "Place order (pay-later) →"}
             </button>
-            <p className="mt-4 font-mono-tight text-ink/55 text-center text-xs">
+            <p className="mt-4 font-mono-tight text-muted text-center text-xs">
               By placing this order you agree to our terms.
             </p>
           </div>
@@ -271,7 +271,7 @@ function Field({
 }) {
   return (
     <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
-      <label htmlFor={id} className="block font-mono-tight text-ink/55">
+      <label htmlFor={id} className="block font-mono-tight text-muted">
         {label}
         {required && <span className="text-vermillion"> *</span>}
       </label>
@@ -305,7 +305,7 @@ function SelectField({
   const controlled = value !== undefined;
   return (
     <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
-      <label htmlFor={id} className="block font-mono-tight text-ink/55">
+      <label htmlFor={id} className="block font-mono-tight text-muted">
         {label}
         {required && <span className="text-vermillion"> *</span>}
       </label>

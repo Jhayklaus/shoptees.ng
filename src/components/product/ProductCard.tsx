@@ -2,92 +2,96 @@ import Image from "next/image";
 import Link from "next/link";
 import type { DisplayProduct } from "@/types";
 import { Money } from "@/components/currency/Money";
+import { productImageUrl } from "@/lib/images";
+import { archiveRef } from "@/lib/archive-ref";
 
 type Props = {
   product: DisplayProduct;
-  index?: number;
-  /** When true, the card sits lower on the page baseline (asymmetric grid) */
-  offset?: boolean;
+  /** Wide tile — used for the lead row of a grid. */
+  lead?: boolean;
 };
 
-export function ProductCard({ product, index = 0, offset }: Props) {
-  const number = String(index + 1).padStart(2, "0");
+// The card used to stamp a sequence number (No 01, No 02…) in the corner.
+// That was decoration dressed as data — the position of a product in
+// whatever grid it happened to land in. It now carries the archive ref,
+// which is the brand's own filing code and means the same thing everywhere.
+export function ProductCard({ product, lead }: Props) {
   const hero = product.images[0];
-  const back = product.images[1]; // back view by convention
+  const back = product.images[1]; // back view / second colourway by convention
   const totalStock = product.variants.reduce((s, v) => s + v.stock, 0);
   const isSoldOut = totalStock === 0 && product.variants.length > 0;
+  const ref = archiveRef(product);
 
   return (
     <Link
       href={`/shop/${product.slug}`}
-      className={`group block ${offset ? "md:translate-y-16" : ""}`}
+      className={`group block ${lead ? "sm:col-span-2" : ""}`}
     >
       {/* data-morph: the box that flies into place as the product page's
-          hero. Same 4:5 ratio on both ends, so it scales rather than warps. */}
-      <div data-morph className="relative overflow-hidden bg-paper-deep aspect-[4/5]">
+          hero. The lead tile is wider, so it carries its own ratio — the
+          morph scales rather than warps because the image inside is
+          `contain` on both ends. */}
+      <div
+        data-morph
+        className={`shot ${lead ? "aspect-[16/10]" : "aspect-square"}`}
+      >
         {hero ? (
           <>
-            {/* Front (default). Stays put on solo-image products. */}
+            {/* Front. Stays put on solo-image products. */}
             <Image
-              src={hero.url}
-              alt={hero.alt || product.name}
+              src={productImageUrl(hero.url)}
+              alt={hero.alt || `${product.name} — ${product.category?.name ?? "archive flat"}`}
               fill
-              sizes="(max-width: 768px) 50vw, 25vw"
+              sizes={lead ? "(max-width: 640px) 100vw, 50vw" : "(max-width: 640px) 50vw, 25vw"}
               className={[
-                "object-contain p-4 transition-all duration-[650ms] ease-[cubic-bezier(.2,.7,.1,1)]",
+                "object-contain p-4 md:p-8 transition-all duration-[650ms] ease-[cubic-bezier(.2,.7,.1,1)]",
                 back
-                  ? "opacity-100 scale-100 group-hover:opacity-0 group-hover:scale-[0.96] group-hover:-translate-y-1"
-                  : "transition-transform group-hover:scale-[1.04]",
+                  ? "opacity-100 group-hover:opacity-0"
+                  : "group-hover:scale-[1.04]",
               ].join(" ")}
             />
 
-            {/* Back view — rendered only if a second image exists. Starts
-                slightly zoomed + offset, settles into place on hover. */}
+            {/* Second view — rendered only if there is one. */}
             {back && (
               <Image
-                src={back.url}
-                alt={back.alt || `${product.name} — back view`}
+                src={productImageUrl(back.url)}
+                alt=""
                 fill
-                sizes="(max-width: 768px) 50vw, 25vw"
-                className="object-contain p-4 absolute inset-0 opacity-0 scale-[1.05] translate-y-1 transition-all duration-[650ms] ease-[cubic-bezier(.2,.7,.1,1)] group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0"
-              />
-            )}
-
-            {/* Subtle vermillion sweep across the bottom on hover */}
-            {back && (
-              <span
-                aria-hidden
-                className="absolute bottom-0 left-0 right-0 h-px bg-vermillion origin-left scale-x-0 transition-transform duration-[700ms] ease-out group-hover:scale-x-100"
+                sizes={lead ? "(max-width: 640px) 100vw, 50vw" : "(max-width: 640px) 50vw, 25vw"}
+                className="object-contain p-4 md:p-8 absolute inset-0 opacity-0 scale-[1.03] transition-all duration-[650ms] ease-[cubic-bezier(.2,.7,.1,1)] group-hover:opacity-100 group-hover:scale-100"
               />
             )}
           </>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center font-italic-accent text-ink/30">
+          <div className="absolute inset-0 flex items-center justify-center font-mono-tight text-muted">
             no image
           </div>
         )}
-        <span className="absolute top-3 left-3 font-mono-tight text-ink/70 bg-paper/85 px-2 py-0.5 z-10">
-          № {number}
-        </span>
+
+        {/* Archive ref, burned into the corner like a filing stamp. This is
+            the brand's own numbering, not decorative sequence numbering. */}
+        {ref && (
+          <span className="absolute top-0 left-0 z-10 bg-ink text-paper font-mono-tight px-2 py-1 text-[0.66rem]">
+            {ref}
+          </span>
+        )}
         {isSoldOut && (
-          <span className="stamp absolute top-3 right-3 text-paper bg-ink border-ink z-10">
-            sold out
+          <span className="absolute top-0 right-0 z-10 bg-vermillion text-paper font-mono-tight px-2 py-1 text-[0.66rem]">
+            Sold out
           </span>
         )}
       </div>
 
-      <div className="mt-3 border-t-2 border-ink pt-2 flex items-start justify-between gap-3">
+      <div className="mt-3 border-t-2 border-ink pt-2 grid gap-1.5 sm:flex sm:items-start sm:justify-between sm:gap-3">
         <div className="min-w-0">
-          <h3 className="font-display text-base md:text-lg leading-[1.05]">
+          <h3 className={`font-sub ${lead ? "text-lg md:text-xl" : "text-[0.9rem] md:text-base"}`}>
             {product.name}
           </h3>
-          {product.category && (
-            <p className="font-mono-tight text-ink/50 mt-1">
-              {product.category.name}
-            </p>
-          )}
+          <p className="font-mono-tight text-muted mt-1">
+            {[product.collection?.name, product.category?.name].filter(Boolean).join(" · ")}
+          </p>
         </div>
-        <p className="font-mono-tight text-ink whitespace-nowrap bg-paper-deep px-1.5 py-0.5 mt-0.5">
+        <p className="font-mono-tight tnum text-ink whitespace-nowrap sm:mt-0.5 text-[0.8rem]">
           <Money ngn={product.priceNGN} />
         </p>
       </div>

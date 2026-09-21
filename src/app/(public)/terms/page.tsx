@@ -48,7 +48,7 @@ export default function TermsPage() {
           </h1>
         </div>
         <div className="col-span-12 md:col-span-4 md:self-end">
-          <p className="font-mono-tight text-ink/55">
+          <p className="font-mono-tight text-muted">
             Effective date: June 2025
             <br />
             Shoptees · Lagos, Nigeria
@@ -61,7 +61,7 @@ export default function TermsPage() {
           {SECTIONS.map((s, i) => (
             <section key={s.title} className="grid grid-cols-12 gap-4">
               <div className="col-span-12 sm:col-span-4">
-                <span className="stamp text-ink/60">
+                <span className="stamp text-muted">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <h2 className="font-display text-2xl mt-2">{s.title}</h2>

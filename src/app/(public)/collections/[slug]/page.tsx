@@ -59,7 +59,7 @@ export default async function CollectionPage({
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-24">
-      <p className="font-mono-tight text-ink/55 mb-5">
+      <p className="font-mono-tight text-muted mb-5">
         <Link href="/collections" className="hover:text-vermillion">
           Collections
         </Link>{" "}
@@ -79,7 +79,7 @@ export default async function CollectionPage({
       <div className="mt-12">
         {display.length === 0 ? (
           <div className="border-2 border-dashed border-ink/30 p-16 text-center">
-            <span className="stamp text-ink/50">
+            <span className="stamp text-muted">
               Nothing in {collection.name.toLowerCase()} right now
             </span>
             <p className="mt-5">
@@ -94,7 +94,7 @@ export default async function CollectionPage({
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-14">
             {display.map((p, i) => (
-              <ProductCard key={p.id} product={p} index={i} />
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         )}
@@ -141,7 +141,7 @@ function PageLink({
 }) {
   if (disabled) {
     return (
-      <span className="flex h-10 w-10 items-center justify-center border-2 border-line text-ink/25">
+      <span className="flex h-10 w-10 items-center justify-center border-2 border-line text-muted">
         {children}
       </span>
     );

@@ -199,7 +199,7 @@ function StampClock() {
           style={{
             fontSize: "9.5px",
             letterSpacing: "0.22em",
-            fontFamily: "var(--font-martian), monospace",
+            fontFamily: "var(--font-azeret), monospace",
             fontWeight: 700,
           }}
         >

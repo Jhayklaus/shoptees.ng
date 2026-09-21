@@ -78,7 +78,7 @@ export async function CategoriesGrid() {
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="stamp text-paper/40">coming soon</span>
+                    <span className="stamp text-paper/60">coming soon</span>
                   </div>
                 )}
 
