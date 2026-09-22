@@ -30,23 +30,22 @@ export function Newsletter() {
   };
 
   return (
-    <section className="reveal bg-ink text-paper py-20 md:py-24 mt-24 grain">
-      <div className="mx-auto max-w-[1400px] px-5 md:px-10 grid grid-cols-12 gap-y-8 gap-x-2 md:gap-8 items-end">
-        <div className="col-span-12 md:col-span-7">
-          <span className="stamp text-tan">Dispatch list</span>
-          <h2 className="font-display text-5xl md:text-7xl leading-[0.95] mt-3">
+    <section className="bg-ink text-paper py-16 md:py-24 grain grain-dark">
+      <div className="relative z-10 mx-auto max-w-[1400px] px-5 md:px-10 grid gap-8 md:grid-cols-[1.1fr_.9fr] md:gap-14 md:items-end">
+        <div>
+          <p className="font-label text-tan">Dispatch list</p>
+          <h2 className="font-display text-[clamp(2rem,6vw,3.6rem)] mt-3">
             First to know
-            <br />
-            <span className="text-tan">when it drops.</span>
+            <span className="block text-tan">when it drops.</span>
           </h2>
-          <p className="mt-5 text-base md:text-lg text-paper/70 max-w-md">
+          <p className="mt-5 text-paper/70 max-w-sm leading-snug">
             Drops, restocks, nothing else. No spam — we&apos;re busy packing boxes.
           </p>
         </div>
 
-        <form onSubmit={onSubmit} className="col-span-12 md:col-span-5">
+        <form onSubmit={onSubmit}>
           {submitted ? (
-            <p className="font-display text-2xl">
+            <p className="font-sub text-xl leading-snug">
               {alreadySubscribed ? (
                 <>
                   Already on the list.{" "}
@@ -54,8 +53,8 @@ export function Newsletter() {
                 </>
               ) : (
                 <>
-                  <span className="stamp stamp-in text-tan mr-2">Logged</span>
-                  You&apos;re on the list.
+                  You&apos;re on the list.{" "}
+                  <span className="text-tan">Watch your inbox.</span>
                 </>
               )}
             </p>
@@ -72,13 +71,9 @@ export function Newsletter() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="YOUR@EMAIL.COM"
-                  className="flex-1 min-w-0 bg-transparent px-4 py-3.5 outline-none placeholder:text-paper/35 font-mono-tight text-sm"
+                  className="flex-1 min-w-0 bg-transparent px-4 py-3.5 outline-none placeholder:text-paper/55 font-label text-paper"
                 />
-                <button
-                  type="submit"
-                  disabled={pending}
-                  className="font-condensed text-[0.78rem] px-5 py-3.5 bg-paper text-ink hover:bg-tan hover:text-ink transition-colors duration-200 disabled:opacity-50 shrink-0"
-                >
+                <button type="submit" disabled={pending} className="btn btn-light shrink-0 border-0">
                   {pending ? "…" : "Sign up"}
                 </button>
               </div>
@@ -94,7 +89,7 @@ export function Newsletter() {
                 />
               </div>
               {error && (
-                <p className="mt-3 font-mono-tight text-paper/85 bg-tan/20 border-l-[3px] border-tan px-3 py-2">
+                <p className="mt-3 font-label text-paper border-l-2 border-tan pl-3 py-2 normal-case">
                   {error}
                 </p>
               )}

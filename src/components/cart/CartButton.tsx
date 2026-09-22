@@ -22,7 +22,7 @@ export function CartButton() {
         <span
           // Re-keying on count replays the pop, so every add "ticks" the badge.
           key={count}
-          className="pop-in absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-vermillion text-paper text-[10px] font-mono-tight flex items-center justify-center"
+          className="pop-in absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-vermillion text-paper text-[10px] font-label flex items-center justify-center"
         >
           {count}
         </span>

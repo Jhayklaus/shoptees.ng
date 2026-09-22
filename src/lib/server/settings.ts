@@ -8,13 +8,12 @@ export const SETTING_KEYS = [
   "contact.phone",
   "order.counter",
   "order.year",
-  // Homepage editorial hero
+  // Homepage hero — a featured-collection banner
+  "hero.collection",
   "hero.eyebrow",
   "hero.headline",
-  "hero.cycle_words",
   "hero.body",
   "hero.cta_label",
-  "hero.cta_href",
   "hero.image_url",
   "hero.image_alt",
   "hero.caption",
@@ -44,18 +43,24 @@ const fallback: Record<SettingKey, string> = {
   "contact.phone": "",
   "order.counter": "0",
   "order.year": new Date().getFullYear().toString(),
-  // Hero — falls back to the original hardcoded copy so the page looks right
-  // out of the box before anything is set in admin.
-  "hero.eyebrow": "Spring/Summer · Lagos",
-  "hero.headline": "Threads for the\nculture,\nbuilt for the",
-  "hero.cycle_words": "streets.,stands.,block.,pitch.,city.,long haul.",
-  "hero.body":
-    "Shoptees is a Nigerian streetwear label. Cut-and-sew apparel and football jerseys for the everyday and the matchday — sold by the piece or by the carton.",
-  "hero.cta_label": "Shop the collection",
-  "hero.cta_href": "/shop",
+  // Hero — a FEATURED COLLECTION banner, not brand copy.
+  //
+  // `hero.collection` names which collection leads the homepage. Blank, or
+  // pointing at a collection that is missing or unpublished, falls back to
+  // the first active collection in the archive's own order — so the hero is
+  // never empty and never advertises something a customer cannot open.
+  //
+  // The copy keys below are OVERRIDES. Left blank, the hero uses the
+  // collection's own name, description and artwork, which means it stays
+  // correct when a collection is edited and needs no second edit here.
+  "hero.collection": "",
+  "hero.eyebrow": "",
+  "hero.headline": "",
+  "hero.body": "",
+  "hero.cta_label": "",
   "hero.image_url": "/hero2.webp",
   "hero.image_alt": "Shoptees — current collection banner",
-  "hero.caption": "· THE CLASSIC collection ·",
+  "hero.caption": "",
   "campaign.enabled": "false",
   "campaign.headline": "New season, new drop.",
   "campaign.subcopy": "A short line about the latest campaign or collection.",

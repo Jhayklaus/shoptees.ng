@@ -42,14 +42,22 @@ export function archiveImageUrl(file: string) {
   return `/archive/${file}`;
 }
 
+/**
+ * The customer-facing description, and nothing else.
+ *
+ * This used to append the colourway list, the archive refs and a sample
+ * production cost. All three were wrong to put here:
+ *
+ *  - the sample cost is internal. It was a note to whoever set prices, and
+ *    it shipped to customers as body copy reading "NOT a retail price";
+ *  - colourways and refs are now structured data on the product page, so
+ *    repeating them in prose duplicates what the UI already shows.
+ *
+ * A re-run of the import rewrites descriptions, so running it again is how
+ * the existing 23 rows get cleaned up.
+ */
 function productDescription(d: ArchiveDesign) {
-  const colours = d.colourways.map((c) => c.name).join(", ");
-  const codes = d.colourways.map((c) => c.code).join(", ");
-  const cost =
-    d.sampleCostNGN != null
-      ? `\n\nSample cost: ₦${d.sampleCostNGN.toLocaleString()} per unit — production cost, NOT a retail price. Set a price before publishing.`
-      : `\n\nNot costed in the merch reference. Set a price before publishing.`;
-  return `${d.description}\n\nColourways: ${colours}.\nArchive refs: ${codes}.${cost}`;
+  return d.description;
 }
 
 function skuFor(code: string, size: string) {
@@ -153,19 +161,30 @@ export async function importArchive({ apply }: { apply: boolean }): Promise<Impo
       prisma.category.findUniqueOrThrow({ where: { slug: d.category } }),
     ]);
 
-    const data = {
+    // What the archive owns: identity, copy and filing. On a product that
+    // already exists these are safe to rewrite, because they come from the
+    // archive document and nothing else edits them.
+    const fromArchive = {
       slug: d.slug,
       name: d.name,
       description: productDescription(d),
-      priceNGN: 0, // see the note at the top of this file
-      status: "DRAFT",
       categoryId: category.id,
       collectionId: collection.id,
     };
 
+    // What the SHOP owns: price and whether it is published. A re-run must
+    // not touch these. They are set once, on create, and after that they
+    // belong to whoever priced the piece and pressed publish — a second run
+    // resetting them would zero every price and unpublish the catalogue.
     const product = existing
-      ? await prisma.product.update({ where: { id: existing.id }, data })
-      : await prisma.product.create({ data });
+      ? await prisma.product.update({ where: { id: existing.id }, data: fromArchive })
+      : await prisma.product.create({
+          data: {
+            ...fromArchive,
+            priceNGN: 0, // see the note at the top of this file
+            status: "DRAFT",
+          },
+        });
 
     // Replace variants and images so a re-run converges instead of
     // accumulating. Variants are only safe to replace while nothing has been

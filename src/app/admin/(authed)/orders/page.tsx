@@ -23,7 +23,7 @@ export default async function AdminOrdersPage() {
             <p className="font-italic-accent text-2xl text-ink/55">
               No orders yet — your storefront is quiet.
             </p>
-            <p className="font-mono-tight text-ink/55 mt-2">
+            <p className="font-label text-ink/55 mt-2">
               Once a customer checks out, the order will appear here.
             </p>
           </div>
@@ -49,18 +49,18 @@ export default async function AdminOrdersPage() {
                     <Td>
                       <Link
                         href={`/admin/orders/${o.id}`}
-                        className="font-mono-tight hover:text-vermillion"
+                        className="font-label hover:text-vermillion"
                       >
                         {o.orderNumber}
                       </Link>
                     </Td>
                     <Td>{o.customer.email}</Td>
-                    <Td className="font-mono-tight">{o.items.length}</Td>
+                    <Td className="font-label">{o.items.length}</Td>
                     <Td>
                       <StatusBadge status={o.status} />
                     </Td>
-                    <Td className="font-mono-tight">{formatNaira(o.totalNGN)}</Td>
-                    <Td className="font-mono-tight text-ink/55">
+                    <Td className="font-label">{formatNaira(o.totalNGN)}</Td>
+                    <Td className="font-label text-ink/55">
                       {new Date(o.createdAt).toLocaleString("en-NG", {
                         dateStyle: "medium",
                         timeStyle: "short",
@@ -78,7 +78,7 @@ export default async function AdminOrdersPage() {
 }
 
 function Th({ children }: { children?: React.ReactNode }) {
-  return <th className="font-mono-tight text-ink/55 px-4 py-3 font-normal">{children}</th>;
+  return <th className="font-label text-ink/55 px-4 py-3 font-normal">{children}</th>;
 }
 function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <td className={`px-4 py-3 ${className}`}>{children}</td>;

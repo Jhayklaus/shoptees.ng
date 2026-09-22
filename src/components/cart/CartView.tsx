@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { productImageUrl } from "@/lib/images";
 import Link from "next/link";
 import { useCart } from "@/store/cart";
 import { useHydratedCart } from "@/store/useHydratedCart";
@@ -28,18 +29,11 @@ export function CartView() {
   if (state.status === "ready" && lines.length === 0) {
     return (
       <main className="mx-auto max-w-3xl px-5 md:px-10 py-24 text-center">
-        <span className="stamp text-ink/50">Cart · empty</span>
-        <h1 className="font-display text-6xl md:text-7xl leading-[0.92] mt-4">
-          Nothing yet,
-          <br />
-          <span className="text-vermillion">go and look.</span>
-        </h1>
-        <Link
-          href="/shop"
-          className="btn-wipe inline-flex items-center gap-2 mt-10 border-2 border-ink px-7 py-3.5 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
-        >
-          Browse the collection
-          <ArrowUpRight size={14} className="text-vermillion" />
+        <p className="font-label text-muted">Your bag is empty</p>
+        <h1 className="font-display text-[clamp(1.9rem,5vw,3rem)] mt-3">Nothing in here yet</h1>
+        <Link href="/shop" className="btn btn-ghost press mt-8">
+          Browse the shop
+          <ArrowUpRight size={14} />
         </Link>
       </main>
     );
@@ -47,60 +41,55 @@ export function CartView() {
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 py-12">
-      <header className="mb-10 border-b-[3px] border-ink pb-6">
-        <span className="stamp text-vermillion">
-          Packing slip ·{" "}
+      <header className="mb-8 border-b border-line pb-5">
+        <p className="font-label text-muted mb-2">
           {isLoading
             ? "--"
             : `${String(lines.length).padStart(2, "0")} item${lines.length === 1 ? "" : "s"}`}
-        </span>
-        <h1 className="font-display text-6xl md:text-7xl mt-3">
-          Your <span className="text-vermillion">basket.</span>
-        </h1>
+        </p>
+        <h1 className="font-display text-[clamp(1.9rem,5vw,3rem)]">Your bag</h1>
       </header>
 
       {state.status === "ready" && state.dropped.length > 0 && (
-        <p className="mb-6 font-mono-tight bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 text-ink-soft">
+        <p className="mb-6 font-label border-l-2 border-vermillion pl-3 py-2 text-ink-soft normal-case tracking-normal">
           Some items were no longer available and have been removed from your cart.
         </p>
       )}
 
       <div className="grid grid-cols-12 gap-y-10 gap-x-2 lg:gap-10">
-        <ul className="col-span-12 lg:col-span-8 divide-y-2 divide-line border-y-2 border-ink">
+        <ul className="col-span-12 lg:col-span-8 divide-y divide-line border-y border-line">
           {lines.map((l, idx) => {
             const hero = l.product.images[0];
             return (
               <li key={l.variantId} className="py-6 grid grid-cols-12 gap-4 items-center">
                 {/* Line number — waybill row index */}
-                <div className="hidden sm:block sm:col-span-1 font-mono-tight text-ink/40">
+                <div className="hidden sm:block sm:col-span-1 font-label text-muted">
                   {String(idx + 1).padStart(2, "0")}
                 </div>
 
-                <div className="col-span-3 sm:col-span-2 relative aspect-[4/5] bg-paper-deep">
+                <div className="shot col-span-3 sm:col-span-2 aspect-square">
                   {hero && (
                     <Image
-                      src={hero.url}
+                      src={productImageUrl(hero.url)}
                       alt={hero.alt || l.product.name}
                       fill
                       sizes="120px"
-                      className="object-cover"
+                      className="object-contain p-2"
                     />
                   )}
-                  <span className="absolute top-0 left-0 w-4 h-[2px] bg-vermillion" />
-                  <span className="absolute top-0 left-0 w-[2px] h-4 bg-vermillion" />
                 </div>
 
                 <div className="col-span-9 sm:col-span-4">
                   <Link
                     href={`/shop/${l.product.slug}`}
-                    className="font-display text-2xl leading-tight hover:text-vermillion"
+                    className="font-sub text-[0.98rem] hover:underline underline-offset-4 decoration-1"
                   >
                     {l.product.name}
                   </Link>
-                  <p className="font-mono-tight text-ink/55 mt-1.5">
-                    SIZE {l.variant.size} · {l.variant.color}
+                  <p className="font-label text-muted mt-1.5">
+                    {l.variant.size} · {l.variant.color}
                   </p>
-                  <p className="font-mono-tight text-ink/40">SKU {l.variant.sku}</p>
+                  <p className="font-label text-muted">SKU {l.variant.sku}</p>
                 </div>
 
                 <div className="col-span-6 sm:col-span-3 flex items-center">
@@ -109,11 +98,11 @@ export function CartView() {
                       type="button"
                       onClick={() => setQuantity(l.variantId, Math.max(0, l.quantity - 1))}
                       aria-label={`Decrease quantity of ${l.product.name}`}
-                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
+                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors leading-none"
                     >
                       −
                     </button>
-                    <span className="w-10 text-center font-mono-tight font-bold">
+                    <span className="w-10 text-center font-sub tnum text-[0.88rem]">
                       {String(l.quantity).padStart(2, "0")}
                     </span>
                     <button
@@ -122,7 +111,7 @@ export function CartView() {
                         setQuantity(l.variantId, Math.min(l.variant.stock, l.quantity + 1))
                       }
                       aria-label={`Increase quantity of ${l.product.name}`}
-                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
+                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors leading-none"
                     >
                       +
                     </button>
@@ -130,14 +119,14 @@ export function CartView() {
                 </div>
 
                 <div className="col-span-6 sm:col-span-2 flex items-center justify-end gap-3">
-                  <p className="font-mono-tight font-bold">
+                  <p className="font-sub tnum text-[0.9rem]">
                     {l.lineTotalNGN > 0 ? money.formatLine(l.unitPriceNGN, l.quantity) : "—"}
                   </p>
                   <button
                     type="button"
                     onClick={() => remove(l.variantId)}
                     aria-label={`Remove ${l.product.name}`}
-                    className="text-ink/40 hover:text-vermillion transition-colors"
+                    className="text-muted hover:text-vermillion transition-colors"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -147,52 +136,47 @@ export function CartView() {
           })}
           {isLoading && (
             <li className="py-12 text-center">
-              <span className="stamp text-ink/40">Loading cart…</span>
+              <p className="font-label text-muted">Loading cart…</p>
             </li>
           )}
         </ul>
 
         <aside className="col-span-12 lg:col-span-4 lg:sticky lg:top-24 self-start">
-          <div className="relative border-2 border-ink p-6 bg-paper shadow-[6px_6px_0_0_var(--ink)]">
-            <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
-            <span className="absolute top-0 left-0 w-[3px] h-8 bg-vermillion" />
-
-            <span className="stamp text-ink/60">Summary</span>
+          <div className="border border-line p-6 bg-shot">
+            <p className="font-label text-muted">Summary</p>
             <dl className="mt-4 space-y-2.5">
-              <div className="flex justify-between font-mono-tight">
-                <dt className="text-ink/55">Subtotal</dt>
-                <dd className="font-bold">{subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}</dd>
+              <div className="flex justify-between font-label">
+                <dt className="text-muted">Subtotal</dt>
+                <dd className="font-sub tnum">{subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}</dd>
               </div>
-              <div className="flex justify-between font-mono-tight">
-                <dt className="text-ink/55">Shipping</dt>
-                <dd className="text-ink/55">at checkout</dd>
+              <div className="flex justify-between font-label">
+                <dt className="text-muted">Shipping</dt>
+                <dd className="text-muted">at checkout</dd>
               </div>
             </dl>
-            <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
-              <p className="font-condensed text-[0.82rem]">Total</p>
-              <p className="font-display text-3xl">
+            <div className="mt-5 pt-5 border-t border-line flex justify-between items-baseline">
+              <p className="font-label text-ink">Total</p>
+              <p className="font-sub tnum text-xl">
                 {subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}
               </p>
             </div>
             <Link
               href="/checkout"
               aria-disabled={lines.length === 0}
-              className={`btn-wipe btn-wipe-hazard press mt-6 block text-center py-4 font-condensed text-[0.82rem] transition-colors duration-200 ${
-                lines.length === 0
-                  ? "bg-ink/40 text-paper pointer-events-none"
-                  : "bg-ink text-paper"
+              className={`btn press mt-6 w-full py-4 ${
+                lines.length === 0 ? "opacity-40 pointer-events-none" : ""
               }`}
             >
-              Proceed to checkout →
+              Proceed to checkout
             </Link>
             <Link
               href="/shop"
-              className="block text-center mt-4 font-condensed text-[0.72rem] underline-offset-4 hover:underline hover:text-vermillion"
+              className="block text-center mt-4 font-label text-muted hover:text-ink transition-colors"
             >
               Continue shopping
             </Link>
           </div>
-          <p className="mt-5 font-mono-tight text-ink/55 text-sm">
+          <p className="mt-5 font-label text-muted normal-case tracking-normal">
             We pack in paper. Lagos deliveries usually go out within 48h.
           </p>
         </aside>

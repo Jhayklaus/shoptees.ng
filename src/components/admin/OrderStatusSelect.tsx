@@ -31,7 +31,7 @@ export function OrderStatusSelect({
         value={current}
         disabled={pending}
         onChange={(e) => onChange(e.target.value)}
-        className="font-mono-tight bg-transparent border border-line py-2 px-3 outline-none focus:border-ink disabled:opacity-50"
+        className="font-label bg-transparent border border-line py-2 px-3 outline-none focus:border-ink disabled:opacity-50"
       >
         {ORDER_STATUSES.map((s) => (
           <option key={s} value={s}>
@@ -40,7 +40,7 @@ export function OrderStatusSelect({
         ))}
       </select>
       {error && (
-        <p className="mt-2 font-mono-tight text-vermillion">{error}</p>
+        <p className="mt-2 font-label text-vermillion">{error}</p>
       )}
     </div>
   );

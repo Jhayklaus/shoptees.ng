@@ -50,14 +50,14 @@ export function PaymentPoller({ paystackReference }: { paystackReference: string
 
   if (failed) {
     return (
-      <p className="mt-4 font-mono-tight text-vermillion text-sm">
+      <p className="mt-4 font-label text-vermillion text-sm">
         Payment verification timed out. If you completed payment, your order will be updated shortly — check your email or contact us.
       </p>
     );
   }
 
   return (
-    <p className="mt-4 font-mono-tight text-ink/55 text-sm animate-pulse">
+    <p className="mt-4 font-label text-muted text-sm animate-pulse">
       Verifying your payment…
     </p>
   );

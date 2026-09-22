@@ -31,8 +31,8 @@ export function CurrencySwitcher({ className = "" }: { className?: string }) {
             aria-pressed={on}
             title={`Show prices in ${CURRENCY_META[code].label}`}
             className={[
-              "font-mono-tight px-2 py-1 leading-none transition-colors",
-              on ? "bg-ink text-paper" : "text-ink/55 hover:text-vermillion",
+              "font-label px-2 py-1 leading-none transition-colors",
+              on ? "bg-ink text-paper" : "text-muted hover:text-vermillion",
             ].join(" ")}
           >
             {CURRENCY_META[code].symbol} {CURRENCY_META[code].label}

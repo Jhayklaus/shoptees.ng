@@ -8,26 +8,20 @@ export const metadata = { robots: { index: false, follow: false } };
 
 export default function NotFound() {
   return (
-    <main className="mx-auto max-w-3xl px-5 md:px-10 py-32 text-center">
-      <span className="stamp text-vermillion">Lost in the studio</span>
-      <h1 className="font-display text-[9rem] md:text-[12rem] leading-none mt-4">
-        4<span className="text-vermillion">0</span>4
+    <main className="mx-auto max-w-2xl px-5 md:px-10 py-28 md:py-36 text-center">
+      <p className="font-label text-muted">Error 404</p>
+      <h1 className="font-display text-[clamp(2.2rem,7vw,4rem)] mt-3">
+        That page slipped behind the cutting table
       </h1>
-      <p className="text-xl text-ink-soft mt-4">
-        That page slipped behind the cutting table.
+      <p className="text-ink-soft mt-4 text-[0.95rem]">
+        The link may be out of date, or the piece may have come off the site.
       </p>
-      <div className="mt-10 flex items-center justify-center gap-4">
-        <Link
-          href="/"
-          className="btn-wipe btn-wipe-hazard inline-block bg-ink text-paper px-7 py-3.5 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
-        >
-          Back to home →
+      <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+        <Link href="/shop" className="btn press">
+          Browse the shop
         </Link>
-        <Link
-          href="/shop"
-          className="btn-wipe inline-block border-2 border-ink px-7 py-3.5 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
-        >
-          Browse the shop →
+        <Link href="/" className="btn btn-ghost press">
+          Home
         </Link>
       </div>
     </main>

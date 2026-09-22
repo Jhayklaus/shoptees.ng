@@ -105,18 +105,18 @@ export function TeamView({
           </div>
 
           {error && (
-            <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+            <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
               {error}
             </p>
           )}
           {success && (
-            <p className="bg-ink/5 border-l-2 border-ink px-3 py-2 font-mono-tight">{success}</p>
+            <p className="bg-ink/5 border-l-2 border-ink px-3 py-2 font-label">{success}</p>
           )}
 
           <button
             type="submit"
             disabled={pending || !email}
-            className="inline-flex items-center gap-2 bg-ink text-paper px-5 py-2.5 font-mono-tight hover:bg-vermillion transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 bg-ink text-paper px-5 py-2.5 font-label hover:bg-vermillion transition-colors disabled:opacity-50"
           >
             <Send size={14} />
             {pending ? "Sending…" : "Send invitation"}
@@ -140,7 +140,7 @@ export function TeamView({
                       <span className="font-italic-accent text-ink/55 ml-2">{inv.name}</span>
                     )}
                   </p>
-                  <p className="font-mono-tight text-ink/55 text-xs mt-0.5">
+                  <p className="font-label text-ink/55 text-xs mt-0.5">
                     Invited by {inv.invitedBy?.name ?? "—"} ·
                     expires {new Date(inv.expiresAt).toLocaleDateString("en-NG", {
                       dateStyle: "medium",
@@ -151,7 +151,7 @@ export function TeamView({
                   type="button"
                   onClick={() => onRevoke(inv.id)}
                   disabled={pending}
-                  className="font-mono-tight text-vermillion hover:underline disabled:opacity-50"
+                  className="font-label text-vermillion hover:underline disabled:opacity-50"
                 >
                   Revoke
                 </button>
@@ -175,12 +175,12 @@ export function TeamView({
                   <p className="font-display text-lg">
                     {a.name}
                     {isYou && (
-                      <span className="ml-2 font-mono-tight text-[0.65rem] uppercase tracking-wider bg-ink text-paper px-1.5 py-0.5">
+                      <span className="ml-2 font-label text-[0.65rem] uppercase tracking-wider bg-ink text-paper px-1.5 py-0.5">
                         you
                       </span>
                     )}
                   </p>
-                  <p className="font-mono-tight text-ink/55 text-xs">{a.email}</p>
+                  <p className="font-label text-ink/55 text-xs">{a.email}</p>
                 </div>
                 {!isYou && (
                   <button
@@ -188,7 +188,7 @@ export function TeamView({
                     onClick={() => onRemove(a.id, a.name)}
                     disabled={pending}
                     aria-label={`Remove ${a.name}`}
-                    className="inline-flex items-center gap-1.5 font-mono-tight text-vermillion hover:underline disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 font-label text-vermillion hover:underline disabled:opacity-50"
                   >
                     <Trash2 size={14} />
                     Remove
@@ -222,7 +222,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="font-mono-tight text-ink/55 block">
+      <label htmlFor={id} className="font-label text-ink/55 block">
         {label}
       </label>
       <input

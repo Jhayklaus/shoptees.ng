@@ -20,7 +20,7 @@ export default async function AdminProductsPage() {
         actions={
           <Link
             href="/admin/products/new"
-            className="inline-flex items-center gap-2 bg-ink text-paper px-4 py-2 font-mono-tight hover:bg-vermillion transition-colors"
+            className="inline-flex items-center gap-2 bg-ink text-paper px-4 py-2 font-label hover:bg-vermillion transition-colors"
           >
             <Plus size={14} /> New product
           </Link>
@@ -33,7 +33,7 @@ export default async function AdminProductsPage() {
             <p className="font-italic-accent text-2xl text-ink/55">No products yet.</p>
             <Link
               href="/admin/products/new"
-              className="inline-block mt-5 border border-ink px-5 py-2 font-mono-tight hover:bg-ink hover:text-paper"
+              className="inline-block mt-5 border border-ink px-5 py-2 font-label hover:bg-ink hover:text-paper"
             >
               Create the first one →
             </Link>
@@ -75,7 +75,7 @@ export default async function AdminProductsPage() {
                         >
                           {p.name}
                         </Link>
-                        <p className="font-mono-tight text-ink/40 text-[0.65rem]">/{p.slug}</p>
+                        <p className="font-label text-ink/40 text-[0.65rem]">/{p.slug}</p>
                       </Td>
                       <Td>
                         <StatusBadge status={p.status} variant="product" />
@@ -86,13 +86,13 @@ export default async function AdminProductsPage() {
                       <Td className="font-italic-accent text-ink-soft">
                         {p.category?.name ?? "—"}
                       </Td>
-                      <Td className="font-mono-tight">
+                      <Td className="font-label">
                         {p.priceNGN > 0 ? formatNaira(p.priceNGN) : "—"}
                       </Td>
-                      <Td className={`font-mono-tight ${stock <= 3 ? "text-vermillion" : ""}`}>
+                      <Td className={`font-label ${stock <= 3 ? "text-vermillion" : ""}`}>
                         {stock}
                       </Td>
-                      <Td className="font-mono-tight text-ink/55">{p._count.orderItems}</Td>
+                      <Td className="font-label text-ink/55">{p._count.orderItems}</Td>
                     </tr>
                   );
                 })}
@@ -106,7 +106,7 @@ export default async function AdminProductsPage() {
 }
 
 function Th({ children }: { children?: React.ReactNode }) {
-  return <th className="font-mono-tight text-ink/55 px-4 py-3 font-normal">{children}</th>;
+  return <th className="font-label text-ink/55 px-4 py-3 font-normal">{children}</th>;
 }
 function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <td className={`px-4 py-3 ${className}`}>{children}</td>;

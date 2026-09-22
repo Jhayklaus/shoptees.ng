@@ -69,12 +69,12 @@ export function ImportArchivePanel({
           {designs} products, each colourway a variant at zero stock. Nothing appears on the
           storefront until you publish it yourself.
         </p>
-        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
           Every product imports at ₦0. The figures in the merch reference are what a sample
           costs to produce, not what it sells for — each product carries its sample cost in
           the description. Set real prices before publishing.
         </p>
-        <p className="font-mono-tight text-ink/55">
+        <p className="font-label text-ink/55">
           Creates any missing categories and collections itself — nothing to run beforehand.
           Safe to run more than once: it matches on slug, so a second run updates rather than
           duplicating.
@@ -92,7 +92,7 @@ export function ImportArchivePanel({
         </button>
 
         <div>
-          <label htmlFor="confirm" className="block font-mono-tight text-ink/55 mb-1">
+          <label htmlFor="confirm" className="block font-label text-ink/55 mb-1">
             Type {CONFIRM} to enable import
           </label>
           <input
@@ -100,7 +100,7 @@ export function ImportArchivePanel({
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             placeholder={CONFIRM}
-            className="border-b-2 border-line focus:border-vermillion outline-none py-2 font-mono-tight w-56 bg-transparent"
+            className="border-b-2 border-line focus:border-vermillion outline-none py-2 font-label w-56 bg-transparent"
           />
         </div>
 
@@ -115,7 +115,7 @@ export function ImportArchivePanel({
       </div>
 
       {error && (
-        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
           {error}
         </p>
       )}
@@ -129,10 +129,10 @@ export function ImportArchivePanel({
 
           {skipped.length > 0 && (
             <div className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2">
-              <p className="font-mono-tight text-ink-soft mb-1">
+              <p className="font-label text-ink-soft mb-1">
                 Skipped — these could not be placed:
               </p>
-              <ul className="font-mono-tight text-ink-soft">
+              <ul className="font-label text-ink-soft">
                 {skipped.map((p) => (
                   <li key={p.slug}>
                     {p.slug} — {p.reason}
@@ -143,12 +143,12 @@ export function ImportArchivePanel({
           )}
 
           <div>
-            <p className="font-mono-tight text-ink/55 mb-2">
+            <p className="font-label text-ink/55 mb-2">
               Categories — {newCategories.length} to create,{" "}
               {report.categories.length - newCategories.length} already there
             </p>
             {newCategories.length > 0 && (
-              <ul className="font-mono-tight space-y-1 mb-4">
+              <ul className="font-label space-y-1 mb-4">
                 {newCategories.map((c) => (
                   <li key={c.slug} className="flex justify-between border-b border-line py-1">
                     <span>{c.slug}</span>
@@ -160,11 +160,11 @@ export function ImportArchivePanel({
           </div>
 
           <div>
-            <p className="font-mono-tight text-ink/55 mb-2">
+            <p className="font-label text-ink/55 mb-2">
               Collections — {newCollections.length} to create as drafts,{" "}
               {report.collections.length - newCollections.length} already there
             </p>
-            <ul className="font-mono-tight space-y-1">
+            <ul className="font-label space-y-1">
               {report.collections.map((c) => (
                 <li key={c.slug} className="flex justify-between border-b border-line py-1">
                   <span>{c.slug}</span>
@@ -177,8 +177,8 @@ export function ImportArchivePanel({
           </div>
 
           <div>
-            <p className="font-mono-tight text-ink/55 mb-2">Products</p>
-            <ul className="font-mono-tight space-y-1">
+            <p className="font-label text-ink/55 mb-2">Products</p>
+            <ul className="font-label space-y-1">
               {report.products.map((p) => (
                 <li key={p.slug} className="flex justify-between gap-4 border-b border-line py-1">
                   <span className="truncate">{p.name}</span>

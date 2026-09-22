@@ -21,14 +21,20 @@ const NOTIFICATION_FIELDS = [
   },
 ] as const;
 
+// The hero is a banner for one collection. Every copy field is an OVERRIDE:
+// left blank it uses the collection's own name, description and artwork, so
+// editing a collection updates the homepage without a second edit here.
 const HERO_FIELDS = [
-  { key: "hero.eyebrow", label: "Eyebrow", hint: 'Small label above the headline. e.g. "Spring/Summer · Lagos".' },
-  { key: "hero.headline", label: "Headline", hint: "Main display headline. Use line breaks for each line.", multiline: true },
-  { key: "hero.cycle_words", label: "Cycling words", hint: "Comma-separated. They animate one after another at the end of the headline. Leave blank for none." },
-  { key: "hero.body", label: "Body", hint: "Short paragraph in the right column.", multiline: true },
-  { key: "hero.cta_label", label: "Button label", hint: 'e.g. "Shop the collection".' },
-  { key: "hero.cta_href", label: "Button link", hint: "Path or full URL." },
-  { key: "hero.caption", label: "Image caption", hint: "Small caption overlaid on the hero image." },
+  {
+    key: "hero.collection",
+    label: "Featured collection",
+    hint: "Slug of the collection the homepage leads with — e.g. trap-house. Blank, or a collection that is missing or unpublished, falls back to the first published collection.",
+  },
+  { key: "hero.eyebrow", label: "Eyebrow", hint: 'Override the small label above the headline. Blank uses "Featured collection".' },
+  { key: "hero.headline", label: "Headline", hint: "Override the headline. Blank uses the collection's name. Use line breaks for each line.", multiline: true },
+  { key: "hero.body", label: "Body", hint: "Override the paragraph. Blank uses the collection's own description.", multiline: true },
+  { key: "hero.cta_label", label: "Button label", hint: 'Override the button. Blank uses "Shop <collection>". The button always routes to that collection.' },
+  { key: "hero.caption", label: "Image caption", hint: "Optional small caption under the button." },
 ] as const;
 
 const CAMPAIGN_FIELDS = [
@@ -161,13 +167,13 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
             onChange={(v) => set("currency.ngn_per_usd", v)}
           />
           {usdOn && !rateValid && (
-            <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+            <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
               Enter a rate greater than zero, or dollar prices stay switched off.
             </p>
           )}
 
           <div>
-            <label htmlFor="currency.usd_rounding" className="block font-mono-tight text-ink/55 mb-1">
+            <label htmlFor="currency.usd_rounding" className="block font-label text-ink/55 mb-1">
               Price rounding
             </label>
             <select
@@ -278,7 +284,7 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
       </section>
 
       {error && (
-        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
           {error}
         </p>
       )}
@@ -287,7 +293,7 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
         <button
           type="submit"
           disabled={pending}
-          className="bg-ink text-paper px-6 py-3 font-mono-tight hover:bg-vermillion transition-colors disabled:opacity-50"
+          className="bg-ink text-paper px-6 py-3 font-label hover:bg-vermillion transition-colors disabled:opacity-50"
         >
           {pending ? "Saving…" : "Save settings"}
         </button>
@@ -318,7 +324,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="font-mono-tight text-ink/55 block">
+      <label htmlFor={id} className="font-label text-ink/55 block">
         {label}
         {hint && <span className="text-ink/40 normal-case ml-2">{hint}</span>}
       </label>

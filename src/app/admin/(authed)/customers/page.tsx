@@ -19,7 +19,7 @@ export default async function AdminCustomersPage() {
         {customers.length === 0 ? (
           <div className="border border-dashed border-line p-12 text-center">
             <p className="font-italic-accent text-2xl text-ink/55">No customers yet.</p>
-            <p className="font-mono-tight text-ink/55 mt-2">
+            <p className="font-label text-ink/55 mt-2">
               Customers are created automatically on first checkout.
             </p>
           </div>
@@ -42,13 +42,13 @@ export default async function AdminCustomersPage() {
                     <Td className="font-display text-lg leading-tight">
                       {c.firstName} {c.lastName}
                     </Td>
-                    <Td className="font-mono-tight">{c.email}</Td>
-                    <Td className="font-mono-tight text-ink/55">{c.phone ?? "—"}</Td>
-                    <Td className="font-mono-tight">{c.orderCount}</Td>
-                    <Td className="font-mono-tight">
+                    <Td className="font-label">{c.email}</Td>
+                    <Td className="font-label text-ink/55">{c.phone ?? "—"}</Td>
+                    <Td className="font-label">{c.orderCount}</Td>
+                    <Td className="font-label">
                       {c.lifetimeNGN > 0 ? formatNaira(c.lifetimeNGN) : "—"}
                     </Td>
-                    <Td className="font-mono-tight text-ink/55">
+                    <Td className="font-label text-ink/55">
                       {new Date(c.createdAt).toLocaleDateString("en-NG")}
                     </Td>
                   </tr>
@@ -63,7 +63,7 @@ export default async function AdminCustomersPage() {
 }
 
 function Th({ children }: { children?: React.ReactNode }) {
-  return <th className="font-mono-tight text-ink/55 px-4 py-3 font-normal">{children}</th>;
+  return <th className="font-label text-ink/55 px-4 py-3 font-normal">{children}</th>;
 }
 function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <td className={`px-4 py-3 ${className}`}>{children}</td>;

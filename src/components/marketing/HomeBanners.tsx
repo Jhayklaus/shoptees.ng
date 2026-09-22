@@ -20,7 +20,7 @@ export async function HomeBanners() {
         const imageAlt = b.imageAlt || b.title || "Shoptees";
 
         return (
-          <section key={b.id} className="reveal mx-auto max-w-[1400px] px-5 md:px-10 py-16 md:py-24">
+          <section key={b.id} className="mx-auto max-w-[1400px] px-5 md:px-10 py-16 md:py-24">
             <div className="relative grid grid-cols-12 bg-ink text-paper overflow-hidden border-[3px] border-ink">
               {/* Image side */}
               {b.imageUrl && (
@@ -54,7 +54,7 @@ export async function HomeBanners() {
 
                 <div>
                   {b.eyebrow && (
-                    <span className="stamp text-paper/70">{b.eyebrow}</span>
+                    <p className="font-label text-paper/70">{b.eyebrow}</p>
                   )}
                   <h2 className="mt-4 font-display text-4xl md:text-5xl xl:text-6xl leading-[0.95]">
                     {b.title}
@@ -70,7 +70,7 @@ export async function HomeBanners() {
                   <div className="mt-8">
                     <Link
                       href={ctaHref}
-                      className="btn-wipe btn-wipe-hazard inline-flex items-center gap-2 group bg-paper text-ink px-5 py-3 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
+                      className="btn btn-light press"
                     >
                       {b.ctaLabel}
                       <ArrowUpRight

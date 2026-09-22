@@ -13,7 +13,7 @@ export function KpiCard({ label, value, hint, accent }: Props) {
         accent ? "bg-ink text-paper border-ink" : "bg-paper border-line",
       ].join(" ")}
     >
-      <p className={accent ? "font-mono-tight text-paper/55" : "font-mono-tight text-ink/55"}>
+      <p className={accent ? "font-label text-paper/55" : "font-label text-ink/55"}>
         {label}
       </p>
       <p className="font-display text-4xl tracking-tight mt-1 leading-none">

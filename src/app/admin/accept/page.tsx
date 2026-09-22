@@ -49,7 +49,7 @@ export default async function AcceptInvitePage({
     <main className="min-h-screen bg-paper flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <header className="text-center mb-10">
-          <p className="font-mono-tight text-ink/55">Studio access</p>
+          <p className="font-label text-ink/55">Studio access</p>
           <h1 className="font-display text-5xl tracking-tight mt-1 leading-[0.95]">
             Set your <span className="font-italic-accent text-vermillion">password.</span>
           </h1>
@@ -79,13 +79,13 @@ function NoticeShell({
   return (
     <main className="min-h-screen bg-paper flex items-center justify-center p-6">
       <div className="max-w-md text-center">
-        <p className="font-mono-tight text-ink/55">Studio access</p>
+        <p className="font-label text-ink/55">Studio access</p>
         <h1 className="font-display text-4xl tracking-tight mt-2">{heading}</h1>
         <p className="mt-4 text-ink-soft">{body}</p>
         {cta && (
           <Link
             href={cta.href}
-            className="inline-block mt-8 border border-ink px-5 py-2.5 font-mono-tight hover:bg-ink hover:text-paper transition-colors"
+            className="inline-block mt-8 border border-ink px-5 py-2.5 font-label hover:bg-ink hover:text-paper transition-colors"
           >
             {cta.label}
           </Link>

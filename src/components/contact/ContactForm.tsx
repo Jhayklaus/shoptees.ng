@@ -36,20 +36,18 @@ export function ContactForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className="col-span-12 md:col-span-6 md:col-start-7 relative border-2 border-ink p-6 md:p-10 shadow-[6px_6px_0_0_var(--ink)]"
+      className="col-span-12 md:col-span-6 md:col-start-7 border border-line bg-shot p-6 md:p-9"
     >
-      <span className="absolute top-0 right-0 w-8 h-[3px] bg-vermillion" />
-      <span className="absolute top-0 right-0 w-[3px] h-8 bg-vermillion" />
 
-      <span className="stamp text-ink/60">A note</span>
-      <h2 className="font-display text-4xl mt-2">
-        Or leave a message <span className="text-vermillion">here.</span>
+      <p className="font-label text-muted">A note</p>
+      <h2 className="font-display text-[clamp(1.5rem,3.5vw,2.2rem)] mt-2">
+        Or leave a message here
       </h2>
 
       {submitted ? (
-        <p className="mt-8 font-display text-2xl">
+        <p className="mt-8 font-sub text-lg leading-snug">
           Thank you —{" "}
-          <span className="text-vermillion">we&apos;ll write back within a day.</span>
+          we&apos;ll write back within a day.
         </p>
       ) : (
         <>
@@ -57,7 +55,7 @@ export function ContactForm() {
             <Field id="c-name" label="Name" required />
             <Field id="c-email" label="Email" type="email" required />
             <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
-              <label htmlFor="c-msg" className="font-mono-tight text-ink/55">
+              <label htmlFor="c-msg" className="font-label text-muted">
                 Message
               </label>
               <textarea
@@ -65,7 +63,7 @@ export function ContactForm() {
                 name="c-msg"
                 rows={4}
                 required
-                className="w-full bg-transparent py-1 outline-none font-display text-lg resize-none"
+                className="w-full bg-transparent py-1 outline-none font-sub text-[0.98rem] resize-none"
               />
             </div>
           </div>
@@ -77,7 +75,7 @@ export function ContactForm() {
           </div>
 
           {error && (
-            <p className="mt-4 bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+            <p className="mt-4 bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 font-label text-ink-soft">
               {error}
             </p>
           )}
@@ -85,7 +83,7 @@ export function ContactForm() {
           <button
             type="submit"
             disabled={pending}
-            className="btn-wipe btn-wipe-hazard press mt-8 w-full bg-ink text-paper py-4 font-condensed text-[0.82rem] transition-colors duration-200 disabled:opacity-50"
+            className="btn press mt-8 w-full py-4"
           >
             {pending ? "Sending…" : "Send →"}
           </button>
@@ -108,7 +106,7 @@ function Field({
 }) {
   return (
     <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
-      <label htmlFor={id} className="font-mono-tight text-ink/55">
+      <label htmlFor={id} className="font-label text-muted">
         {label}
         {required && <span className="text-vermillion"> *</span>}
       </label>
@@ -117,7 +115,7 @@ function Field({
         name={id}
         type={type}
         required={required}
-        className="w-full bg-transparent py-1 outline-none font-display text-lg"
+        className="w-full bg-transparent py-1 outline-none font-sub text-[0.98rem]"
       />
     </div>
   );

@@ -43,26 +43,45 @@ export function Header({
   return (
     <header
       data-vt="header"
-      className="header-scroll sticky top-0 z-40 bg-paper/90 backdrop-blur-md border-b-2 border-ink"
+      // No border at rest. The bar earns its separation as the page moves
+      // under it: .header-scroll fades in a hairline and a faint shadow over
+      // the first 90px of scroll, so at the top of the page the header and
+      // the hero are one surface rather than two stacked boxes.
+      className="header-scroll sticky top-0 z-40 bg-paper/90 backdrop-blur-md"
     >
-      <div className="mx-auto max-w-[1400px] px-5 md:px-10 h-16 flex items-center justify-between">
+      {/* The wordmark sits at the start of the line, not floated to the
+          centre of it. A centred mark with nav left and cart right is a
+          symmetrical arrangement that reads as a template; anchoring it left
+          lets the nav run on from it and gives the row a direction. */}
+      <div className="mx-auto max-w-[1400px] px-5 md:px-10 h-[3.9rem] md:h-[4.75rem] flex items-center gap-4 md:gap-7">
         <button
           type="button"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((v) => !v)}
-          className="md:hidden p-2 -ml-2"
+          className="md:hidden p-2 -ml-2 text-ink"
         >
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        <nav aria-label="Primary" className="hidden md:flex items-center gap-7">
+        <Link href="/" aria-label="Shoptees home" className="select-none shrink-0">
+          <Image
+            src="/logo.png"
+            alt="Shoptees"
+            width={94}
+            height={94}
+            priority
+            className="h-10 w-auto md:h-[3.1rem] object-contain"
+          />
+        </Link>
+
+        <nav aria-label="Primary" className="hidden md:flex items-center gap-8">
           {mainNav.map((item, i) =>
             item.type === "link" ? (
               <Link
                 key={item.href}
                 href={item.href}
-                className="link-underline font-condensed text-[0.82rem] text-ink hover:text-vermillion transition-colors"
+                className="font-label text-ink/80 hover:text-ink transition-colors"
               >
                 {item.label}
               </Link>
@@ -76,22 +95,7 @@ export function Header({
           )}
         </nav>
 
-        <Link
-          href="/"
-          aria-label="Shoptees home"
-          className="absolute left-1/2 -translate-x-1/2 select-none"
-        >
-          <Image
-            src="/logo.png"
-            alt="Shoptees"
-            width={94}
-            height={94}
-            priority
-            className="h-12 w-12 md:h-24 md:w-24 object-contain"
-          />
-        </Link>
-
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-3 shrink-0">
           <CurrencySwitcher className="hidden sm:inline-flex" />
           <CartButton />
         </div>
@@ -166,7 +170,7 @@ function NavDropdown({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="link-underline inline-flex items-center gap-1 font-condensed text-[0.82rem] text-ink hover:text-vermillion transition-colors"
+        className="inline-flex items-center gap-1.5 font-label text-ink/80 hover:text-ink transition-colors"
       >
         {label}
         <ChevronDown
@@ -175,8 +179,8 @@ function NavDropdown({
         />
       </button>
 
-      {/* Panel — anchored to the trigger. Uses absolute + small Y translate
-          to feel like it lifts off the bar. */}
+      {/* Panel — anchored to the trigger, lifted off the bar with the same
+          shadow the product tiles use rather than its own effect. */}
       <div
         role="menu"
         aria-label={label}
@@ -187,19 +191,14 @@ function NavDropdown({
       >
         <div
           className={[
-            "min-w-[240px] bg-paper border-2 border-ink shadow-[5px_5px_0_0_var(--ink)] origin-top-left",
+            "relative min-w-[250px] bg-paper border border-line shadow-lift-lg origin-top-left",
             "transition-all duration-200 ease-out",
-            open
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-1",
+            open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1",
           ].join(" ")}
         >
-          {/* Hazard top tick */}
-          <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
-
           <ul className="py-2">
             {items.length === 0 ? (
-              <li className="px-4 py-2 font-italic-accent text-ink/55 text-sm">
+              <li className="px-4 py-2 font-label text-muted normal-case">
                 {emptyLabel}
               </li>
             ) : (
@@ -209,12 +208,12 @@ function NavDropdown({
                     href={item.href}
                     onClick={() => setOpen(false)}
                     role="menuitem"
-                    className="group flex items-center justify-between gap-4 px-4 py-2 font-mono-tight text-ink hover:bg-paper-deep transition-colors"
+                    className="group flex items-center justify-between gap-4 px-4 py-2.5 font-label text-ink-soft hover:bg-shot hover:text-ink transition-colors"
                   >
                     <span>{item.name}</span>
                     <ArrowUpRight
                       size={14}
-                      className="text-vermillion opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150"
+                      className="text-muted opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150"
                     />
                   </Link>
                 </li>
@@ -226,7 +225,7 @@ function NavDropdown({
               href={footer.href}
               onClick={() => setOpen(false)}
               role="menuitem"
-              className="block px-4 py-2.5 font-mono-tight text-ink/70 hover:text-ink hover:bg-paper-deep transition-colors"
+              className="block px-4 py-2.5 font-label text-muted hover:text-ink hover:bg-ink/5 transition-colors"
             >
               {footer.label}
             </Link>
@@ -260,7 +259,7 @@ function MobileMenu({
 
   return (
     <div className="sheet-in md:hidden border-t border-line bg-paper">
-      <ul className="px-5 py-4 space-y-3">
+      <ul className="px-5 py-5 space-y-4">
         {items.map((item, i) => {
           if (item.type === "link") {
             return (
@@ -268,7 +267,7 @@ function MobileMenu({
                 <Link
                   href={item.href}
                   onClick={onClose}
-                  className="font-display text-2xl tracking-tight"
+                  className="font-display text-[2rem] block"
                 >
                   {item.label}
                 </Link>
@@ -283,7 +282,7 @@ function MobileMenu({
                 type="button"
                 onClick={() => toggleKind(item.kind)}
                 aria-expanded={open}
-                className="inline-flex items-center gap-2 font-display text-2xl tracking-tight"
+                className="inline-flex items-center gap-2 font-display text-[2rem]"
               >
                 {item.label}
                 <ChevronDown
@@ -292,16 +291,16 @@ function MobileMenu({
                 />
               </button>
               {open && (
-                <ul className="mt-2 pl-3 border-l border-line space-y-2">
+                <ul className="mt-3 pl-3 border-l-2 border-line space-y-2.5">
                   {links.length === 0 ? (
-                    <li className="font-italic-accent text-ink/55">{emptyLabel}</li>
+                    <li className="font-label text-muted normal-case">{emptyLabel}</li>
                   ) : (
                     links.map((link) => (
                       <li key={link.href}>
                         <Link
                           href={link.href}
                           onClick={onClose}
-                          className="font-mono-tight text-ink hover:text-vermillion transition-colors"
+                          className="font-label text-ink hover:text-vermillion transition-colors block py-0.5"
                         >
                           {link.name}
                         </Link>
@@ -312,7 +311,7 @@ function MobileMenu({
                     <Link
                       href={footer.href}
                       onClick={onClose}
-                      className="font-mono-tight text-ink/55 hover:text-vermillion transition-colors"
+                      className="font-label text-muted hover:text-vermillion transition-colors block py-0.5"
                     >
                       {footer.label}
                     </Link>
@@ -324,8 +323,8 @@ function MobileMenu({
         })}
       </ul>
 
-      <div className="px-5 pb-5 sm:hidden">
-        <p className="font-mono-tight text-ink/55 mb-2">Currency</p>
+      <div className="px-5 pb-5 sm:hidden border-t border-line pt-4">
+        <p className="font-label text-muted mb-2">Currency</p>
         <CurrencySwitcher />
       </div>
     </div>

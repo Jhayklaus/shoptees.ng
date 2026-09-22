@@ -49,7 +49,7 @@ export function SingleImagePicker({ value, onChange, altValue, onAltChange, labe
 
   return (
     <div>
-      {label && <p className="font-mono-tight text-ink/55 mb-2">{label}</p>}
+      {label && <p className="font-label text-ink/55 mb-2">{label}</p>}
 
       {value ? (
         <div className="flex items-start gap-4">
@@ -68,7 +68,7 @@ export function SingleImagePicker({ value, onChange, altValue, onAltChange, labe
           <div className="flex-1 min-w-0 space-y-2">
             {onAltChange && (
               <div className="border-b border-line py-2">
-                <label className="font-mono-tight text-ink/55 block">Alt text</label>
+                <label className="font-label text-ink/55 block">Alt text</label>
                 <input
                   value={altValue ?? ""}
                   onChange={(e) => onAltChange(e.target.value)}
@@ -77,14 +77,14 @@ export function SingleImagePicker({ value, onChange, altValue, onAltChange, labe
                 />
               </div>
             )}
-            <p className="font-mono-tight text-ink/40 truncate text-[0.65rem]" title={value}>
+            <p className="font-label text-ink/40 truncate text-[0.65rem]" title={value}>
               {value}
             </p>
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
               disabled={busy}
-              className="font-mono-tight border border-line px-3 py-1.5 hover:border-ink disabled:opacity-50"
+              className="font-label border border-line px-3 py-1.5 hover:border-ink disabled:opacity-50"
             >
               {busy ? "Replacing…" : "Replace image"}
             </button>
@@ -101,12 +101,12 @@ export function SingleImagePicker({ value, onChange, altValue, onAltChange, labe
           className="border-2 border-dashed border-line p-6 text-center hover:border-ink transition-colors max-w-md"
         >
           <Upload size={20} className="mx-auto text-ink/55" />
-          <p className="font-mono-tight text-ink/55 mt-2">Drop an image, or</p>
+          <p className="font-label text-ink/55 mt-2">Drop an image, or</p>
           <button
             type="button"
             disabled={busy}
             onClick={() => fileRef.current?.click()}
-            className="mt-2 font-mono-tight border border-ink px-4 py-2 hover:bg-ink hover:text-paper transition-colors disabled:opacity-50"
+            className="mt-2 font-label border border-ink px-4 py-2 hover:bg-ink hover:text-paper transition-colors disabled:opacity-50"
           >
             {busy ? "Uploading…" : "Choose file"}
           </button>
@@ -125,7 +125,7 @@ export function SingleImagePicker({ value, onChange, altValue, onAltChange, labe
       />
 
       {error && (
-        <p className="mt-3 bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft inline-flex items-center gap-2">
+        <p className="mt-3 bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft inline-flex items-center gap-2">
           <AlertCircle size={14} /> {error}
         </p>
       )}

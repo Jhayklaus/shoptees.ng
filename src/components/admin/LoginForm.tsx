@@ -32,7 +32,7 @@ export function LoginForm() {
   return (
     <form onSubmit={onSubmit} className="mt-10 space-y-5">
       <div className="border-b border-ink/20 py-2">
-        <label htmlFor="email" className="font-mono-tight text-ink/55 block">
+        <label htmlFor="email" className="font-label text-ink/55 block">
           Email
         </label>
         <input
@@ -47,7 +47,7 @@ export function LoginForm() {
         />
       </div>
       <div className="border-b border-ink/20 py-2">
-        <label htmlFor="password" className="font-mono-tight text-ink/55 block">
+        <label htmlFor="password" className="font-label text-ink/55 block">
           Password
         </label>
         <input
@@ -63,7 +63,7 @@ export function LoginForm() {
       </div>
 
       {error && (
-        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
           {error}
         </p>
       )}
@@ -71,12 +71,12 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full bg-ink text-paper py-4 font-mono-tight hover:bg-vermillion transition-colors disabled:opacity-50"
+        className="w-full bg-ink text-paper py-4 font-label hover:bg-vermillion transition-colors disabled:opacity-50"
       >
         {isPending ? "Signing in…" : "Sign in →"}
       </button>
 
-      <p className="font-mono-tight text-ink/55 text-center pt-2">
+      <p className="font-label text-ink/55 text-center pt-2">
         Forgot your password? Re-seed via the CLI.
       </p>
     </form>

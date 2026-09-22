@@ -18,7 +18,7 @@ export async function CampaignBanner() {
 
   return (
     <section className="reveal relative w-full mt-12 md:mt-16">
-      <div className="relative w-full aspect-[4/5] sm:aspect-[16/10] lg:aspect-[16/7] overflow-hidden bg-paper-deep group">
+      <div className="relative w-full aspect-[4/5] sm:aspect-[16/10] lg:aspect-[16/7] overflow-hidden bg-shot group">
         <Image
           src={s["campaign.image_url"]}
           alt={imageAlt}
@@ -46,7 +46,7 @@ export async function CampaignBanner() {
               {ctaLabel && (
                 <Link
                   href={ctaHref}
-                  className="btn-wipe btn-wipe-hazard mt-7 inline-flex items-center gap-2 group/cta bg-paper text-ink px-6 py-3 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
+                  className="btn btn-light press mt-7"
                 >
                   {ctaLabel}
                   <ArrowUpRight

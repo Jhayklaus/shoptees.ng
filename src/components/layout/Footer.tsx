@@ -1,53 +1,56 @@
+import Image from "next/image";
 import Link from "next/link";
 import { footerNav } from "@/config/nav";
 import { siteConfig } from "@/config/site";
 import { getAllSettings } from "@/lib/server/settings";
 
-const reel = [
-  "SHOPTEES",
-  "—",
-  "Streetwear that speaks for YOU.",
-  "—",
-  "MADE IN NIGERIA",
-  "—",
-  "EST. [YYYY]",
-  "—",
-];
+/**
+ * Several SiteSetting rows still hold seeded "[PLACEHOLDER: …]" strings, and
+ * they render straight onto the storefront. Until someone fills them in from
+ * /admin, show nothing rather than showing the brackets to a customer.
+ */
+function settingOrNull(value: string | undefined) {
+  const v = value?.trim();
+  if (!v || v.startsWith("[PLACEHOLDER")) return null;
+  return v;
+}
 
 export async function Footer() {
   const settings = await getAllSettings();
-  const items = Array.from({ length: 4 }).flatMap(() => reel);
-  const tagline = settings["site.tagline"];
-  const email = settings["contact.email"];
+  const tagline = settingOrNull(settings["site.tagline"]) ?? siteConfig.description;
+  const email = settingOrNull(settings["contact.email"]) ?? siteConfig.contact.email;
 
   return (
-    <footer className="mt-24 bg-ink text-paper border-t-4 border-tan">
-      <div className="marquee-hover border-b border-paper/15 py-5 overflow-hidden">
-        <div className="flex animate-marquee-slow whitespace-nowrap will-change-transform">
-          {items.map((t, i) => (
-            <span
-              key={i}
-              className="font-display text-[3.2rem] md:text-[5rem] leading-none px-6 text-paper/95"
-            >
-              {t === "—" ? <span className="text-tan">■</span> : t}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-[1400px] px-5 md:px-10 py-16 grid grid-cols-2 md:grid-cols-12 gap-10">
+    <footer className="mt-20 bg-ink text-paper grain grain-dark">
+      <div className="relative z-10 mx-auto max-w-[1400px] px-5 md:px-10 py-16 grid grid-cols-2 md:grid-cols-12 gap-10">
         <div className="col-span-2 md:col-span-5">
-          <p className="font-italic-accent text-2xl md:text-3xl leading-tight max-w-md">
+          {/* The wordmark itself, not the name set as a label. It is a white
+              recolour of the same file the header uses — same oval, same five
+              arched stars, alpha untouched — so the mark is never redrawn,
+              only made legible on ink. */}
+          <Link href="/" aria-label="Shoptees home" className="inline-block">
+            <Image
+              src="/logo-white.png"
+              alt="Shoptees"
+              width={378}
+              height={197}
+              className="h-11 md:h-[3.2rem] w-auto object-contain"
+            />
+          </Link>
+          <p className="mt-5 font-sub text-lg md:text-xl leading-[1.3] max-w-sm normal-case tracking-normal">
             {tagline}
           </p>
         </div>
 
         <div className="col-span-1 md:col-span-2">
-          <h3 className="font-mono-tight text-paper/55 mb-3">Shop</h3>
+          <h3 className="font-label text-paper/55 mb-3">Shop</h3>
           <ul className="space-y-2">
             {footerNav.shop.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="link-underline hover:text-tan transition-colors">
+                <Link
+                  href={l.href}
+                  className="font-label text-paper/80 hover:text-tan transition-colors"
+                >
                   {l.label}
                 </Link>
               </li>
@@ -56,11 +59,14 @@ export async function Footer() {
         </div>
 
         <div className="col-span-1 md:col-span-2">
-          <h3 className="font-mono-tight text-paper/55 mb-3">Studio</h3>
+          <h3 className="font-label text-paper/55 mb-3">Studio</h3>
           <ul className="space-y-2">
             {footerNav.company.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="link-underline hover:text-tan transition-colors">
+                <Link
+                  href={l.href}
+                  className="font-label text-paper/80 hover:text-tan transition-colors"
+                >
                   {l.label}
                 </Link>
               </li>
@@ -69,27 +75,40 @@ export async function Footer() {
         </div>
 
         <div className="col-span-2 md:col-span-3">
-          <h3 className="font-mono-tight text-paper/55 mb-3">Elsewhere</h3>
+          <h3 className="font-label text-paper/55 mb-3">Elsewhere</h3>
           <ul className="space-y-2">
             <li>
-              <a href={siteConfig.social.instagram} className="link-underline hover:text-tan transition-colors">
+              <a
+                href={siteConfig.social.instagram}
+                className="font-label text-paper/80 hover:text-tan transition-colors"
+              >
                 Instagram ↗
               </a>
             </li>
             <li>
-              <a href={siteConfig.social.x} className="link-underline hover:text-tan transition-colors">
+              <a
+                href={siteConfig.social.x}
+                className="font-label text-paper/80 hover:text-tan transition-colors"
+              >
                 X / Twitter ↗
               </a>
             </li>
-            <li className="pt-2 text-paper/55 text-sm">{email}</li>
+            <li className="pt-2">
+              <a
+                href={`mailto:${email}`}
+                className="font-label text-paper/70 hover:text-tan transition-colors normal-case"
+              >
+                {email}
+              </a>
+            </li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-paper/15">
+      <div className="relative z-10 border-t border-paper/15">
         <div className="mx-auto max-w-[1400px] px-5 md:px-10 py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-          <p className="font-mono-tight text-paper/55">
-            © {new Date().getFullYear()} Shoptees. All rights reserved.
+          <p className="font-label text-paper/55">
+            © {new Date().getFullYear()} Shoptees · Lagos, Nigeria
           </p>
           <ul className="flex gap-5">
             {[
@@ -99,7 +118,7 @@ export async function Footer() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="font-mono-tight text-paper/55 hover:text-tan transition-colors"
+                  className="font-label text-paper/55 hover:text-tan transition-colors"
                 >
                   {l.label}
                 </Link>

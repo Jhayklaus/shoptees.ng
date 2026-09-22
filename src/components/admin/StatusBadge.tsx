@@ -20,7 +20,7 @@ export function StatusBadge({
 }) {
   const map = variant === "product" ? productMap : orderMap;
   return (
-    <span className={`font-mono-tight inline-block px-2 py-0.5 border ${map[status] ?? "border-line"}`}>
+    <span className={`font-label inline-block px-2 py-0.5 border ${map[status] ?? "border-line"}`}>
       {status.toLowerCase()}
     </span>
   );

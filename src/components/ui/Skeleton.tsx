@@ -10,9 +10,11 @@ import { cn } from "@/lib/utils";
 // the transition plays immediately into a page that already has its final
 // shape, and the content fills in underneath.
 //
-// Square corners and paper-deep fills on purpose — this brand has no radius
-// anywhere, so a rounded skeleton would read as a different site for the
-// half-second it is on screen.
+// Square corners on purpose — this brand has no radius anywhere, so a
+// rounded skeleton would read as a different site for the half-second it is
+// on screen. The fill is a tint of ink rather than a surface colour: the
+// product ground is now the same white as the page, so a skeleton painted
+// in it would be invisible.
 
 export function Skeleton({
   className,
@@ -29,7 +31,7 @@ export function Skeleton({
       aria-hidden
       style={style}
       {...(morphTarget ? { "data-morph-target": "" } : {})}
-      className={cn("relative overflow-hidden bg-paper-deep", className)}
+      className={cn("relative overflow-hidden bg-ink/[0.07]", className)}
     >
       {/* Sheen sweep, starting off-frame to the left. */}
       <span className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-paper/80 to-transparent" />
@@ -37,12 +39,12 @@ export function Skeleton({
   );
 }
 
-/** Matches ProductCard: 4:5 image, then the ruled title/price row. */
+/** Matches ProductCard: square tile, then the ruled title/price row. */
 export function ProductCardSkeleton() {
   return (
     <div className="block">
-      <Skeleton className="w-full aspect-[4/5]" />
-      <div className="mt-3 border-t-2 border-ink/15 pt-2 flex items-start justify-between gap-3">
+      <Skeleton className="w-full aspect-square" />
+      <div className="mt-3 border-t border-line/15 pt-2 grid gap-1.5 sm:flex sm:items-start sm:justify-between sm:gap-3">
         <div className="min-w-0 flex-1 space-y-2">
           <Skeleton className="h-4 w-3/4" />
           <Skeleton className="h-3 w-1/3" />
@@ -59,7 +61,7 @@ export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
     <div
       role="status"
       aria-label="Loading products"
-      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-14"
+      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12 md:gap-x-7 md:gap-y-14"
     >
       {Array.from({ length: count }).map((_, i) => (
         <ProductCardSkeleton key={i} />
@@ -71,7 +73,7 @@ export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
 /** Matches the stamp + display headline + description block. */
 export function PageHeaderSkeleton() {
   return (
-    <header className="grid grid-cols-12 gap-6 mb-12 border-b-[3px] border-ink pb-8">
+    <header className="grid grid-cols-12 gap-6 mb-12 border-b border-line pb-8">
       <div className="col-span-12 md:col-span-7 space-y-4">
         <Skeleton className="h-5 w-44" />
         <Skeleton className="h-16 md:h-24 w-4/5" />
@@ -99,7 +101,7 @@ export function ProductDetailSkeleton() {
       <div className="grid grid-cols-12 gap-6 lg:gap-12">
         <div className="col-span-12 lg:col-span-6 xl:col-span-7">
           <div className="max-w-[560px] mx-auto lg:mx-0">
-            <Skeleton morphTarget className="w-full aspect-[4/5]" />
+            <Skeleton morphTarget className="w-full aspect-square" />
             <div className="mt-3 flex gap-2">
               {Array.from({ length: 4 }).map((_, i) => (
                 <Skeleton key={i} className="w-16 h-16" />

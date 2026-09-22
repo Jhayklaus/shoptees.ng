@@ -71,7 +71,7 @@ export function AcceptInviteForm({
       />
 
       {error && (
-        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
           {error}
         </p>
       )}
@@ -79,7 +79,7 @@ export function AcceptInviteForm({
       <button
         type="submit"
         disabled={pending}
-        className="w-full bg-ink text-paper py-3.5 font-mono-tight hover:bg-vermillion transition-colors disabled:opacity-50"
+        className="w-full bg-ink text-paper py-3.5 font-label hover:bg-vermillion transition-colors disabled:opacity-50"
       >
         {pending ? "Setting up…" : "Set password & sign in →"}
       </button>
@@ -106,7 +106,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="font-mono-tight text-ink/55">
+      <label htmlFor={id} className="font-label text-ink/55">
         {label}
         {hint && <span className="text-ink/40 ml-2">{hint}</span>}
       </label>

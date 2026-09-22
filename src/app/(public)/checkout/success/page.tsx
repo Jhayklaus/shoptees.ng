@@ -51,11 +51,11 @@ export default async function CheckoutSuccessPage({
   if (!order) {
     return (
       <main className="mx-auto max-w-2xl px-5 md:px-10 py-24 text-center">
-        <span className="stamp text-vermillion">Receipt</span>
-        <h1 className="font-display text-6xl md:text-7xl leading-[0.92] mt-4">
+        <p className="font-label text-muted">Receipt</p>
+        <h1 className="font-display text-[clamp(1.9rem,5vw,3rem)] mt-3">
           Thank you,
           <br />
-          <span className="text-vermillion">noted.</span>
+          noted.
         </h1>
         <p className="mt-6 text-lg text-ink-soft max-w-md mx-auto">
           We&apos;ve recorded your order. A confirmation will follow by email and a
@@ -63,7 +63,7 @@ export default async function CheckoutSuccessPage({
         </p>
         <Link
           href="/shop"
-          className="btn-wipe inline-block mt-10 border-2 border-ink px-7 py-3.5 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
+          className="btn btn-ghost press mt-9"
         >
           Back to the shop →
         </Link>
@@ -78,34 +78,20 @@ export default async function CheckoutSuccessPage({
 
   return (
     <main className="mx-auto max-w-3xl px-5 md:px-10 py-20">
-      {/* Receipt document — bordered like a waybill, with the big status stamp */}
-      <div className="relative border-2 border-ink bg-paper shadow-[8px_8px_0_0_var(--ink)] px-6 md:px-12 py-12">
-        <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion" />
-        <span className="absolute top-0 left-0 w-[3px] h-10 bg-vermillion" />
-        <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-vermillion" />
-        <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-vermillion" />
-
-        {/* Big status stamp — thunks in on load */}
-        <div className="absolute top-6 right-5 md:top-8 md:right-8 stamp-in" aria-hidden>
-          <span
-            className={`block border-[3px] px-4 py-2 md:px-5 md:py-2.5 font-display text-2xl md:text-4xl -rotate-[8deg] select-none ${
-              order.status === "PAID"
-                ? "border-olive text-olive"
-                : "border-vermillion text-vermillion"
-            }`}
-          >
-            {order.status === "PAID" ? "PAID" : "PENDING"}
-          </span>
-        </div>
+      {/* Receipt document. The rotated "PAID" rubber stamp that sat in the
+          corner is gone — a receipt is the one page where a customer is
+          checking figures, and a decorative overlay across it is noise. The
+          status now reads as a plain labelled row with the rest of them. */}
+      <div className="border border-line bg-shot px-6 md:px-10 py-10">
 
         <div>
-          <span className="stamp text-vermillion">Receipt</span>
-          <h1 className="font-display text-5xl md:text-7xl leading-[0.92] mt-3 pr-28 md:pr-40">
+          <p className="font-label text-muted">Receipt</p>
+          <h1 className="font-display text-[clamp(1.9rem,5vw,3rem)] mt-3">
             Thank you,
             <br />
-            <span className="text-vermillion">{order.customer.firstName}.</span>
+            {order.customer.firstName}
           </h1>
-          <p className="font-mono-tight mt-5 text-ink-soft">
+          <p className="font-label mt-5 text-ink-soft">
             Order <span className="text-ink font-bold">{order.orderNumber}</span>
             <br className="sm:hidden" />
             <span className="hidden sm:inline"> · </span>
@@ -123,23 +109,23 @@ export default async function CheckoutSuccessPage({
           )}
         </div>
 
-        <section className="mt-10 border-t-2 border-ink pt-6">
-          <span className="stamp text-ink/60">Items</span>
+        <section className="mt-10 border-t border-line pt-6">
+          <p className="font-label text-muted">Items</p>
           <ul className="divide-y divide-line mt-3">
             {order.items.map((item, idx) => (
               <li key={item.id} className="py-3 flex justify-between gap-4">
                 <div className="flex gap-3">
-                  <span className="font-mono-tight text-ink/40">
+                  <span className="font-label text-muted">
                     {String(idx + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <p className="font-display text-xl leading-tight">{item.productName}</p>
-                    <p className="font-mono-tight text-ink/55">
+                    <p className="font-sub text-[0.95rem]">{item.productName}</p>
+                    <p className="font-label text-muted">
                       {item.variantSize} × {item.quantity}
                     </p>
                   </div>
                 </div>
-                <p className="font-mono-tight whitespace-nowrap">
+                <p className="font-label whitespace-nowrap">
                   {formatStored(
                     item.unitPriceNGN * item.quantity,
                     item.unitPriceMinor == null ? null : item.unitPriceMinor * item.quantity,
@@ -149,18 +135,18 @@ export default async function CheckoutSuccessPage({
               </li>
             ))}
           </ul>
-          <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
-            <p className="font-condensed text-[0.82rem]">Total</p>
-            <p className="font-display text-3xl">
+          <div className="mt-5 pt-5 border-t border-line flex justify-between items-baseline">
+            <p className="font-label text-ink">Total</p>
+            <p className="font-sub tnum text-xl">
               {formatStored(order.totalNGN, order.totalMinor, order.currency)}
             </p>
           </div>
         </section>
 
         {order.address && (
-          <section className="mt-10 border-t-2 border-ink pt-6">
-            <span className="stamp text-ink/60">Deliver to</span>
-            <div className="mt-3 font-mono-tight leading-relaxed">
+          <section className="mt-10 border-t border-line pt-6">
+            <p className="font-label text-muted">Deliver to</p>
+            <div className="mt-3 font-label leading-relaxed">
               <p className="font-bold">
                 {order.customer.firstName} {order.customer.lastName}
               </p>
@@ -176,7 +162,7 @@ export default async function CheckoutSuccessPage({
 
         {/* Perforated tear-off edge */}
         <div className="mt-10 border-t-2 border-dashed border-ink/30 pt-6">
-          <p className="font-mono-tight text-ink/55 text-sm text-center">
+          <p className="font-label text-muted text-sm text-center">
             Save this page or check your email for the same details. Lagos orders
             usually leave the studio within 48 hours.
           </p>
@@ -186,7 +172,7 @@ export default async function CheckoutSuccessPage({
       <div className="text-center mt-12">
         <Link
           href="/shop"
-          className="btn-wipe inline-block border-2 border-ink px-7 py-3.5 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
+          className="btn btn-ghost press"
         >
           Back to the shop →
         </Link>
