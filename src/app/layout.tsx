@@ -27,7 +27,9 @@ const instrumentSerif = Instrument_Serif({
   variable: "--font-serif",
   subsets: ["latin"],
   weight: "400",
-  style: ["normal", "italic"],
+  // Normal only. The italic was being preloaded at ~15 KB and nothing on
+  // the site sets it — the one italic voice, .font-italic-accent, is
+  // Archivo, not the serif.
   display: "swap",
 });
 
