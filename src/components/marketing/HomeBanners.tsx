@@ -20,7 +20,7 @@ export async function HomeBanners() {
         const imageAlt = b.imageAlt || b.title || "Shoptees";
 
         return (
-          <section key={b.id} className="reveal mx-auto max-w-[1400px] px-5 md:px-10 py-16 md:py-24">
+          <section key={b.id} className="mx-auto max-w-[1400px] px-5 md:px-10 py-16 md:py-24">
             <div className="relative grid grid-cols-12 bg-ink text-paper overflow-hidden border-[3px] border-ink">
               {/* Image side */}
               {b.imageUrl && (

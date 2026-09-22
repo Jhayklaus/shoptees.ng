@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, ArrowDown } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export type HeroContent = {
@@ -17,204 +17,130 @@ export type HeroContent = {
   caption: string;
 };
 
-// Full-bleed campaign hero. Admin-managed image fills the viewport with the
-// headline stacked on top like crate-stencil type. Signature moment: the
-// rotating rubber-stamp Lagos clock (see StampClock below).
-export function Hero({ content }: { content: HeroContent }) {
-  const cyclingNouns = content.cycleWords;
-  const longest =
-    cyclingNouns.reduce((a, b) => (b.length > a.length ? b : a), "") || "long haul.";
+export type HeroStats = {
+  collections: number;
+  pieces: number;
+};
 
-  // ── Cycling headline word ────────────────────────────────────────────
-  const [wordIdx, setWordIdx] = useState(0);
-  useEffect(() => {
-    if (cyclingNouns.length < 2) return;
-    const id = setInterval(
-      () => setWordIdx((i) => (i + 1) % cyclingNouns.length),
-      2600
-    );
-    return () => clearInterval(id);
-  }, [cyclingNouns.length]);
-
-  const headlineLines = content.headline.split("\n");
+/**
+ * Split hero: a type panel against a full-height image, not a headline
+ * floated over the middle of a photograph.
+ *
+ * The old arrangement was the centred-headline-plus-two-buttons pattern, and
+ * it had a concrete problem beyond being a cliché: the copy sat on top of a
+ * busy rack shot, so the type fought the picture and neither won. Giving each
+ * its own half lets the image be a full-bleed image and the headline be
+ * readable, and the asymmetric split (the panel is fractionally wider than
+ * the image) keeps it from reading as a tidy 50/50 template.
+ *
+ * Everything here is still admin-managed via the hero banner / hero.* settings.
+ */
+export function Hero({ content, stats }: { content: HeroContent; stats: HeroStats }) {
+  const headlineLines = content.headline.split("\n").filter(Boolean);
 
   return (
-    <section className="relative w-full min-h-[88svh] flex flex-col bg-ink text-paper overflow-hidden">
-      {/* Campaign image */}
-      {content.imageUrl && (
-        <Image
-          src={content.imageUrl}
-          alt={content.imageAlt}
-          fill
-          sizes="100vw"
-          priority
-          className="object-cover"
-        />
-      )}
-
-      {/* Legibility scrim — heavier at the bottom where the copy sits */}
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-ink/20" />
-
-      {/* Crate corner brackets */}
-      <span className="absolute top-0 left-0 w-10 h-[3px] bg-tan z-10" />
-      <span className="absolute top-0 left-0 w-[3px] h-10 bg-tan z-10" />
-      <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-tan z-10" />
-      <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-tan z-10" />
-
-      {/* Top strip: eyebrow stamp + rotating stamp-clock */}
-      <div className="relative z-10 mx-auto w-full max-w-[1400px] px-5 md:px-10 pt-6 flex items-start justify-between gap-4">
-        <p className="stamp stamp-straight text-paper/90 rise" style={{ animationDelay: "0ms" }}>
-          {content.eyebrow}
-        </p>
-        <StampClock />
-      </div>
-
-      {/* Bottom block: headline, copy, CTAs — centered and moderate so the
-          campaign image stays the star */}
-      <div className="relative z-10 mt-auto mx-auto w-full max-w-2xl px-5 md:px-10 pb-10 md:pb-14 text-center">
-        <h1
-          className="font-display text-3xl sm:text-4xl md:text-5xl leading-[0.95] rise"
-          style={{ animationDelay: "100ms" }}
-        >
-          {headlineLines.map((line, i) => (
-            <span key={i}>
-              {line}
-              {i < headlineLines.length - 1 && <br />}
-            </span>
-          ))}
-
-          {cyclingNouns.length > 0 && (
-            <>
-              <br />
-              <span
-                aria-live="polite"
-                className="relative inline-block align-baseline"
-              >
-                {cyclingNouns.map((w, i) => (
-                  <span
-                    key={w + i}
-                    aria-hidden={i !== wordIdx}
-                    className="text-tan absolute inset-x-0 top-0 whitespace-nowrap"
-                    style={{
-                      animation: i === wordIdx ? "word-rise 2.6s var(--ease-snap) both" : "none",
-                      opacity: i === wordIdx ? undefined : 0,
-                    }}
-                  >
-                    {w}
-                  </span>
-                ))}
-                {/* Reserve baseline space using the longest candidate */}
-                <span aria-hidden className="invisible">
-                  {longest}
-                </span>
-              </span>
-            </>
+    <section className="relative grid lg:grid-cols-[1.02fr_.98fr] bg-ink text-paper">
+      {/* ── Type panel ─────────────────────────────────────────────── */}
+      <div className="relative z-10 flex flex-col px-5 md:px-10 pt-8 md:pt-11 pb-9 md:pb-12 lg:min-h-[38rem] grain grain-dark">
+        <div className="relative z-10 flex items-start justify-between gap-4 mb-auto">
+          {content.eyebrow && (
+            <p className="font-mono-tight text-tan">{content.eyebrow}</p>
           )}
-        </h1>
-
-        <div
-          className="mt-6 md:mt-8 flex flex-col items-center gap-6 rise"
-          style={{ animationDelay: "220ms" }}
-        >
-          <p className="text-sm md:text-base leading-snug text-paper/85 max-w-sm font-medium">
-            {content.body}
-          </p>
-
-          <div className="flex items-center justify-center gap-3 shrink-0">
-            <Link
-              href={content.ctaHref || "/shop"}
-              className="btn-wipe btn-wipe-hazard press inline-flex items-center gap-2 group bg-paper text-ink px-6 py-3.5 md:px-7 md:py-4 font-condensed text-[0.8rem] hover:text-paper transition-colors duration-200"
-            >
-              {content.ctaLabel || "Shop now"}
-              <ArrowUpRight
-                size={15}
-                className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </Link>
-            <a
-              href="#new-in"
-              className="hidden md:inline-flex items-center gap-2 group border-2 border-paper/70 text-paper px-6 py-[0.85rem] font-condensed text-[0.8rem] hover:border-paper hover:bg-paper/10 transition-colors"
-            >
-              New in
-              <ArrowDown
-                size={15}
-                className="transition-transform group-hover:translate-y-0.5"
-              />
-            </a>
-          </div>
+          <p className="font-mono-tight text-paper/55 tnum">Lagos · NG</p>
         </div>
 
-        {content.caption && (
-          <p className="mt-6 rise" style={{ animationDelay: "340ms" }}>
-            <span className="stamp bg-paper/90 text-ink backdrop-blur-sm">
-              {content.caption}
+        <h1 className="relative z-10 font-display text-[clamp(2.7rem,9vw,5.6rem)] mt-10">
+          {headlineLines.map((line, i) => (
+            <span key={i} className="block">
+              {line}
             </span>
-          </p>
+          ))}
+          <CyclingWord words={content.cycleWords} />
+        </h1>
+
+        {/* Counts, as a ruled rail. Real figures from the catalogue — the
+            kind of detail a line sheet carries and a template doesn't. */}
+        <dl className="relative z-10 flex flex-wrap mt-7 border-t border-line-dark">
+          <Stat label="Collections" value={String(stats.collections).padStart(2, "0")} />
+          <Stat label="Pieces" value={String(stats.pieces).padStart(2, "0")} />
+          <Stat label="Dispatch" value="Nationwide" last />
+        </dl>
+
+        {/* One primary action and a text link — not two buttons of equal
+            weight, which is the pattern this hero is deliberately avoiding. */}
+        <div className="relative z-10 flex flex-wrap items-center gap-x-7 gap-y-4 mt-7">
+          <Link href={content.ctaHref || "/shop"} className="btn btn-light press">
+            {content.ctaLabel || "Shop the drop"}
+            <ArrowUpRight size={15} />
+          </Link>
+          <a
+            href="#new-in"
+            className="font-mono-tight text-tan border-b border-current pb-0.5 hover:text-paper transition-colors"
+          >
+            What&apos;s new
+          </a>
+        </div>
+      </div>
+
+      {/* ── Image panel ────────────────────────────────────────────── */}
+      <div className="relative min-h-[19rem] sm:min-h-[24rem] lg:min-h-full overflow-hidden bg-line-dark order-first lg:order-none">
+        {content.imageUrl && (
+          <Image
+            src={content.imageUrl}
+            alt={content.imageAlt}
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            priority
+            className="object-cover"
+          />
+        )}
+        {content.caption && (
+          <span className="absolute left-0 bottom-0 z-10 bg-vermillion text-paper font-mono-tight px-3 py-2">
+            {content.caption}
+          </span>
         )}
       </div>
     </section>
   );
 }
 
-// ── Signature moment: rotating rubber-stamp Lagos clock ───────────────────
-// Circular "SHOPTEES · LAGOS · NIGERIA" text spins slowly around a live WAT
-// clock. The time chip re-stamps (thunk) whenever the minute ticks over.
-function StampClock() {
-  const [now, setNow] = useState<{ hm: string; s: string } | null>(null);
+function Stat({ label, value, last }: { label: string; value: string; last?: boolean }) {
+  return (
+    <div className={`py-3 pr-5 ${last ? "" : "mr-5 border-r border-line-dark"}`}>
+      <dt className="font-mono-tight text-paper/55">{label}</dt>
+      <dd className="font-sub text-base mt-1">{value}</dd>
+    </div>
+  );
+}
+
+/**
+ * The rotating last line of the headline, admin-managed via `cycleWords`.
+ *
+ * Rewritten so a word is ALWAYS on screen. The previous version animated each
+ * word out to opacity 0 at the end of its own 2.6s cycle, which left a beat
+ * with nothing in the slot — on mobile the headline regularly read "built for
+ * the" followed by a gap. Now only the entrance is animated and the word
+ * holds until the next one replaces it, so the sentence is never unfinished.
+ */
+function CyclingWord({ words }: { words: string[] }) {
+  const [i, setI] = useState(0);
 
   useEffect(() => {
-    const fmt = () => {
-      const parts = new Intl.DateTimeFormat("en-NG", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-        timeZone: "Africa/Lagos",
-      }).formatToParts(new Date());
-      const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "00";
-      return { hm: `${get("hour")}:${get("minute")}`, s: get("second") };
-    };
-    setNow(fmt());
-    const id = setInterval(() => setNow(fmt()), 1000);
+    if (words.length < 2) return;
+    const id = setInterval(() => setI((n) => (n + 1) % words.length), 3000);
     return () => clearInterval(id);
-  }, []);
+  }, [words.length]);
+
+  if (words.length === 0) return null;
+  const word = words[i % words.length];
 
   return (
-    <div
-      className="relative hidden sm:flex items-center justify-center w-24 h-24 md:w-28 md:h-28 shrink-0 rise"
-      aria-hidden
-    >
-      {/* Rotating circular text */}
-      <svg viewBox="0 0 100 100" className="absolute inset-0 animate-spin-slow text-paper/85">
-        <defs>
-          <path
-            id="stamp-circle"
-            d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
-          />
-        </defs>
-        <circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="50" cy="50" r="29" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.6" />
-        <text
-          className="fill-current"
-          style={{
-            fontSize: "9.5px",
-            letterSpacing: "0.22em",
-            fontFamily: "var(--font-azeret), monospace",
-            fontWeight: 700,
-          }}
-        >
-          <textPath href="#stamp-circle">SHOPTEES · LAGOS · NIGERIA ·</textPath>
-        </text>
-      </svg>
-
-      {/* Live WAT time — re-keys each minute so it "thunks" a re-stamp */}
-      <span
-        key={now?.hm ?? "--"}
-        className="stamp-in relative font-mono-tight text-paper text-[0.7rem] font-bold flex flex-col items-center leading-tight"
-      >
-        {now?.hm ?? "--:--"}
-        <span className="text-tan text-[0.55rem]">{now ? `:${now.s} WAT` : "WAT"}</span>
+    <span className="block text-tan" aria-live="polite">
+      {/* Keyed so the clip-reveal replays on each change; no exit state, so
+          the slot is never empty. */}
+      <span key={word + i} className="inline-block word-in">
+        {word}
       </span>
-    </div>
+    </span>
   );
 }

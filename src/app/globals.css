@@ -499,22 +499,26 @@ body {
   animation: blink 1.05s steps(2) infinite;
 }
 
-/* Cycling headline word: hard clip reveal — no blur, no float. */
-@keyframes word-rise {
-  0% {
-    opacity: 0;
-    transform: translateY(0.45em);
+/* Cycling headline word: hard clip reveal in, then it HOLDS.
+   There is deliberately no exit state. The previous version faded the word
+   back out at the end of its cycle, which left a beat with an empty slot and
+   a headline that read as an unfinished sentence. */
+@keyframes word-in {
+  from {
     clip-path: inset(0 0 100% 0);
+    transform: translateY(0.3em);
   }
-  18%, 82% {
-    opacity: 1;
-    transform: translateY(0);
+  to {
     clip-path: inset(0 0 0 0);
+    transform: translateY(0);
   }
-  100% {
-    opacity: 0;
-    transform: translateY(-0.35em);
-    clip-path: inset(100% 0 0 0);
+}
+.word-in {
+  animation: word-in 420ms var(--ease-snap) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .word-in {
+    animation: none !important;
   }
 }
 

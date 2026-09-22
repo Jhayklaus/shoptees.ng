@@ -33,7 +33,11 @@ export function ProductCard({ product, lead }: Props) {
           `contain` on both ends. */}
       <div
         data-morph
-        className={`shot ${lead ? "aspect-[16/10]" : "aspect-square"}`}
+        // 2:1 is not arbitrary. A lead tile spans 2 columns, so at a 3- or
+        // 4-column grid its height at 2:1 lands exactly on the height of a
+        // square 1-column tile beside it — the row stays flush instead of
+        // leaving a band of dead space under its neighbours.
+        className={`shot ${lead ? "aspect-square sm:aspect-[2/1]" : "aspect-square"}`}
       >
         {hero ? (
           <>
