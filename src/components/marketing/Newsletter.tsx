@@ -33,7 +33,7 @@ export function Newsletter() {
     <section className="bg-ink text-paper py-16 md:py-24 grain grain-dark">
       <div className="relative z-10 mx-auto max-w-[1400px] px-5 md:px-10 grid gap-8 md:grid-cols-[1.1fr_.9fr] md:gap-14 md:items-end">
         <div>
-          <p className="font-mono-tight text-tan">Dispatch list</p>
+          <p className="font-label text-tan">Dispatch list</p>
           <h2 className="font-display text-[clamp(2rem,6vw,3.6rem)] mt-3">
             First to know
             <span className="block text-tan">when it drops.</span>
@@ -71,7 +71,7 @@ export function Newsletter() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="YOUR@EMAIL.COM"
-                  className="flex-1 min-w-0 bg-transparent px-4 py-3.5 outline-none placeholder:text-paper/55 font-mono-tight text-paper"
+                  className="flex-1 min-w-0 bg-transparent px-4 py-3.5 outline-none placeholder:text-paper/55 font-label text-paper"
                 />
                 <button type="submit" disabled={pending} className="btn btn-light shrink-0 border-0">
                   {pending ? "…" : "Sign up"}
@@ -89,7 +89,7 @@ export function Newsletter() {
                 />
               </div>
               {error && (
-                <p className="mt-3 font-mono-tight text-paper border-l-2 border-tan pl-3 py-2 normal-case">
+                <p className="mt-3 font-label text-paper border-l-2 border-tan pl-3 py-2 normal-case">
                   {error}
                 </p>
               )}

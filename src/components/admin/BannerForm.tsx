@@ -73,7 +73,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
               {isHero ? "Hero banner" : "Banner"}
             </h3>
             {isHero && (
-              <p className="font-mono-tight text-ink/50 text-sm mt-0.5">
+              <p className="font-label text-ink/50 text-sm mt-0.5">
                 This controls the full-bleed hero at the top of the homepage.
               </p>
             )}
@@ -127,7 +127,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
         {!isHero && (
           <div className="grid grid-cols-2 gap-5">
             <div>
-              <label htmlFor="layout" className="font-mono-tight text-ink/55 block">
+              <label htmlFor="layout" className="font-label text-ink/55 block">
                 Image side
                 <span className="text-ink/40 normal-case ml-2">Hint — actual order alternates automatically.</span>
               </label>
@@ -145,7 +145,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
               </select>
             </div>
             <div>
-              <label htmlFor="sortOrder" className="font-mono-tight text-ink/55 block">
+              <label htmlFor="sortOrder" className="font-label text-ink/55 block">
                 Sort order
                 <span className="text-ink/40 normal-case ml-2">Lower shows first.</span>
               </label>
@@ -162,7 +162,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
       </section>
 
       {error && (
-        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
           {error}
         </p>
       )}
@@ -171,7 +171,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
         <button
           type="submit"
           disabled={pending}
-          className="bg-ink text-paper px-6 py-3 font-mono-tight hover:bg-vermillion transition-colors disabled:opacity-50"
+          className="bg-ink text-paper px-6 py-3 font-label hover:bg-vermillion transition-colors disabled:opacity-50"
         >
           {pending ? "Saving…" : isHero ? "Save hero" : "Save banner"}
         </button>
@@ -181,7 +181,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
             type="button"
             onClick={onDelete}
             disabled={deleting}
-            className="inline-flex items-center gap-2 font-mono-tight text-ink/55 hover:text-vermillion transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 font-label text-ink/55 hover:text-vermillion transition-colors disabled:opacity-50"
           >
             <Trash2 size={14} />
             {deleting ? "Deleting…" : "Delete"}
@@ -209,7 +209,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="font-mono-tight text-ink/55 block">
+      <label htmlFor={id} className="font-label text-ink/55 block">
         {label}
         {hint && <span className="text-ink/40 normal-case ml-2">{hint}</span>}
       </label>

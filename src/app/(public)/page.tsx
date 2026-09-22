@@ -1,7 +1,7 @@
 import { Hero, type HeroContent } from "@/components/marketing/Hero";
-import { CollectionIndex } from "@/components/marketing/CollectionIndex";
+import { CategoryTiles } from "@/components/marketing/CategoryTiles";
 import { FeaturedGrid } from "@/components/marketing/FeaturedGrid";
-import { ArchiveBreak } from "@/components/marketing/ArchiveBreak";
+import { FeatureBanner } from "@/components/marketing/FeatureBanner";
 import { CollectionRows } from "@/components/marketing/CollectionRows";
 import { CampaignBanner } from "@/components/marketing/CampaignBanner";
 import { HomeBanners } from "@/components/marketing/HomeBanners";
@@ -74,29 +74,40 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero
-        content={hero}
-        stats={{ collections: collections.length, pieces: products.length }}
-      />
-      <CollectionIndex collections={index} />
+      <Hero content={hero} />
+      <CategoryTiles />
       <FeaturedGrid />
 
-      {/* The page's one full-bleed moment. Quote is the archive's own line
-          about this collection, not written copy. */}
-      <ArchiveBreak
-        image={FEATURE_CROP.wall}
-        alt="Graffiti back print: a writer on a ladder tagging Shptz in white script across a black brick wall."
-        eyebrow="Fight or Flight · FF-47"
-        quote="The back print is the whole point: the front hit is small, the wall is the garment."
-        attribution="— Shptz Wrld Collection Archive"
+      {/* Editorial banner. The serif display voice appears here and in the
+          hero, and nowhere else — both sit on a photograph, which is what
+          earns the size. */}
+      <FeatureBanner
+        image={FEATURE_CROP.allover}
+        imageAlt="Flaming-dice Trap House mark repeated across an all-over knit."
+        eyebrow="Featured collection"
+        headline="One mark, every scale"
+        body="Trap House runs headwear, socks and bottoms — the same flaming die applied from a sock cuff to an all-over beanie repeat."
+        ctaLabel="Explore collection"
+        ctaHref="/collections/trap-house"
       />
 
       <CollectionRows collections={rows} />
 
-      {/* Admin-managed slots, after the editorial run so they extend the
-          page rather than interrupt it. Both render nothing when empty. */}
+      {/* Admin-managed slots. Both render nothing when empty. */}
       <HomeBanners />
       <CampaignBanner />
+
+      {/* Brand story block, on the studio sketch — the only other real
+          photograph in the repo besides the hero rack shot. */}
+      <FeatureBanner
+        image="/about-img.webp"
+        imageAlt="Pencil sketch of a Shptz Wrld jersey, front and back, on studio paper."
+        headline="More than just clothes"
+        body="Cut and sewn in Lagos. Sold by the piece, or by the carton."
+        ctaLabel="Our story"
+        ctaHref="/about"
+        tone="light"
+      />
 
       <Newsletter />
     </>

@@ -29,7 +29,7 @@ export function AnnouncementBar() {
           <span
             key={i}
             className={[
-              "font-mono-tight px-5 inline-flex items-center text-[0.7rem]",
+              "font-label px-5 inline-flex items-center text-[0.7rem]",
               t === "·" ? "text-tan" : "text-paper/85",
             ].join(" ")}
           >

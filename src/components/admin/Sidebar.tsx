@@ -60,7 +60,7 @@ export function Sidebar({ userEmail }: { userEmail: string }) {
             className="h-12 w-12 object-contain shrink-0"
           />
           <div>
-            <p className="font-mono-tight text-ink/55 leading-none">Studio</p>
+            <p className="font-label text-ink/55 leading-none">Studio</p>
             <p className="font-display text-base tracking-[-0.01em] leading-tight mt-0.5">
               Shoptees
             </p>
@@ -79,7 +79,7 @@ export function Sidebar({ userEmail }: { userEmail: string }) {
               key={item.href}
               href={item.href}
               className={[
-                "flex items-center gap-3 px-3 py-2 rounded-sm font-mono-tight transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-sm font-label transition-colors",
                 active
                   ? "bg-ink text-paper"
                   : "text-ink-soft hover:bg-ink/5 hover:text-ink",
@@ -97,7 +97,7 @@ export function Sidebar({ userEmail }: { userEmail: string }) {
           href="/"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-2 px-3 py-2 font-mono-tight text-ink/55 hover:text-vermillion"
+          className="flex items-center gap-2 px-3 py-2 font-label text-ink/55 hover:text-vermillion"
         >
           <ExternalLink size={13} />
           View storefront
@@ -105,13 +105,13 @@ export function Sidebar({ userEmail }: { userEmail: string }) {
       </div>
 
       <div className="border-t border-ink/10 p-4">
-        <p className="font-mono-tight text-ink/55 truncate" title={userEmail}>
+        <p className="font-label text-ink/55 truncate" title={userEmail}>
           {userEmail}
         </p>
         <button
           type="button"
           onClick={onLogout}
-          className="mt-2 inline-flex items-center gap-2 font-mono-tight text-ink hover:text-vermillion transition-colors"
+          className="mt-2 inline-flex items-center gap-2 font-label text-ink hover:text-vermillion transition-colors"
         >
           <LogOut size={13} />
           Sign out

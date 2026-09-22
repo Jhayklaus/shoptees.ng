@@ -29,7 +29,7 @@ export function CollectionIndex({
                 href={`/collections/${c.slug}`}
                 className="group block py-4 pr-4 lg:pr-5 h-full"
               >
-                <p className="font-mono-tight text-muted tnum">
+                <p className="font-label text-muted tnum">
                   {String(i + 1).padStart(2, "0")} / {String(c.count).padStart(2, "0")}{" "}
                   {c.count === 1 ? "piece" : "pieces"}
                 </p>

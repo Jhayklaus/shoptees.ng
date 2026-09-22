@@ -60,7 +60,7 @@ export function CartView() {
       </header>
 
       {state.status === "ready" && state.dropped.length > 0 && (
-        <p className="mb-6 font-mono-tight bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 text-ink-soft">
+        <p className="mb-6 font-label bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 text-ink-soft">
           Some items were no longer available and have been removed from your cart.
         </p>
       )}
@@ -72,7 +72,7 @@ export function CartView() {
             return (
               <li key={l.variantId} className="py-6 grid grid-cols-12 gap-4 items-center">
                 {/* Line number — waybill row index */}
-                <div className="hidden sm:block sm:col-span-1 font-mono-tight text-muted">
+                <div className="hidden sm:block sm:col-span-1 font-label text-muted">
                   {String(idx + 1).padStart(2, "0")}
                 </div>
 
@@ -97,10 +97,10 @@ export function CartView() {
                   >
                     {l.product.name}
                   </Link>
-                  <p className="font-mono-tight text-muted mt-1.5">
+                  <p className="font-label text-muted mt-1.5">
                     SIZE {l.variant.size} · {l.variant.color}
                   </p>
-                  <p className="font-mono-tight text-muted">SKU {l.variant.sku}</p>
+                  <p className="font-label text-muted">SKU {l.variant.sku}</p>
                 </div>
 
                 <div className="col-span-6 sm:col-span-3 flex items-center">
@@ -109,11 +109,11 @@ export function CartView() {
                       type="button"
                       onClick={() => setQuantity(l.variantId, Math.max(0, l.quantity - 1))}
                       aria-label={`Decrease quantity of ${l.product.name}`}
-                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
+                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors font-label"
                     >
                       −
                     </button>
-                    <span className="w-10 text-center font-mono-tight font-bold">
+                    <span className="w-10 text-center font-label font-bold">
                       {String(l.quantity).padStart(2, "0")}
                     </span>
                     <button
@@ -122,7 +122,7 @@ export function CartView() {
                         setQuantity(l.variantId, Math.min(l.variant.stock, l.quantity + 1))
                       }
                       aria-label={`Increase quantity of ${l.product.name}`}
-                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
+                      className="w-9 h-9 hover:bg-ink hover:text-paper transition-colors font-label"
                     >
                       +
                     </button>
@@ -130,7 +130,7 @@ export function CartView() {
                 </div>
 
                 <div className="col-span-6 sm:col-span-2 flex items-center justify-end gap-3">
-                  <p className="font-mono-tight font-bold">
+                  <p className="font-label font-bold">
                     {l.lineTotalNGN > 0 ? money.formatLine(l.unitPriceNGN, l.quantity) : "—"}
                   </p>
                   <button
@@ -159,11 +159,11 @@ export function CartView() {
 
             <span className="stamp text-muted">Summary</span>
             <dl className="mt-4 space-y-2.5">
-              <div className="flex justify-between font-mono-tight">
+              <div className="flex justify-between font-label">
                 <dt className="text-muted">Subtotal</dt>
                 <dd className="font-bold">{subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}</dd>
               </div>
-              <div className="flex justify-between font-mono-tight">
+              <div className="flex justify-between font-label">
                 <dt className="text-muted">Shipping</dt>
                 <dd className="text-muted">at checkout</dd>
               </div>
@@ -192,7 +192,7 @@ export function CartView() {
               Continue shopping
             </Link>
           </div>
-          <p className="mt-5 font-mono-tight text-muted text-sm">
+          <p className="mt-5 font-label text-muted text-sm">
             We pack in paper. Lagos deliveries usually go out within 48h.
           </p>
         </aside>

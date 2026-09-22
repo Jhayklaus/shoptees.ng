@@ -3,59 +3,50 @@ import Link from "next/link";
 import type { DisplayProduct } from "@/types";
 import { Money } from "@/components/currency/Money";
 import { productImageUrl } from "@/lib/images";
-import { archiveRef } from "@/lib/archive-ref";
 
 type Props = {
   product: DisplayProduct;
-  /** Wide tile — used for the lead row of a grid. */
+  /** Wide tile — used for the lead slot of a grid. */
   lead?: boolean;
 };
 
-// The card used to stamp a sequence number (No 01, No 02…) in the corner.
-// That was decoration dressed as data — the position of a product in
-// whatever grid it happened to land in. It now carries the archive ref,
-// which is the brand's own filing code and means the same thing everywhere.
+/**
+ * Product tile.
+ *
+ * Quiet on purpose. The previous version set the name in 800-weight
+ * compressed caps and stamped a black archive ref into the corner of every
+ * image, which turned a grid of 23 products into 23 competing posters and
+ * left the garment as the least loud thing on its own card. Here the picture
+ * carries it: name in plain sans, one grey line of context, price. The ref
+ * moves to the product page, where there is room for it to mean something.
+ */
 export function ProductCard({ product, lead }: Props) {
   const hero = product.images[0];
   const back = product.images[1]; // back view / second colourway by convention
   const totalStock = product.variants.reduce((s, v) => s + v.stock, 0);
   const isSoldOut = totalStock === 0 && product.variants.length > 0;
-  const ref = archiveRef(product);
 
   return (
-    <Link
-      href={`/shop/${product.slug}`}
-      className={`group block ${lead ? "sm:col-span-2" : ""}`}
-    >
-      {/* data-morph: the box that flies into place as the product page's
-          hero. The lead tile is wider, so it carries its own ratio — the
-          morph scales rather than warps because the image inside is
-          `contain` on both ends. */}
+    <Link href={`/shop/${product.slug}`} className={`group block ${lead ? "sm:col-span-2" : ""}`}>
       <div
         data-morph
         // 2:1 is not arbitrary. A lead tile spans 2 columns, so at a 3- or
-        // 4-column grid its height at 2:1 lands exactly on the height of a
-        // square 1-column tile beside it — the row stays flush instead of
-        // leaving a band of dead space under its neighbours.
+        // 4-column grid its height at 2:1 lands on the height of a square
+        // 1-column tile beside it and the row stays flush.
         className={`shot ${lead ? "aspect-square sm:aspect-[2/1]" : "aspect-square"}`}
       >
         {hero ? (
           <>
-            {/* Front. Stays put on solo-image products. */}
             <Image
               src={productImageUrl(hero.url)}
-              alt={hero.alt || `${product.name} — ${product.category?.name ?? "archive flat"}`}
+              alt={hero.alt || `${product.name} — ${product.category?.name ?? "product"}`}
               fill
               sizes={lead ? "(max-width: 640px) 100vw, 50vw" : "(max-width: 640px) 50vw, 25vw"}
               className={[
                 "object-contain p-4 md:p-8 transition-all duration-[650ms] ease-[cubic-bezier(.2,.7,.1,1)]",
-                back
-                  ? "opacity-100 group-hover:opacity-0"
-                  : "group-hover:scale-[1.04]",
+                back ? "opacity-100 group-hover:opacity-0" : "group-hover:scale-[1.04]",
               ].join(" ")}
             />
-
-            {/* Second view — rendered only if there is one. */}
             {back && (
               <Image
                 src={productImageUrl(back.url)}
@@ -67,35 +58,26 @@ export function ProductCard({ product, lead }: Props) {
             )}
           </>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center font-mono-tight text-muted">
+          <div className="absolute inset-0 flex items-center justify-center font-label text-muted">
             no image
           </div>
         )}
 
-        {/* Archive ref, burned into the corner like a filing stamp. This is
-            the brand's own numbering, not decorative sequence numbering. */}
-        {ref && (
-          <span className="absolute top-0 left-0 z-10 bg-ink text-paper font-mono-tight px-2 py-1 text-[0.66rem]">
-            {ref}
-          </span>
-        )}
         {isSoldOut && (
-          <span className="absolute top-0 right-0 z-10 bg-vermillion text-paper font-mono-tight px-2 py-1 text-[0.66rem]">
+          <span className="absolute top-3 left-3 z-10 bg-ink/90 text-paper font-label px-2 py-1 text-[0.64rem]">
             Sold out
           </span>
         )}
       </div>
 
-      <div className="mt-3 border-t-2 border-ink pt-2 grid gap-1.5 sm:flex sm:items-start sm:justify-between sm:gap-3">
-        <div className="min-w-0">
-          <h3 className={`font-sub ${lead ? "text-lg md:text-xl" : "text-[0.9rem] md:text-base"}`}>
-            {product.name}
-          </h3>
-          <p className="font-mono-tight text-muted mt-1">
-            {[product.collection?.name, product.category?.name].filter(Boolean).join(" · ")}
-          </p>
-        </div>
-        <p className="font-mono-tight tnum text-ink whitespace-nowrap sm:mt-0.5 text-[0.8rem]">
+      <div className="mt-3">
+        <h3 className="font-sub text-[0.92rem] group-hover:underline underline-offset-4 decoration-1">
+          {product.name}
+        </h3>
+        <p className="font-label text-muted mt-1 text-[0.68rem]">
+          {product.category?.name ?? product.collection?.name ?? ""}
+        </p>
+        <p className="font-sub tnum text-[0.92rem] mt-1.5">
           <Money ngn={product.priceNGN} />
         </p>
       </div>

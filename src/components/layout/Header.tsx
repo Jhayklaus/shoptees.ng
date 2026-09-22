@@ -197,7 +197,7 @@ function NavDropdown({
 
           <ul className="py-2">
             {items.length === 0 ? (
-              <li className="px-4 py-2 font-mono-tight text-muted normal-case">
+              <li className="px-4 py-2 font-label text-muted normal-case">
                 {emptyLabel}
               </li>
             ) : (
@@ -207,7 +207,7 @@ function NavDropdown({
                     href={item.href}
                     onClick={() => setOpen(false)}
                     role="menuitem"
-                    className="group flex items-center justify-between gap-4 px-4 py-2 font-mono-tight text-ink hover:bg-ink hover:text-paper transition-colors"
+                    className="group flex items-center justify-between gap-4 px-4 py-2 font-label text-ink hover:bg-ink hover:text-paper transition-colors"
                   >
                     <span>{item.name}</span>
                     <ArrowUpRight
@@ -224,7 +224,7 @@ function NavDropdown({
               href={footer.href}
               onClick={() => setOpen(false)}
               role="menuitem"
-              className="block px-4 py-2.5 font-mono-tight text-muted hover:text-ink hover:bg-ink/5 transition-colors"
+              className="block px-4 py-2.5 font-label text-muted hover:text-ink hover:bg-ink/5 transition-colors"
             >
               {footer.label}
             </Link>
@@ -292,14 +292,14 @@ function MobileMenu({
               {open && (
                 <ul className="mt-3 pl-3 border-l-2 border-line space-y-2.5">
                   {links.length === 0 ? (
-                    <li className="font-mono-tight text-muted normal-case">{emptyLabel}</li>
+                    <li className="font-label text-muted normal-case">{emptyLabel}</li>
                   ) : (
                     links.map((link) => (
                       <li key={link.href}>
                         <Link
                           href={link.href}
                           onClick={onClose}
-                          className="font-mono-tight text-ink hover:text-vermillion transition-colors block py-0.5"
+                          className="font-label text-ink hover:text-vermillion transition-colors block py-0.5"
                         >
                           {link.name}
                         </Link>
@@ -310,7 +310,7 @@ function MobileMenu({
                     <Link
                       href={footer.href}
                       onClick={onClose}
-                      className="font-mono-tight text-muted hover:text-vermillion transition-colors block py-0.5"
+                      className="font-label text-muted hover:text-vermillion transition-colors block py-0.5"
                     >
                       {footer.label}
                     </Link>
@@ -323,7 +323,7 @@ function MobileMenu({
       </ul>
 
       <div className="px-5 pb-5 sm:hidden border-t border-line pt-4">
-        <p className="font-mono-tight text-muted mb-2">Currency</p>
+        <p className="font-label text-muted mb-2">Currency</p>
         <CurrencySwitcher />
       </div>
     </div>

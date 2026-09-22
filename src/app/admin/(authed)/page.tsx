@@ -108,12 +108,12 @@ export default async function AdminDashboard() {
         <section>
           <div className="flex items-end justify-between mb-3">
             <div>
-              <p className="font-mono-tight text-ink/55">Recent</p>
+              <p className="font-label text-ink/55">Recent</p>
               <h2 className="font-display text-3xl tracking-tight">
                 Latest <span className="font-italic-accent text-vermillion">orders.</span>
               </h2>
             </div>
-            <Link href="/admin/orders" className="font-mono-tight underline-offset-4 hover:underline">
+            <Link href="/admin/orders" className="font-label underline-offset-4 hover:underline">
               See all →
             </Link>
           </div>
@@ -123,7 +123,7 @@ export default async function AdminDashboard() {
               <p className="font-italic-accent text-2xl text-ink/55">
                 No orders yet — your storefront is quiet.
               </p>
-              <p className="font-mono-tight text-ink/55 mt-2">
+              <p className="font-label text-ink/55 mt-2">
                 Once a customer checks out, the order will appear here.
               </p>
             </div>
@@ -144,7 +144,7 @@ export default async function AdminDashboard() {
                   {k.recentOrders.map((o) => (
                     <tr key={o.id} className="border-b border-line last:border-0 hover:bg-paper-deep">
                       <Td>
-                        <Link href={`/admin/orders/${o.id}`} className="font-mono-tight hover:text-vermillion">
+                        <Link href={`/admin/orders/${o.id}`} className="font-label hover:text-vermillion">
                           {o.orderNumber}
                         </Link>
                       </Td>
@@ -153,8 +153,8 @@ export default async function AdminDashboard() {
                       <Td>
                         <StatusBadge status={o.status} />
                       </Td>
-                      <Td className="font-mono-tight">{formatNaira(o.totalNGN)}</Td>
-                      <Td className="font-mono-tight text-ink/55">
+                      <Td className="font-label">{formatNaira(o.totalNGN)}</Td>
+                      <Td className="font-label text-ink/55">
                         {new Date(o.createdAt).toLocaleDateString("en-NG")}
                       </Td>
                     </tr>
@@ -170,7 +170,7 @@ export default async function AdminDashboard() {
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return <th className="font-mono-tight text-ink/55 px-4 py-3 font-normal">{children}</th>;
+  return <th className="font-label text-ink/55 px-4 py-3 font-normal">{children}</th>;
 }
 function Td({
   children,
@@ -191,7 +191,7 @@ function StatusBadge({ status }: { status: string }) {
   };
   return (
     <span
-      className={`font-mono-tight px-2 py-0.5 border ${map[status] ?? "border-line"}`}
+      className={`font-label px-2 py-0.5 border ${map[status] ?? "border-line"}`}
     >
       {status.toLowerCase()}
     </span>

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export type HeroContent = {
@@ -17,117 +16,89 @@ export type HeroContent = {
   caption: string;
 };
 
-export type HeroStats = {
-  collections: number;
-  pieces: number;
-};
-
 /**
- * Split hero: a type panel against a full-height image, not a headline
- * floated over the middle of a photograph.
+ * Full-bleed campaign hero: one image, copy anchored bottom-left.
  *
- * The old arrangement was the centred-headline-plus-two-buttons pattern, and
- * it had a concrete problem beyond being a cliché: the copy sat on top of a
- * busy rack shot, so the type fought the picture and neither won. Giving each
- * its own half lets the image be a full-bleed image and the headline be
- * readable, and the asymmetric split (the panel is fractionally wider than
- * the image) keeps it from reading as a tidy 50/50 template.
+ * Bottom-left rather than centred. A centred headline with a paragraph and a
+ * pair of buttons under it is the single most generic opening a storefront
+ * can have, and it also put the copy in the middle of the picture where the
+ * subject usually is. Anchoring it to a corner leaves the photograph intact
+ * and gives the block a direction to read in.
  *
- * Everything here is still admin-managed via the hero banner / hero.* settings.
+ * All of it is admin-managed — hero banner first, hero.* settings as fallback.
  */
-export function Hero({ content, stats }: { content: HeroContent; stats: HeroStats }) {
+export function Hero({ content }: { content: HeroContent }) {
   const headlineLines = content.headline.split("\n").filter(Boolean);
 
   return (
-    <section className="relative grid lg:grid-cols-[1.02fr_.98fr] bg-ink text-paper">
-      {/* ── Type panel ─────────────────────────────────────────────── */}
-      <div className="relative z-10 flex flex-col px-5 md:px-10 pt-8 md:pt-11 pb-9 md:pb-12 lg:min-h-[38rem] grain grain-dark">
-        <div className="relative z-10 flex items-start justify-between gap-4 mb-auto">
-          {content.eyebrow && (
-            <p className="font-mono-tight text-tan">{content.eyebrow}</p>
-          )}
-          <p className="font-mono-tight text-paper/55 tnum">Lagos · NG</p>
-        </div>
-
-        <h1 className="relative z-10 font-display text-[clamp(2.7rem,9vw,5.6rem)] mt-10">
-          {headlineLines.map((line, i) => (
-            <span key={i} className="block">
-              {line}
-            </span>
-          ))}
-          <CyclingWord words={content.cycleWords} />
-        </h1>
-
-        {/* Counts, as a ruled rail. Real figures from the catalogue — the
-            kind of detail a line sheet carries and a template doesn't. */}
-        <dl className="relative z-10 flex flex-wrap mt-7 border-t border-line-dark">
-          <Stat label="Collections" value={String(stats.collections).padStart(2, "0")} />
-          <Stat label="Pieces" value={String(stats.pieces).padStart(2, "0")} />
-          <Stat label="Dispatch" value="Nationwide" last />
-        </dl>
-
-        {/* One primary action and a text link — not two buttons of equal
-            weight, which is the pattern this hero is deliberately avoiding. */}
-        <div className="relative z-10 flex flex-wrap items-center gap-x-7 gap-y-4 mt-7">
-          <Link href={content.ctaHref || "/shop"} className="btn btn-light press">
-            {content.ctaLabel || "Shop the drop"}
-            <ArrowUpRight size={15} />
-          </Link>
-          <a
-            href="#new-in"
-            className="font-mono-tight text-tan border-b border-current pb-0.5 hover:text-paper transition-colors"
-          >
-            What&apos;s new
-          </a>
-        </div>
-      </div>
-
-      {/* ── Image panel ────────────────────────────────────────────── */}
-      <div className="relative min-h-[19rem] sm:min-h-[24rem] lg:min-h-full overflow-hidden bg-line-dark order-first lg:order-none">
+    <section className="relative bg-ink">
+      <div className="relative h-[78svh] min-h-[28rem] max-h-[46rem] w-full overflow-hidden">
         {content.imageUrl && (
           <Image
             src={content.imageUrl}
             alt={content.imageAlt}
             fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
+            sizes="100vw"
             priority
             className="object-cover"
           />
         )}
-        {content.caption && (
-          <span className="absolute left-0 bottom-0 z-10 bg-vermillion text-paper font-mono-tight px-3 py-2">
-            {content.caption}
-          </span>
-        )}
+
+        {/* Scrim weighted to the bottom-left, where the copy sits, so the
+            rest of the frame is left alone rather than dimmed flat. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/35 to-ink/5" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/70 via-transparent to-transparent" />
+
+        <div className="absolute inset-0 flex flex-col justify-end">
+          <div className="mx-auto w-full max-w-[1400px] px-5 md:px-10 pb-8 md:pb-12">
+            {content.eyebrow && (
+              <p className="font-label text-paper/80 mb-4">{content.eyebrow}</p>
+            )}
+
+            <h1 className="font-display text-paper text-[clamp(2.6rem,8vw,5.4rem)] max-w-[15ch]">
+              {headlineLines.map((line, i) => (
+                <span key={i} className="block">
+                  {line}
+                </span>
+              ))}
+              <CyclingWord words={content.cycleWords} />
+            </h1>
+
+            {content.body && (
+              <p className="mt-5 text-paper/80 max-w-[42ch] leading-snug text-[0.95rem]">
+                {content.body}
+              </p>
+            )}
+
+            <div className="mt-7 flex flex-wrap items-center gap-5">
+              <Link href={content.ctaHref || "/shop"} className="btn btn-light press">
+                {content.ctaLabel || "Shop new arrivals"}
+              </Link>
+              {content.caption && (
+                <span className="font-label text-paper/70">{content.caption}</span>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
-  );
-}
-
-function Stat({ label, value, last }: { label: string; value: string; last?: boolean }) {
-  return (
-    <div className={`py-3 pr-5 ${last ? "" : "mr-5 border-r border-line-dark"}`}>
-      <dt className="font-mono-tight text-paper/55">{label}</dt>
-      <dd className="font-sub text-base mt-1">{value}</dd>
-    </div>
   );
 }
 
 /**
  * The rotating last line of the headline, admin-managed via `cycleWords`.
  *
- * Rewritten so a word is ALWAYS on screen. The previous version animated each
- * word out to opacity 0 at the end of its own 2.6s cycle, which left a beat
- * with nothing in the slot — on mobile the headline regularly read "built for
- * the" followed by a gap. Now only the entrance is animated and the word
- * holds until the next one replaces it, so the sentence is never unfinished.
+ * A word is ALWAYS on screen. The previous version animated each word out to
+ * opacity 0 at the end of its own cycle, which left a beat with nothing in
+ * the slot — on mobile the headline regularly read "built for the" followed
+ * by a gap. Only the entrance is animated now; the word holds until replaced.
  */
 function CyclingWord({ words }: { words: string[] }) {
   const [i, setI] = useState(0);
 
   useEffect(() => {
     if (words.length < 2) return;
-    const id = setInterval(() => setI((n) => (n + 1) % words.length), 3000);
+    const id = setInterval(() => setI((n) => (n + 1) % words.length), 3200);
     return () => clearInterval(id);
   }, [words.length]);
 
@@ -135,9 +106,7 @@ function CyclingWord({ words }: { words: string[] }) {
   const word = words[i % words.length];
 
   return (
-    <span className="block text-tan" aria-live="polite">
-      {/* Keyed so the clip-reveal replays on each change; no exit state, so
-          the slot is never empty. */}
+    <span className="block" aria-live="polite">
       <span key={word + i} className="inline-block word-in">
         {word}
       </span>

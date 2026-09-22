@@ -158,16 +158,16 @@ export function CheckoutForm() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-display text-2xl">Paystack</p>
-                  <p className="font-mono-tight text-muted mt-1">
+                  <p className="font-label text-muted mt-1">
                     Cards · bank transfer · USSD
                   </p>
                 </div>
-                <div className="font-mono-tight text-muted">
+                <div className="font-label text-muted">
                   {money.code === "NGN" ? "₦ NGN" : `$ ${money.code}`}
                 </div>
               </div>
               {money.code !== "NGN" && subtotal > 0 && (
-                <p className="mt-4 font-mono-tight text-muted leading-relaxed">
+                <p className="mt-4 font-label text-muted leading-relaxed">
                   Prices are shown in {money.code} at ₦{money.rate.toLocaleString()}/
                   {money.code}. Your card is charged{" "}
                   <span className="text-ink">{formatMoney(subtotal, "NGN")}</span> and your
@@ -175,9 +175,9 @@ export function CheckoutForm() {
                 </p>
               )}
               {!paystackReady && (
-                <p className="mt-4 bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+                <p className="mt-4 bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 font-label text-ink-soft">
                   Online payment is temporarily unavailable. Your order will be
-                  recorded as <span className="font-mono-tight">PENDING</span>
+                  recorded as <span className="font-label">PENDING</span>
                   &nbsp;and we&apos;ll reach out on WhatsApp to arrange payment.
                 </p>
               )}
@@ -185,7 +185,7 @@ export function CheckoutForm() {
           </fieldset>
 
           {error && (
-            <p className="bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+            <p className="bg-vermillion/10 border-l-[3px] border-vermillion px-3 py-2 font-label text-ink-soft">
               {error}
             </p>
           )}
@@ -201,19 +201,19 @@ export function CheckoutForm() {
               {lines.map((l, idx) => (
                 <li key={l.variantId} className="py-3 flex justify-between gap-4">
                   <div className="flex gap-3 min-w-0">
-                    <span className="font-mono-tight text-muted shrink-0">
+                    <span className="font-label text-muted shrink-0">
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     <div className="min-w-0">
                       <p className="font-display text-lg leading-tight truncate">
                         {l.product.name}
                       </p>
-                      <p className="font-mono-tight text-muted">
+                      <p className="font-label text-muted">
                         {l.variant.size} × {l.quantity}
                       </p>
                     </div>
                   </div>
-                  <p className="font-mono-tight whitespace-nowrap">
+                  <p className="font-label whitespace-nowrap">
                     {l.lineTotalNGN > 0 ? money.formatLine(l.unitPriceNGN, l.quantity) : "—"}
                   </p>
                 </li>
@@ -246,7 +246,7 @@ export function CheckoutForm() {
                   ? "Pay with Paystack →"
                   : "Place order (pay-later) →"}
             </button>
-            <p className="mt-4 font-mono-tight text-muted text-center text-xs">
+            <p className="mt-4 font-label text-muted text-center text-xs">
               By placing this order you agree to our terms.
             </p>
           </div>
@@ -271,7 +271,7 @@ function Field({
 }) {
   return (
     <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
-      <label htmlFor={id} className="block font-mono-tight text-muted">
+      <label htmlFor={id} className="block font-label text-muted">
         {label}
         {required && <span className="text-vermillion"> *</span>}
       </label>
@@ -305,7 +305,7 @@ function SelectField({
   const controlled = value !== undefined;
   return (
     <div className="border-b-2 border-line py-2 focus-within:border-vermillion transition-colors">
-      <label htmlFor={id} className="block font-mono-tight text-muted">
+      <label htmlFor={id} className="block font-label text-muted">
         {label}
         {required && <span className="text-vermillion"> *</span>}
       </label>

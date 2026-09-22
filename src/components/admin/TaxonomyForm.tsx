@@ -117,7 +117,7 @@ export function TaxonomyForm({
               setSlugTouched(true);
               update("slug", e.target.value);
             }}
-            className="w-full bg-transparent border-b border-line py-2 outline-none focus:border-ink font-mono-tight"
+            className="w-full bg-transparent border-b border-line py-2 outline-none focus:border-ink font-label"
           />
         </Field>
         {withDescription && (
@@ -144,7 +144,7 @@ export function TaxonomyForm({
             type="number"
             value={state.sortOrder}
             onChange={(e) => update("sortOrder", parseInt(e.target.value) || 0)}
-            className="w-28 bg-transparent border-b border-line py-2 outline-none focus:border-ink font-mono-tight"
+            className="w-28 bg-transparent border-b border-line py-2 outline-none focus:border-ink font-label"
           />
         </Field>
         {withStatus && (
@@ -155,7 +155,7 @@ export function TaxonomyForm({
             <select
               value={state.status ?? "DRAFT"}
               onChange={(e) => update("status", e.target.value)}
-              className="bg-transparent border-b border-line py-2 outline-none focus:border-ink font-mono-tight"
+              className="bg-transparent border-b border-line py-2 outline-none focus:border-ink font-label"
             >
               {PRODUCT_STATUSES.map((s) => (
                 <option key={s} value={s}>
@@ -168,7 +168,7 @@ export function TaxonomyForm({
       </div>
 
       {error && (
-        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
           {error}
         </p>
       )}
@@ -177,7 +177,7 @@ export function TaxonomyForm({
         <button
           type="submit"
           disabled={pending}
-          className="w-full bg-ink text-paper py-3 font-mono-tight hover:bg-vermillion transition-colors disabled:opacity-50"
+          className="w-full bg-ink text-paper py-3 font-label hover:bg-vermillion transition-colors disabled:opacity-50"
         >
           {pending ? "Saving…" : initial.id ? "Save changes" : `Create ${noun}`}
         </button>
@@ -186,7 +186,7 @@ export function TaxonomyForm({
             type="button"
             onClick={onDelete}
             disabled={pending}
-            className="w-full border border-line py-3 font-mono-tight text-ink/55 hover:border-vermillion hover:text-vermillion disabled:opacity-50"
+            className="w-full border border-line py-3 font-label text-ink/55 hover:border-vermillion hover:text-vermillion disabled:opacity-50"
           >
             Delete {noun}
           </button>
@@ -209,7 +209,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="font-mono-tight text-ink/55 block mb-1">
+      <label className="font-label text-ink/55 block mb-1">
         {label}
         {required && <span className="text-vermillion"> *</span>}
         {hint && <span className="text-ink/40 normal-case ml-2">{hint}</span>}

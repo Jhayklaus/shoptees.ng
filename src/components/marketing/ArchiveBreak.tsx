@@ -41,12 +41,12 @@ export function ArchiveBreak({
           else rather than being dimmed across its whole width. */}
       <div className="col-start-1 row-start-1 self-end relative z-10 w-full bg-gradient-to-t from-ink via-ink/80 to-transparent">
         <div className="mx-auto max-w-[1400px] px-5 md:px-10 py-7 md:py-11">
-          <p className="font-mono-tight text-tan">{eyebrow}</p>
+          <p className="font-label text-tan">{eyebrow}</p>
           <p className="font-sub text-xl sm:text-2xl lg:text-[2rem] leading-[1.14] mt-3 max-w-[44ch] normal-case tracking-normal">
             {quote}
           </p>
           {attribution && (
-            <p className="font-mono-tight text-paper/60 mt-4">{attribution}</p>
+            <p className="font-label text-paper/60 mt-4">{attribution}</p>
           )}
         </div>
       </div>

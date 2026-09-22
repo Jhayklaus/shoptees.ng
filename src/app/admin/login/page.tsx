@@ -13,8 +13,8 @@ export default async function AdminLoginPage() {
       {/* Left: editorial type */}
       <div className="hidden lg:flex flex-col justify-between bg-ink text-paper p-10">
         <div>
-          <p className="font-mono-tight text-paper/55">Shoptees</p>
-          <p className="font-mono-tight text-paper/55">Studio · Admin</p>
+          <p className="font-label text-paper/55">Shoptees</p>
+          <p className="font-label text-paper/55">Studio · Admin</p>
         </div>
         <h1 className="font-display text-7xl xl:text-8xl leading-[0.9] tracking-[-0.03em]">
           Plain
@@ -23,7 +23,7 @@ export default async function AdminLoginPage() {
           <br />
           back office.
         </h1>
-        <p className="font-mono-tight text-paper/55 max-w-sm">
+        <p className="font-label text-paper/55 max-w-sm">
           Restricted. Each session is good for fourteen days.
         </p>
       </div>
@@ -31,7 +31,7 @@ export default async function AdminLoginPage() {
       {/* Right: form */}
       <div className="flex items-center justify-center p-6 md:p-10">
         <div className="w-full max-w-md">
-          <p className="font-mono-tight text-ink/55">Sign in</p>
+          <p className="font-label text-ink/55">Sign in</p>
           <h2 className="font-display text-5xl tracking-[-0.02em] leading-tight mt-1">
             Studio <span className="font-italic-accent text-vermillion">access.</span>
           </h2>

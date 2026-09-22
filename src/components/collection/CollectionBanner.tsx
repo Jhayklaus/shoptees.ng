@@ -49,7 +49,7 @@ export function CollectionBanner({
             .join(" ")}
         />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center font-mono-tight text-paper/60">
+        <div className="absolute inset-0 flex items-center justify-center font-label text-paper/60">
           {name}
         </div>
       )}
@@ -75,7 +75,7 @@ export function CollectionBanner({
             {name}
           </p>
           {description && (
-            <p className="font-mono-tight text-paper/70 mt-3 max-w-xl hidden md:block text-sm">
+            <p className="font-label text-paper/70 mt-3 max-w-xl hidden md:block text-sm">
               {description}
             </p>
           )}

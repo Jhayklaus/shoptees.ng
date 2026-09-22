@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { SectionHead } from "@/components/marketing/SectionHead";
 import { COLLECTION_CROP } from "@/lib/images";
 import { COLLECTIONS } from "@/lib/taxonomy";
 
@@ -32,17 +32,8 @@ export function CollectionRows({
   if (collections.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-[1400px] px-5 md:px-10 py-16 md:py-24">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b-2 border-ink pb-3 mb-2">
-        <div>
-          <p className="font-mono-tight text-muted">Filed by chest graphic, not by garment</p>
-          <h2 className="font-display text-[clamp(2rem,6vw,3.6rem)] mt-2">The collections</h2>
-        </div>
-        <Link href="/collections" className="btn btn-ghost press">
-          All collections
-          <ArrowUpRight size={14} />
-        </Link>
-      </div>
+    <section className="mx-auto max-w-[1400px] px-5 md:px-10 py-12 md:py-16">
+      <SectionHead title="Collections" href="/collections" count={collections.length} />
 
       <ul>
         {collections.map((c, i) => (
@@ -62,10 +53,10 @@ export function CollectionRows({
               </div>
 
               <div>
-                <p className="font-mono-tight text-muted tnum">
+                <p className="font-label text-muted tnum">
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <h3 className="font-sub text-lg md:text-xl mt-1 group-hover:text-vermillion transition-colors">
+                <h3 className="font-sub text-[0.98rem] md:text-[1.05rem] mt-1 group-hover:underline underline-offset-4 decoration-1">
                   {c.name}
                 </h3>
               </div>
@@ -74,7 +65,7 @@ export function CollectionRows({
                 {DEFINING.get(c.slug) ?? ""}
               </p>
 
-              <p className="col-span-2 md:col-span-1 font-mono-tight text-muted tnum md:text-right whitespace-nowrap">
+              <p className="col-span-2 md:col-span-1 font-label text-muted tnum md:text-right whitespace-nowrap">
                 {String(c.count).padStart(2, "0")}{" "}
                 {c.count === 1 ? "piece" : "pieces"} →
               </p>

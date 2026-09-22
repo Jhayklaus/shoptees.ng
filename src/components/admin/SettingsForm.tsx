@@ -161,13 +161,13 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
             onChange={(v) => set("currency.ngn_per_usd", v)}
           />
           {usdOn && !rateValid && (
-            <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+            <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
               Enter a rate greater than zero, or dollar prices stay switched off.
             </p>
           )}
 
           <div>
-            <label htmlFor="currency.usd_rounding" className="block font-mono-tight text-ink/55 mb-1">
+            <label htmlFor="currency.usd_rounding" className="block font-label text-ink/55 mb-1">
               Price rounding
             </label>
             <select
@@ -278,7 +278,7 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
       </section>
 
       {error && (
-        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-mono-tight text-ink-soft">
+        <p className="bg-vermillion/10 border-l-2 border-vermillion px-3 py-2 font-label text-ink-soft">
           {error}
         </p>
       )}
@@ -287,7 +287,7 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
         <button
           type="submit"
           disabled={pending}
-          className="bg-ink text-paper px-6 py-3 font-mono-tight hover:bg-vermillion transition-colors disabled:opacity-50"
+          className="bg-ink text-paper px-6 py-3 font-label hover:bg-vermillion transition-colors disabled:opacity-50"
         >
           {pending ? "Saving…" : "Save settings"}
         </button>
@@ -318,7 +318,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="font-mono-tight text-ink/55 block">
+      <label htmlFor={id} className="font-label text-ink/55 block">
         {label}
         {hint && <span className="text-ink/40 normal-case ml-2">{hint}</span>}
       </label>

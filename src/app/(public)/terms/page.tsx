@@ -48,7 +48,7 @@ export default function TermsPage() {
           </h1>
         </div>
         <div className="col-span-12 md:col-span-4 md:self-end">
-          <p className="font-mono-tight text-muted">
+          <p className="font-label text-muted">
             Effective date: June 2025
             <br />
             Shoptees · Lagos, Nigeria

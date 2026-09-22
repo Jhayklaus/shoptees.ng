@@ -1,4 +1,4 @@
-import { Archivo, Azeret_Mono } from "next/font/google";
+import { Archivo, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { rootMetadata } from "@/lib/seo";
 import { organizationJsonLd } from "@/lib/jsonld";
@@ -12,18 +12,22 @@ const archivo = Archivo({
   display: "swap",
 });
 
-// Machine-printed mono for prices, SKUs, archive refs and metadata.
+// Display serif, headlines only — hero, banner blocks, page titles.
 //
-// Azeret rather than the Martian Mono this replaces: Martian is an unusually
-// WIDE mono, which made every label run long on a 375px screen and turned to
-// mush at label sizes. Azeret is narrower and squarer, so the same metadata
-// fits and still reads. A swap, not an addition — fonts are already the
-// heaviest thing this site ships (138 KB, more than its imagery), so the
-// family count stays at two.
-const azeretMono = Azeret_Mono({
-  variable: "--font-azeret",
+// The headline voice is the single biggest thing separating this from a
+// fashion storefront: a compressed grotesque reads as a poster, a serif
+// reads as a house. Instrument Serif is one weight, ~20 KB, and high
+// enough in contrast to carry a headline at 5rem without extra weight.
+//
+// It does NOT add a family. The mono it replaces (Azeret, three weights)
+// was heavier than this, and the reference this is built against uses no
+// mono at all — labels there are small sans. So the count stays at two and
+// the byte total goes down.
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: "400",
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -37,7 +41,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${azeretMono.variable} h-full antialiased`}
+      className={`${archivo.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-paper text-ink flex flex-col">
         <script

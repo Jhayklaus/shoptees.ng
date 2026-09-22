@@ -40,7 +40,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-32 lg:pb-24">
       {/* Breadcrumb as a routing slip */}
-      <p className="font-mono-tight text-muted mb-6">
+      <p className="font-label text-muted mb-6">
         <Link href="/shop" className="hover:text-vermillion">Shop</Link>
         {product.collection && (
           <>
@@ -81,7 +81,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
             {product.name}
           </h1>
 
-          <p className="mt-5 inline-block font-mono-tight text-xl bg-paper-deep px-3 py-1.5">
+          <p className="mt-5 inline-block font-label text-xl bg-paper-deep px-3 py-1.5">
             {displayPrice > 0 ? money.format(displayPrice) : "Price on request"}
           </p>
 
@@ -143,18 +143,18 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
                   type="button"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
                   aria-label="Decrease quantity"
-                  className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
+                  className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors font-label"
                 >
                   −
                 </button>
-                <span className="w-12 text-center font-mono-tight font-bold">
+                <span className="w-12 text-center font-label font-bold">
                   {String(qty).padStart(2, "0")}
                 </span>
                 <button
                   type="button"
                   onClick={() => setQty((q) => Math.min(variant?.stock ?? 99, q + 1))}
                   aria-label="Increase quantity"
-                  className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors font-mono-tight"
+                  className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors font-label"
                 >
                   +
                 </button>
@@ -182,14 +182,14 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
 
           {/* Spec sheet */}
           <dl className="mt-10 border-t-2 border-ink pt-5 grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
-            <dt className="font-mono-tight text-muted">SKU</dt>
-            <dd className="font-mono-tight">{variant?.sku ?? "—"}</dd>
-            <dt className="font-mono-tight text-muted">Made in</dt>
-            <dd className="font-mono-tight">Nigeria</dd>
-            <dt className="font-mono-tight text-muted">Care</dt>
-            <dd className="font-mono-tight">Cold wash · line dry</dd>
-            <dt className="font-mono-tight text-muted">Dispatch</dt>
-            <dd className="font-mono-tight">Lagos, nationwide delivery</dd>
+            <dt className="font-label text-muted">SKU</dt>
+            <dd className="font-label">{variant?.sku ?? "—"}</dd>
+            <dt className="font-label text-muted">Made in</dt>
+            <dd className="font-label">Nigeria</dd>
+            <dt className="font-label text-muted">Care</dt>
+            <dd className="font-label">Cold wash · line dry</dd>
+            <dt className="font-label text-muted">Dispatch</dt>
+            <dd className="font-label">Lagos, nationwide delivery</dd>
           </dl>
         </aside>
       </div>
@@ -198,7 +198,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-paper border-t-[3px] border-ink px-4 py-3 flex items-center gap-3">
         <div className="min-w-0">
           <p className="font-condensed text-[0.72rem] truncate">{product.name}</p>
-          <p className="font-mono-tight text-sm font-bold">
+          <p className="font-label text-sm font-bold">
             {displayPrice > 0 ? money.formatLine(displayPrice, qty) : "—"}
           </p>
         </div>
@@ -309,7 +309,7 @@ function ProductGallery({
         <span className="absolute bottom-0 right-0 w-[3px] h-8 bg-tan z-10" />
 
         {images.length > 1 && (
-          <span className="absolute bottom-3 right-3 font-mono-tight bg-ink text-paper px-2 py-1 z-10">
+          <span className="absolute bottom-3 right-3 font-label bg-ink text-paper px-2 py-1 z-10">
             {String(activeIdx + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
           </span>
         )}

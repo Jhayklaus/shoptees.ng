@@ -49,14 +49,14 @@ export async function Footer() {
 
       <div className="relative z-10 mx-auto max-w-[1400px] px-5 md:px-10 py-16 grid grid-cols-2 md:grid-cols-12 gap-10">
         <div className="col-span-2 md:col-span-5">
-          <h2 className="font-mono-tight text-paper/55 mb-3">Shptz Wrld</h2>
+          <h2 className="font-label text-paper/55 mb-3">Shptz Wrld</h2>
           <p className="font-sub text-xl md:text-2xl leading-[1.25] max-w-sm normal-case tracking-normal">
             {tagline}
           </p>
         </div>
 
         <div className="col-span-1 md:col-span-2">
-          <h3 className="font-mono-tight text-paper/55 mb-3">Shop</h3>
+          <h3 className="font-label text-paper/55 mb-3">Shop</h3>
           <ul className="space-y-2">
             {footerNav.shop.map((l) => (
               <li key={l.href}>
@@ -72,7 +72,7 @@ export async function Footer() {
         </div>
 
         <div className="col-span-1 md:col-span-2">
-          <h3 className="font-mono-tight text-paper/55 mb-3">Studio</h3>
+          <h3 className="font-label text-paper/55 mb-3">Studio</h3>
           <ul className="space-y-2">
             {footerNav.company.map((l) => (
               <li key={l.href}>
@@ -88,7 +88,7 @@ export async function Footer() {
         </div>
 
         <div className="col-span-2 md:col-span-3">
-          <h3 className="font-mono-tight text-paper/55 mb-3">Elsewhere</h3>
+          <h3 className="font-label text-paper/55 mb-3">Elsewhere</h3>
           <ul className="space-y-2">
             <li>
               <a
@@ -109,7 +109,7 @@ export async function Footer() {
             <li className="pt-2">
               <a
                 href={`mailto:${email}`}
-                className="font-mono-tight text-paper/70 hover:text-tan transition-colors normal-case"
+                className="font-label text-paper/70 hover:text-tan transition-colors normal-case"
               >
                 {email}
               </a>
@@ -120,7 +120,7 @@ export async function Footer() {
 
       <div className="relative z-10 border-t border-paper/15">
         <div className="mx-auto max-w-[1400px] px-5 md:px-10 py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-          <p className="font-mono-tight text-paper/55">
+          <p className="font-label text-paper/55">
             © {new Date().getFullYear()} Shoptees · Lagos, Nigeria
           </p>
           <ul className="flex gap-5">
@@ -131,7 +131,7 @@ export async function Footer() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="font-mono-tight text-paper/55 hover:text-tan transition-colors"
+                  className="font-label text-paper/55 hover:text-tan transition-colors"
                 >
                   {l.label}
                 </Link>

@@ -18,7 +18,7 @@ export default async function AdminBannersPage() {
         actions={
           <Link
             href="/admin/banners/new"
-            className="inline-flex items-center gap-2 bg-ink text-paper px-4 py-2 font-mono-tight hover:bg-vermillion transition-colors"
+            className="inline-flex items-center gap-2 bg-ink text-paper px-4 py-2 font-label hover:bg-vermillion transition-colors"
           >
             <Plus size={14} /> New banner
           </Link>
@@ -31,7 +31,7 @@ export default async function AdminBannersPage() {
             <p className="font-italic-accent text-2xl text-ink/55">No banners yet.</p>
             <Link
               href="/admin/banners/new"
-              className="inline-block mt-5 border border-ink px-5 py-2 font-mono-tight hover:bg-ink hover:text-paper"
+              className="inline-block mt-5 border border-ink px-5 py-2 font-label hover:bg-ink hover:text-paper"
             >
               Create the first one →
             </Link>

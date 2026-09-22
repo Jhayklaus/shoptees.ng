@@ -75,7 +75,7 @@
   --color-foreground: var(--ink);
 
   --font-display: var(--font-archivo);
-  --font-mono: var(--font-azeret);
+  --font-serif-display: var(--font-serif);
   --font-sans: var(--font-archivo);
 }
 
@@ -95,32 +95,56 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Everything below sits in @layer components, ON PURPOSE.
+   
+   Tailwind's utilities live in @layer utilities, and an UNLAYERED rule beats
+   any layered one regardless of specificity. So a plain `.btn { display:
+   inline-flex }` here silently defeated `lg:hidden` on the same element —
+   the mobile filter button rendered on desktop — and `.font-label {
+   font-size: .72rem }` silently defeated every `text-[0.68rem]` override at
+   a call site. Putting these in `components` restores the normal order:
+   utilities win, which is the whole point of using them. */
+@layer components {
+
 /* ── Type voices ─────────────────────────────────────────────────────── */
 
-/* Display: COMPRESSED black, uppercase — a matchday-programme voice.
-   Deliberately not the expanded width this used to run at. One variable
-   file carries every voice on the site, so the width axis is the system,
-   and wide-and-even is both the least characterful end of that axis and
-   the house style of every generated streetwear mock. Compressed is the
-   idiom the brand actually sits in: team sheets, terrace fanzines, the
-   number on the back of a shirt. Costs nothing — same font file. */
+/* Display: SERIF, and only on headlines that sit on or beside an image —
+   the hero, the banner blocks, page titles. Nowhere else.
+   
+   This is the voice that decides whether a storefront reads as a fashion
+   house or as a poster, and a compressed grotesque was firmly the second.
+   Kept to the blocks that earn it: the section headers on a shop page are
+   deliberately small sans below, because a page where every heading shouts
+   has no hierarchy and no density. */
 .font-display {
-  font-family: var(--font-archivo), "Arial Narrow", Arial, sans-serif;
-  font-variation-settings: "wdth" 76;
-  font-weight: 900;
+  font-family: var(--font-serif), "Times New Roman", Times, serif;
+  font-weight: 400;
   text-transform: uppercase;
-  line-height: 0.86;
-  letter-spacing: -0.015em;
+  line-height: 0.96;
+  letter-spacing: -0.01em;
 }
 
-/* Subheads and card titles: a shade wider than the display voice so short
-   strings don't read as cramped, still clearly the same family. */
+/* Section headings on a shop page: quiet. ~1rem, medium, not a headline.
+   This is most of the density difference between a storefront and a
+   lookbook — "Best Sellers" is a signpost, not a statement. */
+.font-section {
+  font-family: var(--font-archivo), Arial, sans-serif;
+  font-variation-settings: "wdth" 100;
+  font-weight: 600;
+  font-size: 1.02rem;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+}
+
+/* Product and card titles. Sentence-cased sans at body size — the
+   reference's cards name the garment quietly and let the picture sell it.
+   The 800-weight compressed caps this replaces made a grid of 23 products
+   read as 23 competing posters. */
 .font-sub {
   font-family: var(--font-archivo), Arial, sans-serif;
-  font-variation-settings: "wdth" 80;
-  font-weight: 800;
-  text-transform: uppercase;
-  line-height: 1.02;
+  font-variation-settings: "wdth" 100;
+  font-weight: 600;
+  line-height: 1.25;
   letter-spacing: -0.005em;
 }
 
@@ -143,13 +167,15 @@ body {
   letter-spacing: 0.01em;
 }
 
-/* Mono labels: prices, SKUs, refs, counts, timestamps. Machine-printed.
-   Size floor is 0.72rem, not the 0.65rem (≈10.4px) this used to be. Small,
-   uppercase and low-contrast at once was the site's worst legibility
-   problem, and it was on 110 elements — every price and category line. */
-.font-mono-tight {
-  font-family: var(--font-azeret), ui-monospace, monospace;
-  letter-spacing: 0.075em;
+/* Small caps label: category lines, counts, meta, eyebrows.
+   Sans, not mono — the mono is gone. It was a wide, eccentric face doing
+   every small label on the site, which made metadata shout as loudly as
+   the product name and ran long on a 375px screen. 0.72rem stays the
+   floor; below that, uppercase low-contrast text stops being readable. */
+.font-label {
+  font-family: var(--font-archivo), Arial, sans-serif;
+  font-variation-settings: "wdth" 100;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   font-size: 0.72rem;
   font-weight: 500;
@@ -341,7 +367,7 @@ body {
   border-bottom: 2px solid var(--line);
   padding: 0.7rem 0;
   color: var(--ink);
-  font-family: var(--font-azeret), ui-monospace, monospace;
+  font-family: var(--font-archivo), Arial, sans-serif;
   font-size: 0.85rem;
   transition: border-color var(--dur-fast) var(--ease-hard);
 }
@@ -351,6 +377,8 @@ body {
 .field:focus {
   outline: none;
   border-bottom-color: var(--vermillion);
+}
+
 }
 
 /* ── Rules & stamps ──────────────────────────────────────────────────── */
@@ -365,7 +393,7 @@ body {
 /* Waybill stamp chip: bordered mono, slightly rotated like a hand stamp. */
 .stamp {
   display: inline-block;
-  font-family: var(--font-azeret), ui-monospace, monospace;
+  font-family: var(--font-archivo), Arial, sans-serif;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.08em;

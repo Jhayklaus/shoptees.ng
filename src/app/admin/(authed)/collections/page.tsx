@@ -18,7 +18,7 @@ export default async function AdminCollectionsPage() {
         actions={
           <Link
             href="/admin/collections/new"
-            className="inline-flex items-center gap-2 bg-ink text-paper px-4 py-2 font-mono-tight hover:bg-vermillion transition-colors"
+            className="inline-flex items-center gap-2 bg-ink text-paper px-4 py-2 font-label hover:bg-vermillion transition-colors"
           >
             <Plus size={14} /> New collection
           </Link>
@@ -29,12 +29,12 @@ export default async function AdminCollectionsPage() {
         {collections.length === 0 ? (
           <div className="border border-dashed border-line p-12 text-center">
             <p className="font-italic-accent text-2xl text-ink/55">No collections yet.</p>
-            <p className="font-mono-tight text-ink/55 mt-2">
+            <p className="font-label text-ink/55 mt-2">
               A collection is a curated line — e.g. “Urban Retro” — that products are assigned to.
             </p>
             <Link
               href="/admin/collections/new"
-              className="inline-block mt-5 border border-ink px-5 py-2 font-mono-tight hover:bg-ink hover:text-paper"
+              className="inline-block mt-5 border border-ink px-5 py-2 font-label hover:bg-ink hover:text-paper"
             >
               Create the first one →
             </Link>
@@ -65,9 +65,9 @@ export default async function AdminCollectionsPage() {
                     <Td>
                       <StatusBadge status={c.status} variant="product" />
                     </Td>
-                    <Td className="font-mono-tight text-ink/55">/{c.slug}</Td>
-                    <Td className="font-mono-tight">{c._count.products}</Td>
-                    <Td className="font-mono-tight text-ink/55">{c.sortOrder}</Td>
+                    <Td className="font-label text-ink/55">/{c.slug}</Td>
+                    <Td className="font-label">{c._count.products}</Td>
+                    <Td className="font-label text-ink/55">{c.sortOrder}</Td>
                   </tr>
                 ))}
               </tbody>
@@ -80,7 +80,7 @@ export default async function AdminCollectionsPage() {
 }
 
 function Th({ children }: { children?: React.ReactNode }) {
-  return <th className="font-mono-tight text-ink/55 px-4 py-3 font-normal">{children}</th>;
+  return <th className="font-label text-ink/55 px-4 py-3 font-normal">{children}</th>;
 }
 function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <td className={`px-4 py-3 ${className}`}>{children}</td>;

@@ -59,7 +59,7 @@ export default async function CollectionPage({
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-24">
-      <p className="font-mono-tight text-muted mb-5">
+      <p className="font-label text-muted mb-5">
         <Link href="/collections" className="hover:text-vermillion">
           Collections
         </Link>{" "}
@@ -112,7 +112,7 @@ export default async function CollectionPage({
           >
             <ChevronLeft size={16} />
           </PageLink>
-          <p className="font-mono-tight text-ink/70">
+          <p className="font-label text-ink/70">
             Page {Math.min(page, totalPages)} of {totalPages}
           </p>
           <PageLink

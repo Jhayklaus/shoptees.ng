@@ -59,7 +59,7 @@ export default async function CollectionsPage() {
                 />
 
                 {display.length === 0 ? (
-                  <p className="font-mono-tight text-muted mt-2">
+                  <p className="font-label text-muted mt-2">
                     Nothing in {col.name.toLowerCase()} yet — coming soon.
                   </p>
                 ) : (

@@ -105,7 +105,7 @@ export default async function CheckoutSuccessPage({
             <br />
             <span className="text-vermillion">{order.customer.firstName}.</span>
           </h1>
-          <p className="font-mono-tight mt-5 text-ink-soft">
+          <p className="font-label mt-5 text-ink-soft">
             Order <span className="text-ink font-bold">{order.orderNumber}</span>
             <br className="sm:hidden" />
             <span className="hidden sm:inline"> · </span>
@@ -129,17 +129,17 @@ export default async function CheckoutSuccessPage({
             {order.items.map((item, idx) => (
               <li key={item.id} className="py-3 flex justify-between gap-4">
                 <div className="flex gap-3">
-                  <span className="font-mono-tight text-muted">
+                  <span className="font-label text-muted">
                     {String(idx + 1).padStart(2, "0")}
                   </span>
                   <div>
                     <p className="font-display text-xl leading-tight">{item.productName}</p>
-                    <p className="font-mono-tight text-muted">
+                    <p className="font-label text-muted">
                       {item.variantSize} × {item.quantity}
                     </p>
                   </div>
                 </div>
-                <p className="font-mono-tight whitespace-nowrap">
+                <p className="font-label whitespace-nowrap">
                   {formatStored(
                     item.unitPriceNGN * item.quantity,
                     item.unitPriceMinor == null ? null : item.unitPriceMinor * item.quantity,
@@ -160,7 +160,7 @@ export default async function CheckoutSuccessPage({
         {order.address && (
           <section className="mt-10 border-t-2 border-ink pt-6">
             <span className="stamp text-muted">Deliver to</span>
-            <div className="mt-3 font-mono-tight leading-relaxed">
+            <div className="mt-3 font-label leading-relaxed">
               <p className="font-bold">
                 {order.customer.firstName} {order.customer.lastName}
               </p>
@@ -176,7 +176,7 @@ export default async function CheckoutSuccessPage({
 
         {/* Perforated tear-off edge */}
         <div className="mt-10 border-t-2 border-dashed border-ink/30 pt-6">
-          <p className="font-mono-tight text-muted text-sm text-center">
+          <p className="font-label text-muted text-sm text-center">
             Save this page or check your email for the same details. Lagos orders
             usually leave the studio within 48 hours.
           </p>
