@@ -1,8 +1,14 @@
 import { notFound } from "next/navigation";
 import { buildMetadata } from "@/lib/seo";
 import { productJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
-import { getProductBySlug, toDisplayProduct } from "@/lib/server/products";
+import {
+  getProductBySlug,
+  listActiveProducts,
+  toDisplayProduct,
+} from "@/lib/server/products";
 import { ProductDetail } from "@/components/product/ProductDetail";
+import { ProductCard } from "@/components/product/ProductCard";
+import { SectionHead } from "@/components/marketing/SectionHead";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +41,21 @@ export default async function ProductDetailPage({
 
   const product = toDisplayProduct(row);
 
+  // Rest of the line. Falls back to the wider catalogue when a collection
+  // holds only this one piece, so the block is never a lonely single card.
+  const siblings = product.collection
+    ? await listActiveProducts({ collectionSlug: product.collection.slug })
+    : [];
+  const pool = siblings.length > 1 ? siblings : await listActiveProducts();
+  const related = pool
+    .filter((p) => p.slug !== product.slug)
+    .slice(0, 4)
+    .map(toDisplayProduct);
+  const relatedTitle =
+    siblings.length > 1 && product.collection
+      ? `More from ${product.collection.name}`
+      : "Also in the archive";
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: "/" },
     { name: "Shop", url: "/shop" },
@@ -58,6 +79,24 @@ export default async function ProductDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
       <ProductDetail product={product} />
+
+      {related.length > 0 && (
+        <section className="mx-auto max-w-[1400px] px-5 md:px-10 pb-24 lg:pb-28">
+          <SectionHead
+            title={relatedTitle}
+            href={
+              siblings.length > 1 && product.collection
+                ? `/collections/${product.collection.slug}`
+                : "/shop"
+            }
+          />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-10 md:gap-x-6">
+            {related.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 }
