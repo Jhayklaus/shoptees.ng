@@ -43,13 +43,17 @@ export function Header({
   return (
     <header
       data-vt="header"
-      className="header-scroll sticky top-0 z-40 bg-paper/95 backdrop-blur-md border-b-2 border-ink"
+      // No border at rest. The bar earns its separation as the page moves
+      // under it: .header-scroll fades in a hairline and a faint shadow over
+      // the first 90px of scroll, so at the top of the page the header and
+      // the hero are one surface rather than two stacked boxes.
+      className="header-scroll sticky top-0 z-40 bg-paper/90 backdrop-blur-md"
     >
       {/* The wordmark sits at the start of the line, not floated to the
           centre of it. A centred mark with nav left and cart right is a
           symmetrical arrangement that reads as a template; anchoring it left
           lets the nav run on from it and gives the row a direction. */}
-      <div className="mx-auto max-w-[1400px] px-5 md:px-10 h-16 md:h-[4.6rem] flex items-center gap-4 md:gap-6">
+      <div className="mx-auto max-w-[1400px] px-5 md:px-10 h-[3.9rem] md:h-[4.75rem] flex items-center gap-4 md:gap-7">
         <button
           type="button"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -71,13 +75,13 @@ export function Header({
           />
         </Link>
 
-        <nav aria-label="Primary" className="hidden md:flex items-center gap-7">
+        <nav aria-label="Primary" className="hidden md:flex items-center gap-8">
           {mainNav.map((item, i) =>
             item.type === "link" ? (
               <Link
                 key={item.href}
                 href={item.href}
-                className="link-underline font-condensed text-[0.84rem] text-ink hover:text-vermillion transition-colors"
+                className="font-label text-ink/80 hover:text-ink transition-colors"
               >
                 {item.label}
               </Link>
@@ -166,7 +170,7 @@ function NavDropdown({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="link-underline inline-flex items-center gap-1 font-condensed text-[0.84rem] text-ink hover:text-vermillion transition-colors"
+        className="inline-flex items-center gap-1.5 font-label text-ink/80 hover:text-ink transition-colors"
       >
         {label}
         <ChevronDown
@@ -187,14 +191,11 @@ function NavDropdown({
       >
         <div
           className={[
-            "relative min-w-[250px] bg-paper border-2 border-ink shadow-lift-lg origin-top-left",
+            "relative min-w-[250px] bg-paper border border-line shadow-lift-lg origin-top-left",
             "transition-all duration-200 ease-out",
             open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1",
           ].join(" ")}
         >
-          {/* Hazard top tick */}
-          <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
-
           <ul className="py-2">
             {items.length === 0 ? (
               <li className="px-4 py-2 font-label text-muted normal-case">
@@ -207,12 +208,12 @@ function NavDropdown({
                     href={item.href}
                     onClick={() => setOpen(false)}
                     role="menuitem"
-                    className="group flex items-center justify-between gap-4 px-4 py-2 font-label text-ink hover:bg-ink hover:text-paper transition-colors"
+                    className="group flex items-center justify-between gap-4 px-4 py-2.5 font-label text-ink-soft hover:bg-shot hover:text-ink transition-colors"
                   >
                     <span>{item.name}</span>
                     <ArrowUpRight
                       size={14}
-                      className="text-vermillion opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-paper transition-all duration-150"
+                      className="text-muted opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150"
                     />
                   </Link>
                 </li>
@@ -257,7 +258,7 @@ function MobileMenu({
     setOpenKinds((s) => ({ ...s, [kind]: !s[kind] }));
 
   return (
-    <div className="sheet-in md:hidden border-t-2 border-ink bg-paper">
+    <div className="sheet-in md:hidden border-t border-line bg-paper">
       <ul className="px-5 py-5 space-y-4">
         {items.map((item, i) => {
           if (item.type === "link") {

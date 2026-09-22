@@ -6,7 +6,7 @@ export const metadata = buildMetadata({ title: "About", path: "/about" });
 export default function AboutPage() {
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 pb-24">
-      <header className="grid grid-cols-12 gap-6 mb-16 border-b-[3px] border-ink pb-10">
+      <header className="grid grid-cols-12 gap-6 mb-16 border-b border-line pb-10">
         <div className="col-span-12 md:col-span-8">
           <span className="stamp text-vermillion">A studio note</span>
           <h1 className="font-display text-5xl sm:text-7xl md:text-[9rem] leading-[0.88] mt-3">
@@ -62,7 +62,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 border-y-[3px] border-ink py-10">
+      <section className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 border-y border-line py-10">
         {[
           ["Made in", "Lagos, NG"],
           ["Catalog", "Apparel + jerseys"],

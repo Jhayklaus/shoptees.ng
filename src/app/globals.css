@@ -25,13 +25,17 @@
      as secondary. Anything below this on white is decoration, not text. */
   --muted: #6b5a52;
 
-  /* The product ground is the same bright white as the page; the step
-     between them is a SHADOW, not a tone. Tight and warm-tinted so a tile
-     reads as a sheet lifted off the page rather than a material card —
-     which, with square corners, is what keeps it out of template territory. */
-  --shot: #ffffff;
-  --lift: 0 1px 2px rgb(22 17 15 / 0.07), 0 12px 26px -12px rgb(22 17 15 / 0.3);
-  --lift-lg: 0 2px 4px rgb(22 17 15 / 0.07), 0 26px 52px -22px rgb(22 17 15 / 0.36);
+  /* Product ground: a flat, barely-there grey against the white page.
+     Warm-biased rather than a neutral #f4f4f4 — a pure grey next to this
+     palette's warm ink and tan reads as a different site's component.
+     No shadow: the tone alone separates the tile, which keeps the page
+     flat and printed rather than layered. */
+  --shot: #f4f2ef;
+
+  /* Kept for the few places that genuinely lift off the page — the nav
+     dropdown and the mobile filter sheet, which float over content. */
+  --lift: 0 1px 2px rgb(22 17 15 / 0.06), 0 12px 26px -12px rgb(22 17 15 / 0.26);
+  --lift-lg: 0 2px 4px rgb(22 17 15 / 0.07), 0 26px 52px -22px rgb(22 17 15 / 0.32);
 
   /* Motion: snap, don't float. One vocabulary, used everywhere.
      --ease-snap  decelerating, the signature: things arrive and stop dead.
@@ -195,14 +199,12 @@ body {
   position: relative;
   background: var(--shot);
   overflow: hidden;
-  box-shadow: var(--lift);
-  transition: box-shadow var(--dur-mid) var(--ease-snap);
+  transition: background-color var(--dur-mid) var(--ease-snap);
 }
-.shot-lg {
-  box-shadow: var(--lift-lg);
-}
+/* The only hover affordance the tile needs: the ground deepens a shade.
+   No lift, no scale on the tile itself — the image inside already moves. */
 .group:hover .shot {
-  box-shadow: var(--lift-lg);
+  background: #efece8;
 }
 
 /* Print grain, on the product ground and on dark fields. Cheap: one inline
@@ -231,6 +233,19 @@ body {
   .shot {
     transition: none;
   }
+}
+
+/* ── Rules ───────────────────────────────────────────────────────────── */
+
+/* One rule weight on the storefront: a warm hairline. The 2px and 3px ink
+   rules this replaces were doing the work of a headline — every section
+   header, page header and table sat under a black bar, which is a lot of
+   structure to draw for something the eye only needs a hint of. */
+.rule-soft {
+  border-color: var(--line);
+  border-width: 0;
+  border-bottom-width: 1px;
+  border-style: solid;
 }
 
 /* ── Primitives ──────────────────────────────────────────────────────── */
@@ -688,12 +703,20 @@ body {
 
 @keyframes header-lift {
   from {
+    /* Flush against the page: no rule, no shadow. */
     box-shadow: 0 0 0 0 rgb(0 0 0 / 0);
-    background-color: color-mix(in srgb, var(--paper) 90%, transparent);
+    background-color: color-mix(in srgb, var(--paper) 86%, transparent);
   }
   to {
-    box-shadow: 0 6px 0 -3px color-mix(in srgb, var(--ink) 12%, transparent);
-    background-color: color-mix(in srgb, var(--paper) 97%, transparent);
+    /* A hairline drawn with the shadow's first stop, then a soft fall-off —
+       so the bar separates without a black bar under it. */
+    box-shadow:
+      0 1px 0 0 var(--line),
+      0 6px 18px -10px rgb(22 17 15 / 0.25);
+    /* Fully opaque once lifted: at 98% the hero read through the bar
+       and the white went grey. Translucency is for the at-rest state, where
+       there is nothing under it yet. */
+    background-color: var(--paper);
   }
 }
 

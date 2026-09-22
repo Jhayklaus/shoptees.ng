@@ -7,7 +7,7 @@ export const metadata = buildMetadata({ title: "Contact", path: "/contact" });
 export default function ContactPage() {
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 pb-24">
-      <header className="grid grid-cols-12 gap-6 mb-16 border-b-[3px] border-ink pb-10">
+      <header className="grid grid-cols-12 gap-6 mb-16 border-b border-line pb-10">
         <div className="col-span-12 md:col-span-9">
           <span className="stamp text-vermillion">Open line</span>
           <h1 className="font-display text-5xl sm:text-7xl md:text-9xl leading-[0.9] mt-3">
@@ -23,7 +23,7 @@ export default function ContactPage() {
             tailoring, anything. Usually within a day.
           </p>
 
-          <ul className="mt-10 space-y-8 border-l-[3px] border-ink pl-6">
+          <ul className="mt-10 space-y-8 border-l-2 border-ink pl-6">
             <li>
               <span className="stamp text-muted">Email</span>
               <a

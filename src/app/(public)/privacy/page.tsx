@@ -36,7 +36,7 @@ const SECTIONS = [
 export default function PrivacyPage() {
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 pb-24">
-      <header className="mb-16 border-b-[3px] border-ink pb-8 grid grid-cols-12 gap-6">
+      <header className="mb-16 border-b border-line pb-8 grid grid-cols-12 gap-6">
         <div className="col-span-12 md:col-span-8">
           <span className="stamp text-vermillion">Legal</span>
           <h1 className="font-display text-4xl sm:text-6xl md:text-8xl leading-[0.92] mt-3">

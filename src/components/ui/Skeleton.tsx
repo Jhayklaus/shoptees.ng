@@ -44,7 +44,7 @@ export function ProductCardSkeleton() {
   return (
     <div className="block">
       <Skeleton className="w-full aspect-square" />
-      <div className="mt-3 border-t-2 border-ink/15 pt-2 grid gap-1.5 sm:flex sm:items-start sm:justify-between sm:gap-3">
+      <div className="mt-3 border-t border-line/15 pt-2 grid gap-1.5 sm:flex sm:items-start sm:justify-between sm:gap-3">
         <div className="min-w-0 flex-1 space-y-2">
           <Skeleton className="h-4 w-3/4" />
           <Skeleton className="h-3 w-1/3" />
@@ -73,7 +73,7 @@ export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
 /** Matches the stamp + display headline + description block. */
 export function PageHeaderSkeleton() {
   return (
-    <header className="grid grid-cols-12 gap-6 mb-12 border-b-[3px] border-ink pb-8">
+    <header className="grid grid-cols-12 gap-6 mb-12 border-b border-line pb-8">
       <div className="col-span-12 md:col-span-7 space-y-4">
         <Skeleton className="h-5 w-44" />
         <Skeleton className="h-16 md:h-24 w-4/5" />

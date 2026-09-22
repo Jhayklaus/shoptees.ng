@@ -274,7 +274,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
       </div>
 
       {/* ── Sticky mobile bar ──────────────────────────────────── */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-paper border-t-2 border-ink px-4 py-3 flex items-center gap-3">
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-paper border-t border-line px-4 py-3 flex items-center gap-3">
         <div className="min-w-0">
           <p className="font-sub text-[0.82rem] truncate">{product.name}</p>
           <p className="font-sub tnum text-[0.88rem]">
@@ -366,7 +366,7 @@ function ProductGallery({
         // you navigate to next. Square, matching the grid tile, so the morph
         // scales rather than warps.
         data-morph-target
-        className="shot shot-lg aspect-square"
+        className="shot aspect-square"
         role="region"
         aria-roledescription="product gallery"
         aria-label={`${fallbackAlt} — image ${activeIdx + 1} of ${images.length}`}

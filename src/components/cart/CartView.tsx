@@ -47,7 +47,7 @@ export function CartView() {
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 py-12">
-      <header className="mb-10 border-b-[3px] border-ink pb-6">
+      <header className="mb-10 border-b border-line pb-6">
         <span className="stamp text-vermillion">
           Packing slip ·{" "}
           {isLoading
@@ -168,7 +168,7 @@ export function CartView() {
                 <dd className="text-muted">at checkout</dd>
               </div>
             </dl>
-            <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
+            <div className="mt-5 pt-5 border-t border-line flex justify-between items-baseline">
               <p className="font-condensed text-[0.82rem]">Total</p>
               <p className="font-display text-3xl">
                 {subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}

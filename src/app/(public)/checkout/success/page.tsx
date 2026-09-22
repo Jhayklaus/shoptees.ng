@@ -123,7 +123,7 @@ export default async function CheckoutSuccessPage({
           )}
         </div>
 
-        <section className="mt-10 border-t-2 border-ink pt-6">
+        <section className="mt-10 border-t border-line pt-6">
           <span className="stamp text-muted">Items</span>
           <ul className="divide-y divide-line mt-3">
             {order.items.map((item, idx) => (
@@ -149,7 +149,7 @@ export default async function CheckoutSuccessPage({
               </li>
             ))}
           </ul>
-          <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
+          <div className="mt-5 pt-5 border-t border-line flex justify-between items-baseline">
             <p className="font-condensed text-[0.82rem]">Total</p>
             <p className="font-display text-3xl">
               {formatStored(order.totalNGN, order.totalMinor, order.currency)}
@@ -158,7 +158,7 @@ export default async function CheckoutSuccessPage({
         </section>
 
         {order.address && (
-          <section className="mt-10 border-t-2 border-ink pt-6">
+          <section className="mt-10 border-t border-line pt-6">
             <span className="stamp text-muted">Deliver to</span>
             <div className="mt-3 font-label leading-relaxed">
               <p className="font-bold">

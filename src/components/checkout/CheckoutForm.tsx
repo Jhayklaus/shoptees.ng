@@ -101,7 +101,7 @@ export function CheckoutForm() {
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 py-12">
-      <header className="mb-10 border-b-[3px] border-ink pb-6">
+      <header className="mb-10 border-b border-line pb-6">
         <span className="stamp text-vermillion">Waybill · step 1 of 2</span>
         <h1 className="font-display text-6xl md:text-7xl mt-3">
           Almost <span className="text-vermillion">there.</span>
@@ -229,7 +229,7 @@ export function CheckoutForm() {
                 </li>
               )}
             </ul>
-            <div className="mt-5 pt-5 border-t-2 border-ink flex justify-between items-baseline">
+            <div className="mt-5 pt-5 border-t border-line flex justify-between items-baseline">
               <p className="font-condensed text-[0.82rem]">Total</p>
               <p className="font-display text-3xl">
                 {subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}

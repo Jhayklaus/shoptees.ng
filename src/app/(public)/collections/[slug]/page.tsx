@@ -103,7 +103,7 @@ export default async function CollectionPage({
       {totalPages > 1 && (
         <nav
           aria-label="Pagination"
-          className="mt-16 flex items-center justify-center gap-6 border-t-2 border-ink pt-8"
+          className="mt-16 flex items-center justify-center gap-6 border-t border-line pt-8"
         >
           <PageLink
             href={`/collections/${slug}?page=${page - 1}`}

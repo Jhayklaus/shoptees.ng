@@ -21,7 +21,7 @@ export default async function CollectionsPage() {
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 pb-24">
-      <header className="mb-12 border-b-[3px] border-ink pb-8">
+      <header className="mb-12 border-b border-line pb-8">
         <span className="stamp text-vermillion">
           {String(collections.length).padStart(2, "0")}{" "}
           {collections.length === 1 ? "line" : "lines"}
