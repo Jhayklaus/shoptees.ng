@@ -65,7 +65,9 @@ CROPS = [
     ("trap-house/beanies/beanie-allover-dice_nnshptzx10.png", "th-allover", (0.30, 0.28, 0.62, 0.62)),
     ("trap-house/buckets/bucket-hat-black-pink-dice_shptzBKT1.png", "th-dice", (0.40, 0.31, 0.62, 0.55)),
     ("urban-classic/tees/tee-black-gold-script_nnshptzx35.png", "uc-script", (0.53, 0.28, 0.78, 0.45)),
-    ("shptz-wrld/polos/polo-black-red-seal_nnshptzx11.png", "sw-seal", (0.26, 0.27, 0.42, 0.57)),
+    # The seal on the BLACK polo is a dark red on black — legible on the
+    # garment, near-invisible as a tile. Same mark on the white polo reads.
+    ("shptz-wrld/polos/polo-white-red-seal_nnshptzx13.png", "sw-seal", (0.26, 0.28, 0.42, 0.51)),
     ("live-laugh-love/polos/polo-red-white-collar_nnshptzx8.png", "lll-script", (0.13, 0.36, 0.40, 0.54)),
     ("previous-season/long-sleeve-jerseys/ls-jersey-shoptees-black-blue_shptzBLU.png", "ps-26", (0.36, 0.58, 0.64, 0.82)),
     ("previous-season/jerseys/jersey-classic-white-pink_shp3.png", "ps-squiggle", (0.58, 0.55, 0.88, 0.76)),

@@ -58,16 +58,16 @@ export default async function CollectionPage({
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
   return (
-    <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-24">
-      <p className="font-label text-muted mb-5">
-        <Link href="/collections" className="hover:text-vermillion">
+    <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-6 pb-24">
+      <nav aria-label="Breadcrumb" className="font-label text-muted mb-5">
+        <Link href="/collections" className="hover:text-ink transition-colors">
           Collections
-        </Link>{" "}
-        / {collection.name}
-      </p>
+        </Link>
+        {" / "}
+        <span className="text-ink">{collection.name}</span>
+      </nav>
 
       <CollectionBanner
-        variant="page"
         name={collection.name}
         slug={collection.slug}
         description={collection.description}
@@ -76,24 +76,21 @@ export default async function CollectionPage({
         count={total}
       />
 
-      <div className="mt-12">
+      <div className="mt-10 md:mt-12">
         {display.length === 0 ? (
-          <div className="border-2 border-dashed border-ink/30 p-16 text-center">
-            <span className="stamp text-muted">
+          <div className="border border-dashed border-line-2 p-16 text-center">
+            <p className="font-label text-muted">
               Nothing in {collection.name.toLowerCase()} right now
-            </span>
+            </p>
             <p className="mt-5">
-              <Link
-                href="/shop"
-                className="font-condensed text-[0.78rem] underline underline-offset-4 hover:text-vermillion"
-              >
+              <Link href="/shop" className="font-label underline underline-offset-4">
                 See everything →
               </Link>
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-14">
-            {display.map((p, i) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-10 md:gap-x-6 md:gap-y-12">
+            {display.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
@@ -103,7 +100,7 @@ export default async function CollectionPage({
       {totalPages > 1 && (
         <nav
           aria-label="Pagination"
-          className="mt-16 flex items-center justify-center gap-6 border-t border-line pt-8"
+          className="mt-14 flex items-center justify-center gap-6 border-t border-line pt-8"
         >
           <PageLink
             href={`/collections/${slug}?page=${page - 1}`}
@@ -112,7 +109,7 @@ export default async function CollectionPage({
           >
             <ChevronLeft size={16} />
           </PageLink>
-          <p className="font-label text-ink/70">
+          <p className="font-label text-muted tnum">
             Page {Math.min(page, totalPages)} of {totalPages}
           </p>
           <PageLink
@@ -128,6 +125,11 @@ export default async function CollectionPage({
   );
 }
 
+/**
+ * Pagination arrow. A disabled page renders as a span, not a dead link —
+ * a link that goes nowhere is still focusable and still announced as a
+ * link, which is a worse experience than not having it.
+ */
 function PageLink({
   href,
   disabled,
@@ -139,9 +141,11 @@ function PageLink({
   label: string;
   children: React.ReactNode;
 }) {
+  const shape =
+    "inline-flex items-center justify-center w-11 h-11 border transition-colors";
   if (disabled) {
     return (
-      <span className="flex h-10 w-10 items-center justify-center border-2 border-line text-muted">
+      <span aria-hidden className={`${shape} border-line text-muted opacity-40`}>
         {children}
       </span>
     );
@@ -150,7 +154,7 @@ function PageLink({
     <Link
       href={href}
       aria-label={label}
-      className="flex h-10 w-10 items-center justify-center border-2 border-ink hover:bg-ink hover:text-paper transition-colors"
+      className={`${shape} border-line-2 text-ink hover:border-ink hover:bg-ink hover:text-paper`}
     >
       {children}
     </Link>

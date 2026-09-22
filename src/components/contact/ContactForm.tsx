@@ -38,8 +38,6 @@ export function ContactForm() {
       onSubmit={onSubmit}
       className="col-span-12 md:col-span-6 md:col-start-7 relative border-2 border-ink p-6 md:p-10 shadow-[6px_6px_0_0_var(--ink)]"
     >
-      <span className="absolute top-0 right-0 w-8 h-[3px] bg-vermillion" />
-      <span className="absolute top-0 right-0 w-[3px] h-8 bg-vermillion" />
 
       <span className="stamp text-muted">A note</span>
       <h2 className="font-display text-4xl mt-2">

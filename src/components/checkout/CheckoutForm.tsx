@@ -102,22 +102,21 @@ export function CheckoutForm() {
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 py-12">
       <header className="mb-10 border-b border-line pb-6">
-        <span className="stamp text-vermillion">Waybill · step 1 of 2</span>
-        <h1 className="font-display text-6xl md:text-7xl mt-3">
-          Almost <span className="text-vermillion">there.</span>
+        <p className="font-label text-muted mb-2">Step 1 of 2</p>
+        <h1 className="font-display text-[clamp(1.9rem,5vw,3rem)]">Checkout
         </h1>
       </header>
 
       <form onSubmit={onSubmit} className="grid grid-cols-12 gap-y-10 gap-x-2 lg:gap-10">
         <div className="col-span-12 lg:col-span-7 space-y-10">
           <fieldset>
-            <legend className="stamp text-muted mb-4">01 · Contact</legend>
+            <legend className="font-label text-muted mb-4">01 · Contact</legend>
             <Field id="email" label="Email" type="email" autoComplete="email" required />
             <Field id="phone" label="Phone (WhatsApp)" type="tel" autoComplete="tel" required />
           </fieldset>
 
           <fieldset>
-            <legend className="stamp text-muted mb-4">02 · Delivery</legend>
+            <legend className="font-label text-muted mb-4">02 · Delivery</legend>
             <div className="grid grid-cols-2 gap-x-4">
               <Field id="firstName" label="First name" autoComplete="given-name" required />
               <Field id="lastName" label="Last name" autoComplete="family-name" required />
@@ -151,13 +150,11 @@ export function CheckoutForm() {
           </fieldset>
 
           <fieldset>
-            <legend className="stamp text-muted mb-4">03 · Payment</legend>
+            <legend className="font-label text-muted mb-4">03 · Payment</legend>
             <div className="relative border-2 border-ink p-5">
-              <span className="absolute top-0 right-0 w-6 h-[3px] bg-vermillion" />
-              <span className="absolute top-0 right-0 w-[3px] h-6 bg-vermillion" />
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-display text-2xl">Paystack</p>
+                  <p className="font-sub text-base">Paystack</p>
                   <p className="font-label text-muted mt-1">
                     Cards · bank transfer · USSD
                   </p>
@@ -192,11 +189,9 @@ export function CheckoutForm() {
         </div>
 
         <aside className="col-span-12 lg:col-span-5 lg:sticky lg:top-24 self-start">
-          <div className="relative border-2 border-ink p-6 bg-paper shadow-[6px_6px_0_0_var(--ink)]">
-            <span className="absolute top-0 left-0 w-8 h-[3px] bg-vermillion" />
-            <span className="absolute top-0 left-0 w-[3px] h-8 bg-vermillion" />
+          <div className="border border-line p-6 bg-shot">
 
-            <span className="stamp text-muted">Order summary</span>
+            <p className="font-label text-muted">Order summary</p>
             <ul className="divide-y divide-line mt-3">
               {lines.map((l, idx) => (
                 <li key={l.variantId} className="py-3 flex justify-between gap-4">
@@ -205,7 +200,7 @@ export function CheckoutForm() {
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     <div className="min-w-0">
-                      <p className="font-display text-lg leading-tight truncate">
+                      <p className="font-sub text-[0.92rem] truncate">
                         {l.product.name}
                       </p>
                       <p className="font-label text-muted">
@@ -220,25 +215,25 @@ export function CheckoutForm() {
               ))}
               {empty && (
                 <li className="py-4 text-center">
-                  <span className="stamp text-muted">Cart is empty</span>
+                  <p className="font-label text-muted">Cart is empty</p>
                 </li>
               )}
               {cart.status === "loading" && (
                 <li className="py-4 text-center">
-                  <span className="stamp text-muted">Loading…</span>
+                  <p className="font-label text-muted">Loading…</p>
                 </li>
               )}
             </ul>
             <div className="mt-5 pt-5 border-t border-line flex justify-between items-baseline">
-              <p className="font-condensed text-[0.82rem]">Total</p>
-              <p className="font-display text-3xl">
+              <p className="font-label text-ink">Total</p>
+              <p className="font-sub tnum text-xl">
                 {subtotal > 0 ? money.formatMajor(subtotalMajor) : "—"}
               </p>
             </div>
             <button
               type="submit"
               disabled={pending || empty || cart.status === "loading"}
-              className="btn-wipe btn-wipe-hazard press mt-6 w-full bg-ink text-paper py-4 font-condensed text-[0.82rem] transition-colors duration-200 disabled:opacity-40"
+              className="btn press mt-6 w-full py-4"
             >
               {pending
                 ? "Placing order…"
@@ -281,7 +276,7 @@ function Field({
         type={type}
         required={required}
         autoComplete={autoComplete}
-        className="w-full bg-transparent py-1 outline-none font-display text-lg"
+        className="w-full bg-transparent py-1 outline-none font-sub text-[0.98rem]"
       />
     </div>
   );
@@ -313,7 +308,7 @@ function SelectField({
         id={id}
         name={id}
         required={required}
-        className="w-full bg-transparent py-1 outline-none font-display text-lg"
+        className="w-full bg-transparent py-1 outline-none font-sub text-[0.98rem]"
         {...(controlled
           ? { value, onChange: (e) => onChange?.(e.target.value) }
           : { defaultValue: "" })}

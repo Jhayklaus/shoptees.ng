@@ -1,17 +1,17 @@
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { COLLECTION_CROP } from "@/lib/images";
 
-// Wide editorial banner for a collection — used full-size at the top of
-// /collections/[slug] and in a shorter variant for each section of the
-// /collections index.
-//
-// With no banner set in admin it falls back to a detail crop of the
-// collection's defining chest graphic, because that is what the collection
-// IS — the archive files by graphic, not by garment. The old fallback was
-// the name set in 20%-opacity type over an empty ink block: 1.85:1, and it
-// looked like a broken image.
+/**
+ * Masthead for a single collection page.
+ *
+ * With no banner set in admin it falls back to a detail crop of the
+ * collection's defining chest graphic — which is what a collection IS in
+ * this brand's filing system, so the fallback says something true rather
+ * than rendering an empty ink block.
+ *
+ * The index no longer uses this: collections there are a grid of tiles, not
+ * a stack of full-width banners each with its own carousel under it.
+ */
 export function CollectionBanner({
   name,
   slug,
@@ -19,7 +19,6 @@ export function CollectionBanner({
   imageUrl,
   imageAlt,
   count,
-  variant = "index",
 }: {
   name: string;
   slug: string;
@@ -27,80 +26,46 @@ export function CollectionBanner({
   imageUrl?: string;
   imageAlt?: string;
   count: number;
-  variant?: "index" | "page";
 }) {
-  const isPage = variant === "page";
   const art = imageUrl || COLLECTION_CROP[slug] || null;
-  const inner = (
-    <>
-      {art ? (
+
+  return (
+    <div className="relative overflow-hidden bg-ink aspect-[16/9] sm:aspect-[21/8] lg:aspect-[3/1]">
+      {art && (
         <Image
           src={art}
           alt={imageUrl ? imageAlt || name : `${name} — defining graphic`}
           fill
           sizes="100vw"
-          priority={isPage}
-          className={[
-            "object-cover opacity-90",
-            !isPage &&
-              "transition-all duration-[900ms] ease-out group-hover:scale-[1.03] group-hover:opacity-100",
-          ]
-            .filter(Boolean)
-            .join(" ")}
+          priority
+          className="object-cover"
         />
-      ) : (
-        <div className="absolute inset-0 flex items-center justify-center font-label text-paper/60">
-          {name}
-        </div>
       )}
 
-      {/* Bottom scrim for the overlaid copy */}
-      <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/35 to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/35 to-ink/5" />
+      <div className="absolute inset-0 bg-gradient-to-r from-ink/70 via-transparent to-transparent" />
 
-      {/* Crate corner brackets */}
-      <span className="absolute top-0 left-0 w-10 h-[3px] bg-tan z-10" />
-      <span className="absolute top-0 left-0 w-[3px] h-10 bg-tan z-10" />
-
-      <div className="absolute left-5 right-5 bottom-5 md:left-8 md:bottom-7 z-20 flex items-end justify-between gap-6">
-        <div>
-          <span className="stamp text-paper/70">
-            Collection · {String(count).padStart(2, "0")} {count === 1 ? "piece" : "pieces"}
-          </span>
-          <p
-            className={[
-              "font-display leading-[0.92] text-paper mt-2",
-              isPage ? "text-5xl md:text-7xl" : "text-4xl md:text-6xl",
-            ].join(" ")}
-          >
-            {name}
+      <div className="absolute inset-0 flex items-end">
+        <div className="w-full px-5 md:px-8 pb-6 md:pb-8">
+          <p className="font-label text-paper/75">
+            Collection
+            <span aria-hidden className="mx-2 text-paper/40">
+              ·
+            </span>
+            <span className="tnum">
+              {String(count).padStart(2, "0")} {count === 1 ? "piece" : "pieces"}
+            </span>
           </p>
+          <h1 className="font-display text-paper text-[clamp(2rem,6vw,4rem)] mt-2.5">
+            {name}
+          </h1>
           {description && (
-            <p className="font-label text-paper/70 mt-3 max-w-xl hidden md:block text-sm">
+            <p className="mt-3 text-paper/80 text-[0.94rem] leading-snug max-w-[52ch]">
               {description}
             </p>
           )}
         </div>
-        {!isPage && (
-          <span className="hidden md:inline-flex items-center gap-2 font-condensed text-[0.78rem] text-paper shrink-0 border-2 border-paper/50 px-4 py-2 group-hover:bg-paper group-hover:text-ink transition-colors duration-200">
-            View collection
-            <ArrowUpRight size={13} />
-          </span>
-        )}
       </div>
-    </>
-  );
-
-  const frameClasses = [
-    "relative block overflow-hidden bg-ink",
-    isPage ? "aspect-[16/7] md:aspect-[3/1]" : "aspect-[16/8] md:aspect-[21/7]",
-  ].join(" ");
-
-  // On the index the whole banner links through to the collection page.
-  return isPage ? (
-    <div className={frameClasses}>{inner}</div>
-  ) : (
-    <Link href={`/collections/${slug}`} className={`group ${frameClasses}`}>
-      {inner}
-    </Link>
+    </div>
   );
 }

@@ -80,10 +80,6 @@ export default async function CheckoutSuccessPage({
     <main className="mx-auto max-w-3xl px-5 md:px-10 py-20">
       {/* Receipt document — bordered like a waybill, with the big status stamp */}
       <div className="relative border-2 border-ink bg-paper shadow-[8px_8px_0_0_var(--ink)] px-6 md:px-12 py-12">
-        <span className="absolute top-0 left-0 w-10 h-[3px] bg-vermillion" />
-        <span className="absolute top-0 left-0 w-[3px] h-10 bg-vermillion" />
-        <span className="absolute bottom-0 right-0 w-10 h-[3px] bg-vermillion" />
-        <span className="absolute bottom-0 right-0 w-[3px] h-10 bg-vermillion" />
 
         {/* Big status stamp — thunks in on load */}
         <div className="absolute top-6 right-5 md:top-8 md:right-8 stamp-in" aria-hidden>
