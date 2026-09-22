@@ -1,19 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import { footerNav } from "@/config/nav";
 import { siteConfig } from "@/config/site";
 import { getAllSettings } from "@/lib/server/settings";
-
-// The big marquee. "EST. [YYYY]" used to be an item here — a literal
-// placeholder rendering at 5rem on the live site. Dropped rather than
-// invented; add it back once there's a founding year to put in it.
-const reel = [
-  "SHOPTEES",
-  "—",
-  "STREETWEAR THAT SPEAKS FOR YOU",
-  "—",
-  "MADE IN NIGERIA",
-  "—",
-];
 
 /**
  * Several SiteSetting rows still hold seeded "[PLACEHOLDER: …]" strings, and
@@ -28,29 +17,27 @@ function settingOrNull(value: string | undefined) {
 
 export async function Footer() {
   const settings = await getAllSettings();
-  const items = Array.from({ length: 4 }).flatMap(() => reel);
   const tagline = settingOrNull(settings["site.tagline"]) ?? siteConfig.description;
   const email = settingOrNull(settings["contact.email"]) ?? siteConfig.contact.email;
 
   return (
-    <footer className="mt-24 bg-ink text-paper border-t-[3px] border-tan grain grain-dark">
-      <div className="marquee-hover border-b border-paper/15 py-5 overflow-hidden">
-        <div className="flex animate-marquee-slow whitespace-nowrap will-change-transform">
-          {items.map((t, i) => (
-            <span
-              key={i}
-              className="font-display text-[2.8rem] md:text-[4.5rem] leading-none px-6 text-paper/95"
-            >
-              {t === "—" ? <span className="text-tan">■</span> : t}
-            </span>
-          ))}
-        </div>
-      </div>
-
+    <footer className="mt-20 bg-ink text-paper grain grain-dark">
       <div className="relative z-10 mx-auto max-w-[1400px] px-5 md:px-10 py-16 grid grid-cols-2 md:grid-cols-12 gap-10">
         <div className="col-span-2 md:col-span-5">
-          <h2 className="font-label text-paper/55 mb-3">Shptz Wrld</h2>
-          <p className="font-sub text-xl md:text-2xl leading-[1.25] max-w-sm normal-case tracking-normal">
+          {/* The wordmark itself, not the name set as a label. It is a white
+              recolour of the same file the header uses — same oval, same five
+              arched stars, alpha untouched — so the mark is never redrawn,
+              only made legible on ink. */}
+          <Link href="/" aria-label="Shoptees home" className="inline-block">
+            <Image
+              src="/logo-white.png"
+              alt="Shoptees"
+              width={378}
+              height={197}
+              className="h-11 md:h-[3.2rem] w-auto object-contain"
+            />
+          </Link>
+          <p className="mt-5 font-sub text-lg md:text-xl leading-[1.3] max-w-sm normal-case tracking-normal">
             {tagline}
           </p>
         </div>
@@ -62,7 +49,7 @@ export async function Footer() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="link-underline font-condensed text-[0.8rem] hover:text-tan transition-colors"
+                  className="font-label text-paper/80 hover:text-tan transition-colors"
                 >
                   {l.label}
                 </Link>
@@ -78,7 +65,7 @@ export async function Footer() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="link-underline font-condensed text-[0.8rem] hover:text-tan transition-colors"
+                  className="font-label text-paper/80 hover:text-tan transition-colors"
                 >
                   {l.label}
                 </Link>
@@ -93,7 +80,7 @@ export async function Footer() {
             <li>
               <a
                 href={siteConfig.social.instagram}
-                className="link-underline font-condensed text-[0.8rem] hover:text-tan transition-colors"
+                className="font-label text-paper/80 hover:text-tan transition-colors"
               >
                 Instagram ↗
               </a>
@@ -101,7 +88,7 @@ export async function Footer() {
             <li>
               <a
                 href={siteConfig.social.x}
-                className="link-underline font-condensed text-[0.8rem] hover:text-tan transition-colors"
+                className="font-label text-paper/80 hover:text-tan transition-colors"
               >
                 X / Twitter ↗
               </a>

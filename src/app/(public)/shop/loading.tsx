@@ -7,7 +7,7 @@ export default function ShopLoading() {
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 pb-24">
       <PageHeaderSkeleton />
       <div className="mb-10 flex items-center justify-between gap-4">
-        <div className="h-10 w-28 bg-paper-deep" aria-hidden />
+        <div className="h-10 w-28 bg-ink/[0.07]" aria-hidden />
       </div>
       <ProductGridSkeleton />
     </main>

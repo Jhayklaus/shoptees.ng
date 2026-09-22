@@ -42,9 +42,9 @@ export default function TermsPage() {
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 pb-24">
       <header className="mb-16 border-b border-line pb-8 grid grid-cols-12 gap-6">
         <div className="col-span-12 md:col-span-8">
-          <span className="stamp text-vermillion">Legal</span>
-          <h1 className="font-display text-4xl sm:text-6xl md:text-8xl leading-[0.92] mt-3">
-            Terms &amp; <span className="text-vermillion">conditions.</span>
+          <p className="font-label text-muted">Legal</p>
+          <h1 className="font-display text-[clamp(1.5rem,3.5vw,2.1rem)]">
+            Terms &amp; conditions
           </h1>
         </div>
         <div className="col-span-12 md:col-span-4 md:self-end">
@@ -61,7 +61,7 @@ export default function TermsPage() {
           {SECTIONS.map((s, i) => (
             <section key={s.title} className="grid grid-cols-12 gap-4">
               <div className="col-span-12 sm:col-span-4">
-                <span className="stamp text-muted">
+                <span className="font-label text-muted">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <h2 className="font-display text-2xl mt-2">{s.title}</h2>

@@ -54,7 +54,7 @@ export async function HomeBanners() {
 
                 <div>
                   {b.eyebrow && (
-                    <span className="stamp text-paper/70">{b.eyebrow}</span>
+                    <p className="font-label text-paper/70">{b.eyebrow}</p>
                   )}
                   <h2 className="mt-4 font-display text-4xl md:text-5xl xl:text-6xl leading-[0.95]">
                     {b.title}
@@ -70,7 +70,7 @@ export async function HomeBanners() {
                   <div className="mt-8">
                     <Link
                       href={ctaHref}
-                      className="btn-wipe btn-wipe-hazard inline-flex items-center gap-2 group bg-paper text-ink px-5 py-3 font-condensed text-[0.78rem] hover:text-paper transition-colors duration-200"
+                      className="btn btn-light press"
                     >
                       {b.ctaLabel}
                       <ArrowUpRight

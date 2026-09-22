@@ -35,7 +35,7 @@ export function FeatureBanner({
 
   return (
     <section
-      className={`relative overflow-hidden ${light ? "bg-paper-deep" : "bg-ink"} ${
+      className={`relative overflow-hidden ${light ? "bg-shot" : "bg-ink"} ${
         height === "lg" ? "h-[26rem] md:h-[32rem]" : "h-[19rem] md:h-[24rem]"
       }`}
     >
