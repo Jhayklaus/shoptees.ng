@@ -1,38 +1,44 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 export type HeroContent = {
+  /** Collection the hero is advertising. */
+  slug: string;
+  name: string;
+  /** Small label above the headline. */
   eyebrow: string;
-  headline: string; // newline-separated lines, rendered above the cycling word
-  cycleWords: string[];
+  /** Usually the collection name; overridable from admin. */
+  headline: string;
   body: string;
   ctaLabel: string;
-  ctaHref: string;
   imageUrl: string;
   imageAlt: string;
   caption: string;
+  pieces: number;
 };
 
 /**
- * Full-bleed campaign hero: one image, copy anchored bottom-left.
+ * Homepage hero — a banner for the featured collection, not a brand statement.
  *
- * Bottom-left rather than centred. A centred headline with a paragraph and a
- * pair of buttons under it is the single most generic opening a storefront
- * can have, and it also put the copy in the middle of the picture where the
- * subject usually is. Anchoring it to a corner leaves the photograph intact
- * and gives the block a direction to read in.
+ * It used to open on the label's tagline, which told a returning customer
+ * nothing they did not already know and gave them nothing to click. A
+ * storefront's most valuable surface should point at something buyable, so
+ * the hero now leads on one collection: its name, its own description, how
+ * many pieces are in it, and a route straight into it.
  *
- * All of it is admin-managed — hero banner first, hero.* settings as fallback.
+ * Which collection is admin-set (`hero.collection`); the copy keys are
+ * overrides that default to the collection's own fields, so editing a
+ * collection updates the homepage without a second edit.
+ *
+ * No longer a client component — with the cycling headline gone there is no
+ * state here, so this renders on the server.
  */
 export function Hero({ content }: { content: HeroContent }) {
   const headlineLines = content.headline.split("\n").filter(Boolean);
 
   return (
     <section className="relative bg-ink">
-      <div className="relative h-[78svh] min-h-[28rem] max-h-[46rem] w-full overflow-hidden">
+      <div className="relative h-[76svh] min-h-[27rem] max-h-[44rem] w-full overflow-hidden">
         {content.imageUrl && (
           <Image
             src={content.imageUrl}
@@ -51,65 +57,47 @@ export function Hero({ content }: { content: HeroContent }) {
 
         <div className="absolute inset-0 flex flex-col justify-end">
           <div className="mx-auto w-full max-w-[1400px] px-5 md:px-10 pb-8 md:pb-12">
-            {content.eyebrow && (
-              <p className="font-label text-paper/80 mb-4">{content.eyebrow}</p>
-            )}
+            <p className="font-label text-paper/75 mb-4">
+              {content.eyebrow}
+              <span aria-hidden className="mx-2 text-paper/40">·</span>
+              <span className="tnum">
+                {String(content.pieces).padStart(2, "0")}{" "}
+                {content.pieces === 1 ? "piece" : "pieces"}
+              </span>
+            </p>
 
-            <h1 className="font-display text-paper text-[clamp(2.6rem,8vw,5.4rem)] max-w-[15ch]">
+            <h1 className="font-display text-paper text-[clamp(2.6rem,8vw,5.4rem)] max-w-[14ch]">
               {headlineLines.map((line, i) => (
                 <span key={i} className="block">
                   {line}
                 </span>
               ))}
-              <CyclingWord words={content.cycleWords} />
             </h1>
 
             {content.body && (
-              <p className="mt-5 text-paper/80 max-w-[42ch] leading-snug text-[0.95rem]">
+              <p className="mt-5 text-paper/80 max-w-[46ch] leading-snug text-[0.95rem]">
                 {content.body}
               </p>
             )}
 
             <div className="mt-7 flex flex-wrap items-center gap-5">
-              <Link href={content.ctaHref || "/shop"} className="btn btn-light press">
-                {content.ctaLabel || "Shop new arrivals"}
+              <Link href={`/collections/${content.slug}`} className="btn btn-light press">
+                {content.ctaLabel || `Shop ${content.name}`}
               </Link>
-              {content.caption && (
-                <span className="font-label text-paper/70">{content.caption}</span>
-              )}
+              <Link
+                href="/collections"
+                className="font-label text-paper/75 border-b border-paper/40 pb-1 hover:text-paper hover:border-paper transition-colors"
+              >
+                All collections
+              </Link>
             </div>
+
+            {content.caption && (
+              <p className="font-label text-paper/60 mt-6">{content.caption}</p>
+            )}
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-/**
- * The rotating last line of the headline, admin-managed via `cycleWords`.
- *
- * A word is ALWAYS on screen. The previous version animated each word out to
- * opacity 0 at the end of its own cycle, which left a beat with nothing in
- * the slot — on mobile the headline regularly read "built for the" followed
- * by a gap. Only the entrance is animated now; the word holds until replaced.
- */
-function CyclingWord({ words }: { words: string[] }) {
-  const [i, setI] = useState(0);
-
-  useEffect(() => {
-    if (words.length < 2) return;
-    const id = setInterval(() => setI((n) => (n + 1) % words.length), 3200);
-    return () => clearInterval(id);
-  }, [words.length]);
-
-  if (words.length === 0) return null;
-  const word = words[i % words.length];
-
-  return (
-    <span className="block" aria-live="polite">
-      <span key={word + i} className="inline-block word-in">
-        {word}
-      </span>
-    </span>
   );
 }

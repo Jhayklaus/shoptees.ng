@@ -21,14 +21,20 @@ const NOTIFICATION_FIELDS = [
   },
 ] as const;
 
+// The hero is a banner for one collection. Every copy field is an OVERRIDE:
+// left blank it uses the collection's own name, description and artwork, so
+// editing a collection updates the homepage without a second edit here.
 const HERO_FIELDS = [
-  { key: "hero.eyebrow", label: "Eyebrow", hint: 'Small label above the headline. e.g. "Spring/Summer · Lagos".' },
-  { key: "hero.headline", label: "Headline", hint: "Main display headline. Use line breaks for each line.", multiline: true },
-  { key: "hero.cycle_words", label: "Cycling words", hint: "Comma-separated. They animate one after another at the end of the headline. Leave blank for none." },
-  { key: "hero.body", label: "Body", hint: "Short paragraph in the right column.", multiline: true },
-  { key: "hero.cta_label", label: "Button label", hint: 'e.g. "Shop the collection".' },
-  { key: "hero.cta_href", label: "Button link", hint: "Path or full URL." },
-  { key: "hero.caption", label: "Image caption", hint: "Small caption overlaid on the hero image." },
+  {
+    key: "hero.collection",
+    label: "Featured collection",
+    hint: "Slug of the collection the homepage leads with — e.g. trap-house. Blank, or a collection that is missing or unpublished, falls back to the first published collection.",
+  },
+  { key: "hero.eyebrow", label: "Eyebrow", hint: 'Override the small label above the headline. Blank uses "Featured collection".' },
+  { key: "hero.headline", label: "Headline", hint: "Override the headline. Blank uses the collection's name. Use line breaks for each line.", multiline: true },
+  { key: "hero.body", label: "Body", hint: "Override the paragraph. Blank uses the collection's own description.", multiline: true },
+  { key: "hero.cta_label", label: "Button label", hint: 'Override the button. Blank uses "Shop <collection>". The button always routes to that collection.' },
+  { key: "hero.caption", label: "Image caption", hint: "Optional small caption under the button." },
 ] as const;
 
 const CAMPAIGN_FIELDS = [

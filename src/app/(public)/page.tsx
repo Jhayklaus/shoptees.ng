@@ -9,8 +9,7 @@ import { Newsletter } from "@/components/marketing/Newsletter";
 import { getAllSettings } from "@/lib/server/settings";
 import { getHeroBanner } from "@/lib/server/banners";
 import { listCollectionsWithProducts } from "@/lib/server/collections";
-import { listActiveProducts } from "@/lib/server/products";
-import { FEATURE_CROP } from "@/lib/images";
+import { FEATURE_CROP, COLLECTION_CROP } from "@/lib/images";
 
 // Homepage content (hero banner, campaign banners, settings) is admin-managed
 // in the DB, so render per-request instead of freezing it at build time.
@@ -20,49 +19,42 @@ export default async function HomePage() {
   // `take: 1` because only the counts are wanted here — the rows render a
   // graphic crop, not a product rail — but reusing the existing query keeps
   // this page out of the data layer.
-  const [s, heroBanner, collections, products] = await Promise.all([
+  const [s, heroBanner, collections] = await Promise.all([
     getAllSettings(),
     getHeroBanner(),
     listCollectionsWithProducts(1),
-    listActiveProducts(),
   ]);
 
-  // Hero content: DB hero-slot banner takes priority, settings keys are the fallback.
-  const hero: HeroContent = heroBanner
-    ? {
-        eyebrow: heroBanner.eyebrow || s["hero.eyebrow"],
-        headline: heroBanner.title,
-        cycleWords: heroBanner.cycleWords
-          .split(",")
-          .map((w) => w.trim())
-          .filter(Boolean),
-        body: heroBanner.body,
-        ctaLabel: heroBanner.ctaLabel,
-        ctaHref: heroBanner.ctaHref || "/shop",
-        imageUrl: heroBanner.imageUrl,
-        imageAlt: heroBanner.imageAlt,
-        caption: heroBanner.caption,
-      }
-    : {
-        eyebrow: s["hero.eyebrow"],
-        headline: s["hero.headline"],
-        cycleWords: s["hero.cycle_words"]
-          .split(",")
-          .map((w) => w.trim())
-          .filter(Boolean),
-        body: s["hero.body"],
-        ctaLabel: s["hero.cta_label"],
-        ctaHref: s["hero.cta_href"],
-        imageUrl: s["hero.image_url"],
-        imageAlt: s["hero.image_alt"],
-        caption: s["hero.caption"],
-      };
+  // ── Featured collection ────────────────────────────────────────────
+  // The hero advertises one collection. Admin picks it with
+  // `hero.collection`; anything missing or unpublished falls back to the
+  // first active collection in the archive's own order, so the hero is
+  // never empty and never links somewhere a customer cannot open.
+  const featured =
+    collections.find((c) => c.slug === s["hero.collection"].trim()) ?? collections[0];
 
-  const index = collections.map((c) => ({
-    slug: c.slug,
-    name: c.name,
-    count: c._count.products,
-  }));
+  // Copy keys are overrides. Blank means "use the collection's own", which
+  // keeps the homepage correct when a collection is edited in admin without
+  // needing a second edit here. A hero-slot banner still wins over both.
+  const hero: HeroContent | null = featured
+    ? {
+        slug: featured.slug,
+        name: featured.name,
+        pieces: featured._count.products,
+        eyebrow: heroBanner?.eyebrow || s["hero.eyebrow"] || "Featured collection",
+        headline: heroBanner?.title || s["hero.headline"] || featured.name,
+        body: heroBanner?.body || s["hero.body"] || featured.description,
+        ctaLabel: heroBanner?.ctaLabel || s["hero.cta_label"] || `Shop ${featured.name}`,
+        imageUrl:
+          heroBanner?.imageUrl ||
+          featured.imageUrl ||
+          COLLECTION_CROP[featured.slug] ||
+          s["hero.image_url"],
+        imageAlt:
+          heroBanner?.imageAlt || featured.imageAlt || `${featured.name} — ${featured.description}`,
+        caption: heroBanner?.caption || s["hero.caption"],
+      }
+    : null;
 
   const rows = collections.map((c) => ({
     id: c.id,
@@ -74,7 +66,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero content={hero} />
+      {hero && <Hero content={hero} />}
       <CategoryTiles />
       <FeaturedGrid />
 
