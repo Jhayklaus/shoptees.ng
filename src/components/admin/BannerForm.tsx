@@ -5,11 +5,17 @@ import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { SingleImagePicker } from "@/components/admin/SingleImagePicker";
 import { saveBannerAction, deleteBannerAction } from "@/app/admin/(authed)/banners/actions";
-import { BANNER_LAYOUTS, type BannerLayout } from "@/lib/banners-shared";
+import {
+  BANNER_LAYOUTS,
+  SLOT_LABEL,
+  isSingletonSlot,
+  type BannerLayout,
+  type BannerSlot,
+} from "@/lib/banners-shared";
 
 export type BannerFormValues = {
   id?: string;
-  slot: "hero" | "banner";
+  slot: BannerSlot;
   enabled: boolean;
   sortOrder: number;
   eyebrow: string;
@@ -32,6 +38,11 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
   const [error, setError] = useState<string | null>(null);
 
   const isHero = v.slot === "hero";
+  const isFeature = v.slot === "feature";
+  // Hero and feature are fixed parts of the homepage layout. They are hidden
+  // with the Enabled toggle, never deleted, and have no place in the ordered
+  // stack — so the delete button and the sort field both drop away.
+  const isSingleton = isSingletonSlot(v.slot);
 
   const set = <K extends keyof BannerFormValues>(k: K, val: BannerFormValues[K]) =>
     setV((s) => ({ ...s, [k]: val }));
@@ -51,7 +62,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
   };
 
   const onDelete = () => {
-    if (!v.id || isHero) return;
+    if (!v.id || isSingleton) return;
     if (!confirm("Delete this banner? This cannot be undone.")) return;
     startDelete(async () => {
       const res = await deleteBannerAction(v.id!);
@@ -69,12 +80,16 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
       <section className="space-y-5">
         <header className="border-b border-line pb-2 flex items-center justify-between gap-4">
           <div>
-            <h3 className="font-display text-2xl tracking-tight">
-              {isHero ? "Hero banner" : "Banner"}
-            </h3>
+            <h3 className="font-display text-2xl tracking-tight">{SLOT_LABEL[v.slot]}</h3>
             {isHero && (
               <p className="font-label text-ink/50 text-sm mt-0.5">
                 This controls the full-bleed hero at the top of the homepage.
+              </p>
+            )}
+            {isFeature && (
+              <p className="font-label text-ink/50 text-sm mt-0.5">
+                The editorial block mid-page, under the New in grid. Switch it
+                off to drop the section entirely.
               </p>
             )}
           </div>
@@ -86,7 +101,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
         </header>
 
         <SingleImagePicker
-          label={isHero ? "Hero image" : "Banner image"}
+          label={`${SLOT_LABEL[v.slot]} image`}
           value={v.imageUrl}
           onChange={(url) => set("imageUrl", url)}
           altValue={v.imageAlt}
@@ -125,7 +140,7 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
           value={v.ctaHref} onChange={(x) => set("ctaHref", x)} />
 
         {!isHero && (
-          <div className="grid grid-cols-2 gap-5">
+          <div className={`grid gap-5 ${isSingleton ? "grid-cols-1" : "grid-cols-2"}`}>
             <div>
               <label htmlFor="layout" className="font-label text-ink/55 block">
                 Copy side
@@ -148,19 +163,23 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
                 ))}
               </select>
             </div>
-            <div>
-              <label htmlFor="sortOrder" className="font-label text-ink/55 block">
-                Sort order
-                <span className="text-ink/40 normal-case ml-2">Lower shows first.</span>
-              </label>
-              <input
-                id="sortOrder"
-                type="number"
-                value={v.sortOrder}
-                onChange={(e) => set("sortOrder", parseInt(e.target.value, 10) || 0)}
-                className="mt-1 w-full bg-transparent border-b border-line py-2 outline-none focus:border-ink font-display text-lg"
-              />
-            </div>
+            {/* Only the stack is ordered — a singleton has nothing to sort
+                against, so the field would just be a number that does nothing. */}
+            {!isSingleton && (
+              <div>
+                <label htmlFor="sortOrder" className="font-label text-ink/55 block">
+                  Sort order
+                  <span className="text-ink/40 normal-case ml-2">Lower shows first.</span>
+                </label>
+                <input
+                  id="sortOrder"
+                  type="number"
+                  value={v.sortOrder}
+                  onChange={(e) => set("sortOrder", parseInt(e.target.value, 10) || 0)}
+                  className="mt-1 w-full bg-transparent border-b border-line py-2 outline-none focus:border-ink font-display text-lg"
+                />
+              </div>
+            )}
           </div>
         )}
       </section>
@@ -177,10 +196,10 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
           disabled={pending}
           className="bg-ink text-paper px-6 py-3 font-label hover:bg-vermillion transition-colors disabled:opacity-50"
         >
-          {pending ? "Saving…" : isHero ? "Save hero" : "Save banner"}
+          {pending ? "Saving…" : `Save ${SLOT_LABEL[v.slot].toLowerCase()}`}
         </button>
 
-        {v.id && !isHero && (
+        {v.id && !isSingleton && (
           <button
             type="button"
             onClick={onDelete}

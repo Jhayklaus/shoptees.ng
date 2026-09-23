@@ -21,7 +21,12 @@ export async function Footer() {
   const email = settingOrNull(settings["contact.email"]) ?? siteConfig.contact.email;
 
   return (
-    <footer className="mt-20 bg-ink text-paper grain grain-dark">
+    /* No top margin. The homepage now runs the newsletter and the banner
+       stack straight into the footer, and a 5rem gap there read as a white
+       band between two dark blocks. Every other public page already ends in
+       its own pb-24, so the spacing they had is unchanged — the hairline is
+       what separates the footer when the section above it is also ink. */
+    <footer className="border-t border-paper/15 bg-ink text-paper grain grain-dark">
       <div className="relative z-10 mx-auto max-w-[1400px] px-5 md:px-10 py-16 grid grid-cols-2 md:grid-cols-12 gap-10">
         <div className="col-span-2 md:col-span-5">
           {/* The wordmark itself, not the name set as a label. It is a white
