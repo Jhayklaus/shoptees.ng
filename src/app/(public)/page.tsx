@@ -85,21 +85,10 @@ export default async function HomePage() {
 
       <CollectionRows collections={rows} />
 
-      {/* Admin-managed slots. Both render nothing when empty. */}
+      {/* Admin-managed slots, rendered through the same FeatureBanner as the
+          block above. Both render nothing when empty. */}
       <HomeBanners />
       <CampaignBanner />
-
-      {/* Brand story block, on the studio sketch — the only other real
-          photograph in the repo besides the hero rack shot. */}
-      <FeatureBanner
-        image="/about-img.webp"
-        imageAlt="Pencil sketch of a Shptz Wrld jersey, front and back, on studio paper."
-        headline="More than just clothes"
-        body="Cut and sewn in Lagos. Sold by the piece, or by the carton."
-        ctaLabel="Our story"
-        ctaHref="/about"
-        tone="light"
-      />
 
       <Newsletter />
     </>

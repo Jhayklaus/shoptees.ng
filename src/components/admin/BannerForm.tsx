@@ -128,8 +128,8 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
           <div className="grid grid-cols-2 gap-5">
             <div>
               <label htmlFor="layout" className="font-label text-ink/55 block">
-                Image side
-                <span className="text-ink/40 normal-case ml-2">Hint — actual order alternates automatically.</span>
+                Copy side
+                <span className="text-ink/40 normal-case ml-2">Which half the text sits on.</span>
               </label>
               <select
                 id="layout"
@@ -139,7 +139,11 @@ export function BannerForm({ initial }: { initial: BannerFormValues }) {
               >
                 {BANNER_LAYOUTS.map((l) => (
                   <option key={l} value={l}>
-                    {l === "imageLeft" ? "Image left" : "Image right"}
+                    {/* The stored values are still imageLeft/imageRight — the
+                        banner is full-bleed now, so what they actually pick is
+                        the copy side. Relabelled rather than renamed so no row
+                        needs migrating. */}
+                    {l === "imageLeft" ? "Copy left" : "Copy right"}
                   </option>
                 ))}
               </select>
