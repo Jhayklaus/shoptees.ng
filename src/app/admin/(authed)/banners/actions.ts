@@ -7,13 +7,16 @@ import {
   saveBanner,
   deleteBanner,
   reorderBanners,
+  getBanner,
+  isSingletonSlot,
   BANNER_LAYOUTS,
+  BANNER_SLOTS,
   type SaveBannerInput,
 } from "@/lib/server/banners";
 
 const schema = z.object({
   id: z.string().optional(),
-  slot: z.enum(["hero", "banner"]).optional(),
+  slot: z.enum(BANNER_SLOTS).optional(),
   enabled: z.boolean(),
   sortOrder: z.number().int(),
   eyebrow: z.string().max(200),
@@ -73,6 +76,14 @@ export async function deleteBannerAction(
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const user = await requireAdmin();
   if (!user) return { ok: false, error: "Unauthorized" };
+
+  // The hero and feature slots are part of the homepage layout, not content
+  // an editor adds and removes. Disabling one hides it; there is no route in
+  // the UI to recreate a deleted singleton, so deleting would strand it.
+  const existing = await getBanner(id);
+  if (existing && isSingletonSlot(existing.slot)) {
+    return { ok: false, error: "This slot cannot be deleted — switch it off instead." };
+  }
 
   try {
     await deleteBanner(id);

@@ -20,7 +20,10 @@ export type BannerRow = {
 export function BannerList({ banners }: { banners: BannerRow[] }) {
   const router = useRouter();
   const heroBanner = banners.find((b) => b.slot === "hero");
-  const regularBanners = banners.filter((b) => b.slot !== "hero");
+  const featureBanner = banners.find((b) => b.slot === "feature");
+  // Only the stack is draggable; the two singletons sit above it in fixed
+  // positions that mirror where they appear on the homepage.
+  const regularBanners = banners.filter((b) => b.slot !== "hero" && b.slot !== "feature");
 
   const [rows, setRows] = useState<BannerRow[]>(regularBanners);
   const [dragId, setDragId] = useState<string | null>(null);
@@ -61,28 +64,24 @@ export function BannerList({ banners }: { banners: BannerRow[] }) {
 
   return (
     <div className="space-y-8">
-      {/* Hero slot — always shown, cannot be deleted or reordered */}
-      <div>
-        <p className="font-label text-ink/55 text-xs mb-3 uppercase tracking-wider">
-          Hero slot · appears at the very top of the homepage
-        </p>
-        {heroBanner ? (
-          <BannerCard banner={heroBanner} isHero />
-        ) : (
-          <div className="border border-dashed border-line p-8 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-ink/40">
-              <LayoutTemplate size={18} />
-              <p className="font-label text-sm">No hero banner set yet.</p>
-            </div>
-            <Link
-              href="/admin/banners/hero"
-              className="border border-ink px-4 py-2 font-label text-sm hover:bg-ink hover:text-paper transition-colors"
-            >
-              Set up hero →
-            </Link>
-          </div>
-        )}
-      </div>
+      {/* The two fixed slots — always shown, cannot be deleted or reordered. */}
+      <SingletonSlot
+        banner={heroBanner}
+        slug="hero"
+        label="Hero slot"
+        where="appears at the very top of the homepage"
+        empty="No hero banner set yet."
+        badge="Hero"
+      />
+
+      <SingletonSlot
+        banner={featureBanner}
+        slug="feature"
+        label="Feature slot"
+        where="the editorial block mid-page, under the New in grid"
+        empty="No feature banner set — the homepage is showing its built-in default."
+        badge="Feature"
+      />
 
       {/* Regular banners — draggable */}
       <div>
@@ -143,12 +142,12 @@ export function BannerList({ banners }: { banners: BannerRow[] }) {
   );
 }
 
-function BannerCard({ banner: b, isHero = false }: { banner: BannerRow; isHero?: boolean }) {
+function BannerCard({ banner: b, badge }: { banner: BannerRow; badge?: string }) {
   return (
     <div
       className={[
         "flex items-center gap-3 w-full",
-        isHero ? "border border-line px-3 py-3" : "",
+        badge ? "border border-line px-3 py-3" : "",
       ].join(" ")}
     >
       {b.imageUrl ? (
@@ -171,9 +170,9 @@ function BannerCard({ banner: b, isHero = false }: { banner: BannerRow; isHero?:
         )}
       </div>
 
-      {isHero && (
+      {badge && (
         <span className="font-label text-[0.65rem] uppercase tracking-wider text-ink/40 hidden sm:inline shrink-0">
-          Hero
+          {badge}
         </span>
       )}
 
@@ -187,6 +186,51 @@ function BannerCard({ banner: b, isHero = false }: { banner: BannerRow; isHero?:
       >
         {b.enabled ? "Live" : "Hidden"}
       </span>
+    </div>
+  );
+}
+
+/**
+ * One of the fixed homepage slots. Shows the row if it exists, or a prompt
+ * that links to /admin/banners/<slot> — a route the edit page resolves into a
+ * blank form bound to that slot.
+ */
+function SingletonSlot({
+  banner,
+  slug,
+  label,
+  where,
+  empty,
+  badge,
+}: {
+  banner?: BannerRow;
+  slug: string;
+  label: string;
+  where: string;
+  empty: string;
+  badge: string;
+}) {
+  return (
+    <div>
+      <p className="font-label text-ink/55 text-xs mb-3 uppercase tracking-wider">
+        {label} · {where}
+      </p>
+      {banner ? (
+        <BannerCard banner={banner} badge={badge} />
+      ) : (
+        <div className="border border-dashed border-line p-8 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 text-ink/40">
+            <LayoutTemplate size={18} />
+            <p className="font-label text-sm normal-case tracking-normal">{empty}</p>
+          </div>
+          <Link
+            href={`/admin/banners/${slug}`}
+            className="border border-ink px-4 py-2 font-label text-sm hover:bg-ink hover:text-paper transition-colors shrink-0"
+          >
+            Set up →
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

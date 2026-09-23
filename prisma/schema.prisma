@@ -94,7 +94,7 @@ model Collection {
 // sortOrder. Replaces the old single settings-driven announcement banner.
 model HomeBanner {
   id         String   @id @default(cuid())
-  slot       String   @default("banner") // "hero" | "banner"
+  slot       String   @default("banner") // "hero" | "feature" | "banner" — see lib/banners-shared.ts
   enabled    Boolean  @default(true)
   sortOrder  Int      @default(0)
   eyebrow    String   @default("")
