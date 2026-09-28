@@ -166,9 +166,9 @@ export default async function HomePage() {
 
       <CollectionRows collections={rows} />
 
-      <CampaignBanner />
 
       <Newsletter />
+      <CampaignBanner />
 
       {/* The banner stack closes the page, between the newsletter and the
           footer. Renders nothing when no banner is enabled. */}
