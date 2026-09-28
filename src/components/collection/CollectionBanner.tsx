@@ -1,40 +1,35 @@
 import Image from "next/image";
-import { COLLECTION_CROP } from "@/lib/images";
+import { collectionBanner, type CollectionArtSource } from "@/lib/images";
 
 /**
  * Masthead for a single collection page.
  *
- * With no banner set in admin it falls back to a detail crop of the
- * collection's defining chest graphic — which is what a collection IS in
- * this brand's filing system, so the fallback says something true rather
- * than rendering an empty ink block.
+ * Takes the collection row and resolves its banner art through the shared
+ * helper, so this page, the homepage hero and the feature block all pick the
+ * same image by the same rules. With nothing uploaded it falls back to a
+ * detail crop of the collection's defining chest graphic — which is what a
+ * collection IS in this brand's filing system, so the fallback says
+ * something true rather than rendering an empty ink block.
  *
  * The index no longer uses this: collections there are a grid of tiles, not
  * a stack of full-width banners each with its own carousel under it.
  */
 export function CollectionBanner({
-  name,
-  slug,
-  description,
-  imageUrl,
-  imageAlt,
+  collection,
   count,
 }: {
-  name: string;
-  slug: string;
-  description?: string;
-  imageUrl?: string;
-  imageAlt?: string;
+  collection: CollectionArtSource & { description?: string };
   count: number;
 }) {
-  const art = imageUrl || COLLECTION_CROP[slug] || null;
+  const { name, description } = collection;
+  const art = collectionBanner(collection);
 
   return (
     <div className="relative overflow-hidden bg-ink aspect-[16/9] sm:aspect-[21/8] lg:aspect-[3/1]">
       {art && (
         <Image
-          src={art}
-          alt={imageUrl ? imageAlt || name : `${name} — defining graphic`}
+          src={art.url}
+          alt={art.alt}
           fill
           sizes="100vw"
           priority

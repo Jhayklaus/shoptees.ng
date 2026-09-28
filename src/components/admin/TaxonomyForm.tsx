@@ -8,15 +8,22 @@ import { PRODUCT_STATUSES } from "@/lib/constants";
 
 // One form for both catalogue groupings — collections ("Urban Retro") and
 // categories ("Hoodies"). Same fields either way; collections additionally
-// carry a banner image and a description used in SEO copy.
+// carry a description used in SEO copy and TWO images, because the two
+// places a collection appears want different crops: a wide banner for when
+// it leads the homepage, and a squarer card for the featured row and the
+// /collections grid.
 
 export type TaxonomyFormInitial = {
   id?: string;
   slug: string;
   name: string;
   description?: string;
-  imageUrl?: string;
-  imageAlt?: string;
+  bannerImageUrl?: string;
+  bannerImageAlt?: string;
+  cardImageUrl?: string;
+  cardImageAlt?: string;
+  /** Collections only — hand-picks the homepage's featured row. */
+  featured?: boolean;
   sortOrder: number;
   /** Collections only — categories are always live. */
   status?: string;
@@ -131,13 +138,40 @@ export function TaxonomyForm({
           </Field>
         )}
         {withImage && (
-          <SingleImagePicker
-            label="Banner image"
-            value={state.imageUrl ?? ""}
-            onChange={(url) => update("imageUrl", url)}
-            altValue={state.imageAlt ?? ""}
-            onAltChange={(alt) => update("imageAlt", alt)}
-          />
+          <>
+            <SingleImagePicker
+              label="Banner image"
+              hint="Wide. Used when this collection leads the homepage — the hero, or the feature block."
+              value={state.bannerImageUrl ?? ""}
+              onChange={(url) => update("bannerImageUrl", url)}
+              altValue={state.bannerImageAlt ?? ""}
+              onAltChange={(alt) => update("bannerImageAlt", alt)}
+            />
+            <SingleImagePicker
+              label="Card image"
+              hint="Squarer. The tile in the homepage's featured row and on the collections page."
+              value={state.cardImageUrl ?? ""}
+              onChange={(url) => update("cardImageUrl", url)}
+              altValue={state.cardImageAlt ?? ""}
+              onAltChange={(alt) => update("cardImageAlt", alt)}
+            />
+            <Field
+              label="Feature on the homepage"
+              hint="The homepage shows three. With none ticked it falls back to the first three by sort order."
+            >
+              <label className="inline-flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={state.featured ?? false}
+                  onChange={(e) => update("featured", e.target.checked)}
+                  className="w-4 h-4 accent-[var(--vermillion)]"
+                />
+                <span className="font-label text-ink-soft">
+                  {state.featured ? "Shown in the featured row" : "Not featured"}
+                </span>
+              </label>
+            </Field>
+          </>
         )}
         <Field label="Sort order" hint="Lower numbers show first.">
           <input

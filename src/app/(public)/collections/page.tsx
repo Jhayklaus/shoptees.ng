@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
 import { listCollectionsWithProducts } from "@/lib/server/collections";
-import { COLLECTION_CROP } from "@/lib/images";
+import { collectionCard } from "@/lib/images";
 import { COLLECTIONS } from "@/lib/taxonomy";
 
 export const metadata: Metadata = buildMetadata({
@@ -54,17 +54,21 @@ export default async function CollectionsPage() {
            own carousel underneath. Six lines on one screen is a contents
            page; six banners is six pages of scrolling. */
         <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-10 lg:gap-x-8 lg:gap-y-12">
-          {collections.map((col) => (
+          {collections.map((col) => {
+            const art = collectionCard(col);
+            return (
             <li key={col.id}>
               <Link href={`/collections/${col.slug}`} className="group block">
                 <div className="shot aspect-[4/3] sm:aspect-[16/10]">
-                  <Image
-                    src={col.imageUrl || COLLECTION_CROP[col.slug] || "/archive-crop/th-dice.webp"}
-                    alt={col.imageUrl ? col.imageAlt || col.name : `${col.name} — defining graphic`}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-[700ms] ease-out group-hover:scale-[1.04]"
-                  />
+                  {art && (
+                    <Image
+                      src={art.url}
+                      alt={art.alt}
+                      fill
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                      className="object-cover transition-transform duration-[700ms] ease-out group-hover:scale-[1.04]"
+                    />
+                  )}
                 </div>
 
                 <div className="mt-4 flex items-baseline justify-between gap-4">
@@ -82,7 +86,8 @@ export default async function CollectionsPage() {
                 </p>
               </Link>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </main>

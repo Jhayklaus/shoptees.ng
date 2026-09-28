@@ -16,7 +16,7 @@ type WithRelations = {
   priceNGN: number;
   category: { slug: string; name: string } | null;
   collection: { slug: string; name: string } | null;
-  images: { url: string; alt: string }[];
+  images: { url: string; alt: string; color: string }[];
   variants: {
     id: string;
     size: string;
@@ -36,7 +36,7 @@ export function toDisplayProduct(p: WithRelations): DisplayProduct {
     priceNGN: p.priceNGN,
     category: p.category ? { slug: p.category.slug, name: p.category.name } : null,
     collection: p.collection ? { slug: p.collection.slug, name: p.collection.name } : null,
-    images: p.images.map((i) => ({ url: i.url, alt: i.alt })),
+    images: p.images.map((i) => ({ url: i.url, alt: i.alt, color: i.color })),
     variants: p.variants.map((v) => ({
       id: v.id,
       size: v.size,
@@ -126,6 +126,8 @@ export type SaveProductInput = {
     id?: string;
     url: string;
     alt: string;
+    /** Colourway the photo shows; empty means it shows for every colour. */
+    color: string;
     sortOrder: number;
   }[];
 };
@@ -232,7 +234,7 @@ export async function saveProduct(input: SaveProductInput) {
         if (!img.id) continue;
         await tx.productImage.update({
           where: { id: img.id },
-          data: { url: img.url, alt: img.alt, sortOrder: i },
+          data: { url: img.url, alt: img.alt, color: img.color, sortOrder: i },
         });
       }
 
@@ -245,6 +247,7 @@ export async function saveProduct(input: SaveProductInput) {
             productId: productId!,
             url: img.url,
             alt: img.alt,
+            color: img.color,
             sortOrder: i,
           })),
         });

@@ -51,3 +51,44 @@ export const FEATURE_CROP = {
   squiggle: "/archive-crop/ps-squiggle.webp",
   script: "/archive-crop/uc-script.webp",
 } as const;
+
+/**
+ * Which image a collection shows, for each of the two places it appears.
+ *
+ * Precedence is the same in both: the image uploaded for that slot, then the
+ * legacy single image, then the archive crop of the collection's defining
+ * graphic, then nothing. The crop is LAST among the real options rather than
+ * ahead of an upload — it is a stand-in for collections that have no
+ * photography yet, and it used to sit ahead of the admin's own uploads,
+ * which silently swallowed them.
+ */
+export type CollectionArtSource = {
+  slug: string;
+  name: string;
+  bannerImageUrl?: string | null;
+  bannerImageAlt?: string | null;
+  cardImageUrl?: string | null;
+  cardImageAlt?: string | null;
+  imageUrl?: string | null;
+  imageAlt?: string | null;
+};
+
+export function collectionBanner(c: CollectionArtSource): { url: string; alt: string } | null {
+  const url = c.bannerImageUrl || c.imageUrl || COLLECTION_CROP[c.slug] || "";
+  if (!url) return null;
+  const uploaded = Boolean(c.bannerImageUrl || c.imageUrl);
+  return {
+    url,
+    alt: c.bannerImageAlt || c.imageAlt || (uploaded ? c.name : `${c.name} — defining graphic`),
+  };
+}
+
+export function collectionCard(c: CollectionArtSource): { url: string; alt: string } | null {
+  const url = c.cardImageUrl || c.imageUrl || COLLECTION_CROP[c.slug] || "";
+  if (!url) return null;
+  const uploaded = Boolean(c.cardImageUrl || c.imageUrl);
+  return {
+    url,
+    alt: c.cardImageAlt || c.imageAlt || (uploaded ? c.name : `${c.name} — defining graphic`),
+  };
+}

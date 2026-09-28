@@ -25,11 +25,6 @@ const NOTIFICATION_FIELDS = [
 // left blank it uses the collection's own name, description and artwork, so
 // editing a collection updates the homepage without a second edit here.
 const HERO_FIELDS = [
-  {
-    key: "hero.collection",
-    label: "Featured collection",
-    hint: "Slug of the collection the homepage leads with — e.g. trap-house. Blank, or a collection that is missing or unpublished, falls back to the first published collection.",
-  },
   { key: "hero.eyebrow", label: "Eyebrow", hint: 'Override the small label above the headline. Blank uses "Featured collection".' },
   { key: "hero.headline", label: "Headline", hint: "Override the headline. Blank uses the collection's name. Use line breaks for each line.", multiline: true },
   { key: "hero.body", label: "Body", hint: "Override the paragraph. Blank uses the collection's own description.", multiline: true },
@@ -55,8 +50,10 @@ const ALL_KEYS = [
   ...NOTIFICATION_FIELDS.map((f) => f.key),
   ...HERO_FIELDS.map((f) => f.key),
   ...CAMPAIGN_FIELDS.map((f) => f.key),
+  "hero.collection",
   "hero.image_url",
   "hero.image_alt",
+  "feature.collection",
   "campaign.enabled",
   "campaign.image_url",
   "campaign.image_alt",
@@ -68,7 +65,15 @@ const ALL_KEYS = [
 
 type AnyKey = (typeof ALL_KEYS)[number];
 
-export function SettingsForm({ initial }: { initial: Record<string, string> }) {
+export type CollectionOption = { slug: string; name: string; published: boolean };
+
+export function SettingsForm({
+  initial,
+  collections,
+}: {
+  initial: Record<string, string>;
+  collections: CollectionOption[];
+}) {
   const router = useRouter();
   const [values, setValues] = useState<Record<AnyKey, string>>(() => {
     const seeded = {} as Record<AnyKey, string>;
@@ -219,8 +224,18 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
           </p>
         </header>
 
+        <CollectionSelect
+          id="hero.collection"
+          label="Which collection leads"
+          hint="The hero advertises this one. Blank uses the first published collection."
+          value={values["hero.collection"]}
+          onChange={(v) => set("hero.collection", v)}
+          collections={collections}
+        />
+
         <SingleImagePicker
-          label="Hero image"
+          label="Hero image override"
+          hint="Optional. Blank uses the chosen collection's own banner image."
           value={values["hero.image_url"]}
           onChange={(url) => set("hero.image_url", url)}
           altValue={values["hero.image_alt"]}
@@ -240,6 +255,26 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
             />
           ))}
         </div>
+      </section>
+
+      {/* ── Homepage feature block ───────────────────────────────────── */}
+      <section className="space-y-5">
+        <header className="border-b border-line pb-2">
+          <h3 className="font-display text-2xl tracking-tight">Homepage feature block</h3>
+          <p className="font-italic-accent text-ink/55">
+            The wide editorial band mid-page. Point it at a collection and it
+            uses that collection&apos;s banner image, name and description.
+          </p>
+        </header>
+
+        <CollectionSelect
+          id="feature.collection"
+          label="Which collection to feature"
+          hint="Blank leaves the block on its built-in content. A banner set up under Banners → Feature slot overrides this."
+          value={values["feature.collection"]}
+          onChange={(v) => set("feature.collection", v)}
+          collections={collections}
+        />
       </section>
 
       {/* ── Campaign banner ──────────────────────────────────────────── */}
@@ -391,4 +426,51 @@ function previewPrice(rate: number, rounding: string): string {
         ? Math.round(raw * 100) / 100
         : Math.max(0.99, Math.ceil(raw) - 0.01);
   return `A ₦${sample.toLocaleString()} product shows as $${out.toFixed(2)}.`;
+}
+
+/**
+ * Picks a collection by slug.
+ *
+ * This was a free-text field asking for a slug, which meant a typo silently
+ * fell through to "first published collection" with nothing to say why.
+ * Drafts are listed but marked, because a collection that is simply absent
+ * from the list gives an editor no way to work out that it is unpublished.
+ */
+function CollectionSelect({
+  id,
+  label,
+  hint,
+  value,
+  onChange,
+  collections,
+}: {
+  id: string;
+  label: string;
+  hint?: string;
+  value: string;
+  onChange: (v: string) => void;
+  collections: CollectionOption[];
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="font-label text-ink/55 block">
+        {label}
+        {hint && <span className="text-ink/40 normal-case tracking-normal ml-2">{hint}</span>}
+      </label>
+      <select
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-1 w-full bg-transparent border-b border-line py-2 outline-none focus:border-ink font-display text-lg"
+      >
+        <option value="">— none —</option>
+        {collections.map((c) => (
+          <option key={c.slug} value={c.slug}>
+            {c.name}
+            {c.published ? "" : " (draft — will not show)"}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 }

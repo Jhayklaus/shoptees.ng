@@ -109,6 +109,18 @@ body {
    a call site. Putting these in `components` restores the normal order:
    utilities win, which is the whole point of using them. */
 @layer components {
+  /* The product gallery scrolls horizontally by design; the scrollbar under
+     the picture is just noise. Scrolling itself is untouched — swipe, wheel
+     and the arrow buttons all still work, and the dots carry the affordance
+     on touch. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
 
 /* ── Type voices ─────────────────────────────────────────────────────── */
 

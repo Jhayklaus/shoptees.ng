@@ -17,6 +17,9 @@ export const SETTING_KEYS = [
   "hero.image_url",
   "hero.image_alt",
   "hero.caption",
+  // Homepage feature block (mid-page). Names a collection whose banner image
+  // and copy fill it; a `feature`-slot banner row still overrides it.
+  "feature.collection",
   // Homepage full-bleed campaign banner (below the hero)
   "campaign.enabled",
   "campaign.headline",
@@ -58,9 +61,15 @@ const fallback: Record<SettingKey, string> = {
   "hero.headline": "",
   "hero.body": "",
   "hero.cta_label": "",
-  "hero.image_url": "/hero2.webp",
+  // Used only when the featured collection has no banner image of its own
+  // AND no archive crop. It used to sit LAST in the hero's fallback chain,
+  // behind the archive crop — which exists for every seeded collection — so
+  // an image uploaded here could never appear. It is now the direct override
+  // it reads as: set it and the hero uses it.
+  "hero.image_url": "",
   "hero.image_alt": "Shoptees — current collection banner",
   "hero.caption": "",
+  "feature.collection": "",
   "campaign.enabled": "false",
   "campaign.headline": "New season, new drop.",
   "campaign.subcopy": "A short line about the latest campaign or collection.",

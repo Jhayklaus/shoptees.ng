@@ -12,8 +12,11 @@ type CollectionFormInput = {
   slug: string;
   name: string;
   description?: string;
-  imageUrl?: string;
-  imageAlt?: string;
+  bannerImageUrl?: string;
+  bannerImageAlt?: string;
+  cardImageUrl?: string;
+  cardImageAlt?: string;
+  featured?: boolean;
   sortOrder: number;
   status?: string;
 };
@@ -26,8 +29,11 @@ const schema = z.object({
     .regex(/^[a-z0-9-]+$/, "Slug may only contain lowercase letters, numbers, and hyphens"),
   name: z.string().min(1).max(200),
   description: z.string().default(""),
-  imageUrl: z.string().default(""),
-  imageAlt: z.string().default(""),
+  bannerImageUrl: z.string().default(""),
+  bannerImageAlt: z.string().default(""),
+  cardImageUrl: z.string().default(""),
+  cardImageAlt: z.string().default(""),
+  featured: z.boolean().default(false),
   sortOrder: z.number().int(),
   status: z.enum(PRODUCT_STATUSES).default("DRAFT"),
 });

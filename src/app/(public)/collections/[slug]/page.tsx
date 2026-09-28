@@ -67,14 +67,7 @@ export default async function CollectionPage({
         <span className="text-ink">{collection.name}</span>
       </nav>
 
-      <CollectionBanner
-        name={collection.name}
-        slug={collection.slug}
-        description={collection.description}
-        imageUrl={collection.imageUrl}
-        imageAlt={collection.imageAlt}
-        count={total}
-      />
+      <CollectionBanner collection={collection} count={total} />
 
       <div className="mt-10 md:mt-12">
         {display.length === 0 ? (

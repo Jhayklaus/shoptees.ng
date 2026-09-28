@@ -82,8 +82,24 @@ model Collection {
   // created in admin start as drafts via the form, not via this default.
   status      String    @default("ACTIVE")
   description String    @default("")
-  imageUrl    String    @default("") // banner image on /collections and /collections/[slug]
+  // Two images, because the two places a collection appears want different
+  // crops. `banner*` is the wide full-bleed art used when a collection is
+  // featured on the homepage (hero, feature block); `card*` is the tile shown
+  // in the featured-collections list and on /collections.
+  //
+  // `imageUrl`/`imageAlt` predate the split and are kept as the fallback for
+  // both, so every collection that already had one image keeps working
+  // untouched. Nothing writes to them any more.
+  bannerImageUrl String @default("")
+  bannerImageAlt String @default("")
+  cardImageUrl   String @default("")
+  cardImageAlt   String @default("")
+  imageUrl    String    @default("") // legacy single image; falls back for both of the above
   imageAlt    String    @default("")
+  // Hand-picked for the homepage's featured-collections row. With none
+  // picked the row falls back to the first few by sortOrder, so the section
+  // is never empty on a site that has not been curated yet.
+  featured    Boolean   @default(false)
   sortOrder   Int       @default(0)
   products    Product[]
   createdAt   DateTime  @default(now())
@@ -157,6 +173,14 @@ model ProductImage {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
   alt       String  @default("")
+  // Which colourway this photo shows, matching Variant.color. Lets the
+  // product page group images per colour so picking a colour swaps the
+  // gallery to that colour's shots.
+  //
+  // Empty means "not specific to a colourway", and such an image shows for
+  // every colour. That is the default, so existing rows keep appearing
+  // exactly as before until someone tags them.
+  color     String  @default("")
   sortOrder Int     @default(0)
 
   @@index([productId])

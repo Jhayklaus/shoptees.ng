@@ -40,8 +40,14 @@ export default async function EditCollectionPage({
           slug: collection.slug,
           name: collection.name,
           description: collection.description,
-          imageUrl: collection.imageUrl,
-          imageAlt: collection.imageAlt,
+          // Legacy single image seeds both slots so an existing collection
+          // opens showing the art it already has, rather than two empty
+          // pickers that look like the image was lost.
+          bannerImageUrl: collection.bannerImageUrl || collection.imageUrl,
+          bannerImageAlt: collection.bannerImageAlt || collection.imageAlt,
+          cardImageUrl: collection.cardImageUrl || collection.imageUrl,
+          cardImageAlt: collection.cardImageAlt || collection.imageAlt,
+          featured: collection.featured,
           sortOrder: collection.sortOrder,
           status: collection.status,
         }}

@@ -1,11 +1,24 @@
 import { getAllSettings } from "@/lib/server/settings";
+import { listAdminCollections } from "@/lib/server/collections";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { SettingsForm } from "@/components/admin/SettingsForm";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
-  const settings = await getAllSettings();
+  const [settings, collections] = await Promise.all([
+    getAllSettings(),
+    listAdminCollections(),
+  ]);
+
+  // Drafts are included so the picker can show them greyed rather than
+  // hiding them — an editor who cannot find their collection in the list
+  // has no way to tell it is because it is unpublished.
+  const collectionOptions = collections.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    published: c.status === "ACTIVE",
+  }));
 
   return (
     <>
@@ -13,7 +26,7 @@ export default async function AdminSettingsPage() {
       <div className="px-8 py-8 space-y-10">
         <section>
           <h2 className="font-label text-ink/55 mb-3">Storefront</h2>
-          <SettingsForm initial={settings} />
+          <SettingsForm initial={settings} collections={collectionOptions} />
         </section>
 
         <section className="border-t border-line pt-8">

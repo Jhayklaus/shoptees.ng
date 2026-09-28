@@ -14,6 +14,11 @@ export type DisplayVariant = {
 export type DisplayImage = {
   url: string;
   alt: string;
+  /**
+   * Colourway the photo shows, matching DisplayVariant.color. Empty means
+   * it is not specific to one, and it shows under every colourway.
+   */
+  color: string;
 };
 
 export type DisplayCategory = {
