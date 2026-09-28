@@ -19,8 +19,11 @@ export default function NewCollectionPage() {
           slug: "",
           name: "",
           description: "",
-          imageUrl: "",
-          imageAlt: "",
+          bannerImageUrl: "",
+          bannerImageAlt: "",
+          cardImageUrl: "",
+          cardImageAlt: "",
+          featured: false,
           sortOrder: 0,
           // New collections start hidden, so a half-built line never appears
           // on the storefront mid-edit.

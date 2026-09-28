@@ -47,6 +47,13 @@ export function ProductForm({ initial, categories, collections, action, deleteAc
   const update = <K extends keyof ProductFormInitial>(k: K, v: ProductFormInitial[K]) =>
     setState((s) => ({ ...s, [k]: v }));
 
+  // The colourways this product actually offers, in the order they were
+  // entered. Derived from the variants rather than typed a second time, so
+  // an image can only ever be tagged with a colour that exists.
+  const variantColours = Array.from(
+    new Set(state.variants.map((v) => v.color.trim()).filter(Boolean)),
+  );
+
   const onNameChange = (name: string) => {
     setState((s) => ({
       ...s,
@@ -222,8 +229,15 @@ export function ProductForm({ initial, categories, collections, action, deleteAc
           </button>
         </Section>
 
-        <Section title="Images" hint="Drag to reorder. The first image is the hero.">
-          <ImageUploader value={state.images} onChange={(imgs) => update("images", imgs)} />
+        <Section
+          title="Images"
+          hint="Drag to reorder. The first image is the hero. Tag an image with a colourway and it only shows while that colourway is selected."
+        >
+          <ImageUploader
+            value={state.images}
+            onChange={(imgs) => update("images", imgs)}
+            colours={variantColours}
+          />
         </Section>
       </div>
 

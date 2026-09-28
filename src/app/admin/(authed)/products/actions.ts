@@ -23,6 +23,7 @@ const imageSchema = z.object({
   id: z.string().optional(),
   url: z.string().url(),
   alt: z.string(),
+  color: z.string().default(""),
   sortOrder: z.number().int().nonnegative(),
 });
 

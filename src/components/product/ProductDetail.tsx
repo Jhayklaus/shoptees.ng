@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { DisplayProduct, DisplayImage } from "@/types";
 import { useMoney } from "@/components/currency/CurrencyProvider";
 import { useCart } from "@/store/cart";
-import { Check } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { productImageUrl } from "@/lib/images";
 import { archiveRef } from "@/lib/archive-ref";
 import { sortBySize } from "@/lib/sizes";
@@ -27,7 +27,6 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
   const [variantId, setVariantId] = useState<string>(
     inStockVariants[0]?.id ?? variants[0]?.id ?? ""
   );
-  const [imageIdx, setImageIdx] = useState(0);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const add = useCart((s) => s.add);
@@ -62,20 +61,33 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
     [variants, activeColour],
   );
 
-  // The importer writes one image per colourway, in colourway order, so
-  // index alignment holds for every imported product. Guarded on the counts
-  // matching, because a product edited by hand in /admin need not follow it.
-  const imagesTrackColours =
-    colourways.length > 1 && product.images.length === colourways.length;
+  // The gallery shows the photos of the selected colourway, so a customer
+  // looking at Burgundy flicks through Burgundy's front and back rather than
+  // through every shot of every colour.
+  //
+  // An image with no colour set is not specific to one — a flat-lay, a
+  // detail, a size guide — so it shows under every colourway. That is also
+  // what every image looked like before images could be tagged, which is
+  // why an untagged product behaves exactly as it always did.
+  const imagesForColour = useMemo(() => {
+    if (!activeColour) return product.images;
+    const tagged = product.images.filter((i) => i.color === activeColour);
+    const untagged = product.images.filter((i) => !i.color);
+    const shown = [...tagged, ...untagged];
+    // A colour whose images are all tagged to OTHER colours would otherwise
+    // render an empty gallery; fall back to the full set rather than a hole.
+    return shown.length > 0 ? shown : product.images;
+  }, [product.images, activeColour]);
+
+  // The image that stands for each colourway in the swatch strip: its first
+  // tagged photo, or the product's first image when nothing is tagged yet.
+  const swatchFor = (colour: string) =>
+    product.images.find((i) => i.color === colour) ?? product.images[0] ?? null;
 
   const pickColour = (colour: string) => {
     const pool = variants.filter((v) => v.color === colour);
     const next = pool.find((v) => v.stock > 0) ?? pool[0];
     if (next) setVariantId(next.id);
-    if (imagesTrackColours) {
-      const i = colourways.indexOf(colour);
-      if (i >= 0) setImageIdx(i);
-    }
   };
 
   const onAdd = () => {
@@ -122,10 +134,19 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
           picture — which is what 1.15/0.85 did. */}
       <div className="grid lg:grid-cols-[1.2fr_.8fr] gap-8 lg:gap-14">
         <ProductGallery
-          images={product.images}
+          // Keyed by colourway: switching colour remounts the gallery, so its
+          // position resets to the first shot with no state left over.
+          // Pairing the index with the colour instead LOOKED right but kept a
+          // stale index alive — leaving Burgundy, coming back, and landing on
+          // slide 2 with the counter disagreeing with the picture.
+          key={activeColour}
+          images={imagesForColour}
           fallbackAlt={product.name}
-          activeIdx={imageIdx}
-          onSelect={setImageIdx}
+          colourways={colourways}
+          activeColour={activeColour}
+          onPickColour={pickColour}
+          colourInStock={(c) => variants.some((v) => v.color === c && v.stock > 0)}
+          swatchFor={swatchFor}
         />
 
         <aside className="lg:sticky lg:top-28 self-start">
@@ -139,42 +160,16 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
             {product.description}
           </p>
 
-          {colourways.length > 1 ? (
-            <div className="mt-7">
-              <p className="font-label text-muted">
-                Colourway
-                <span className="ml-2 text-ink normal-case tracking-normal">
-                  {activeColour}
-                </span>
-              </p>
-              <div className="flex flex-wrap gap-2 mt-2.5">
-                {colourways.map((c) => {
-                  const any = variants.some((v) => v.color === c && v.stock > 0);
-                  return (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => pickColour(c)}
-                      aria-pressed={c === activeColour}
-                      disabled={!any}
-                      className="chip px-3.5 text-[0.82rem] font-medium"
-                      style={{ fontVariationSettings: '"wdth" 100' }}
-                    >
-                      {c}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : (
-            colourways.length === 1 && (
-              <p className="font-label text-muted mt-7">
-                Colourway
-                <span className="ml-2 text-ink normal-case tracking-normal">
-                  {colourways[0]}
-                </span>
-              </p>
-            )
+          {/* A readout, not a control. The swatches under the gallery pick the
+              colourway — two pickers for one choice is one too many, and the
+              one beside the picture is the one that shows what it changes. */}
+          {activeColour && (
+            <p className="font-label text-muted mt-7">
+              Colourway
+              <span className="ml-2 text-ink normal-case tracking-normal">
+                {activeColour}
+              </span>
+            </p>
           )}
 
           {/* ── Size ─────────────────────────────────────────────── */}
@@ -320,20 +315,72 @@ function AddButton({
   );
 }
 
+/**
+ * The gallery: one colourway's photos as a swipeable track, with the
+ * colourways themselves as the strip underneath.
+ *
+ * It used to lay every image of every colourway out as thumbnails, so a
+ * three-colour product gave you nine small boxes and no indication which
+ * belonged together. The strip now holds one swatch per colourway — picking
+ * one swaps the track to that colour's shots, and you flick through its
+ * front and back.
+ *
+ * The track is a scroll-snap row, not a JS carousel: swipe, trackpad, arrow
+ * keys and the buttons all drive the same native scroll, so it behaves
+ * correctly on touch without shipping a carousel library for it.
+ */
 function ProductGallery({
   images,
   fallbackAlt,
-  activeIdx,
-  onSelect,
+  colourways,
+  activeColour,
+  onPickColour,
+  colourInStock,
+  swatchFor,
 }: {
   images: DisplayImage[];
   fallbackAlt: string;
-  /** Controlled by the parent so picking a colourway moves the picture. */
-  activeIdx: number;
-  onSelect: (i: number) => void;
+  colourways: string[];
+  activeColour: string;
+  onPickColour: (colour: string) => void;
+  colourInStock: (colour: string) => boolean;
+  swatchFor: (colour: string) => DisplayImage | null;
 }) {
-  const setActiveIdx = (next: number | ((i: number) => number)) =>
-    onSelect(typeof next === "function" ? next(activeIdx) : next);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Plain position state. The parent remounts this component when the
+  // colourway changes, so there is nothing here that has to be reset — and
+  // nothing that can go stale behind the picture.
+  const [current, setCurrent] = useState(0);
+
+  const goTo = (next: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const clamped = Math.max(0, Math.min(next, images.length - 1));
+    track.scrollTo({ left: clamped * track.clientWidth, behavior: "smooth" });
+    setCurrent(clamped);
+  };
+
+  // Derive the index from the scroll position so a swipe updates the
+  // counter and the dots, not just the buttons.
+  const onScroll = () => {
+    const track = trackRef.current;
+    if (!track || track.clientWidth === 0) return;
+    const next = Math.round(track.scrollLeft / track.clientWidth);
+    if (next !== current) setCurrent(next);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (images.length < 2) return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      goTo(current + 1);
+    }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      goTo(current - 1);
+    }
+  };
 
   if (images.length === 0) {
     return (
@@ -343,22 +390,8 @@ function ProductGallery({
     );
   }
 
-  const active = images[Math.min(activeIdx, images.length - 1)];
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (images.length < 2) return;
-    if (e.key === "ArrowRight") {
-      e.preventDefault();
-      setActiveIdx((i) => (i + 1) % images.length);
-    }
-    if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      setActiveIdx((i) => (i - 1 + images.length) % images.length);
-    }
-  };
-
   return (
-    <div onKeyDown={onKeyDown}>
+    <div>
       <div
         // Marks where a card's image should land. The transition name is
         // attached only while a morph is in flight (see ViewTransitions);
@@ -366,63 +399,148 @@ function ProductGallery({
         // you navigate to next. Square, matching the grid tile, so the morph
         // scales rather than warps.
         data-morph-target
-        className="shot aspect-square"
+        className="shot aspect-square group/gallery"
         role="region"
-        aria-roledescription="product gallery"
-        aria-label={`${fallbackAlt} — image ${activeIdx + 1} of ${images.length}`}
+        aria-roledescription="carousel"
+        aria-label={`${fallbackAlt}${activeColour ? ` — ${activeColour}` : ""}`}
+        onKeyDown={onKeyDown}
+        tabIndex={0}
       >
-        <Image
-          key={active.url}
-          src={productImageUrl(active.url)}
-          alt={active.alt || fallbackAlt}
-          fill
-          sizes="(max-width: 1024px) 100vw, 55vw"
-          className="object-contain p-8 md:p-14"
-          priority
-        />
+        <div
+          ref={trackRef}
+          onScroll={onScroll}
+          className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory no-scrollbar overscroll-x-contain"
+        >
+          {images.map((img, i) => (
+            <div
+              key={img.url + i}
+              className="relative w-full h-full shrink-0 snap-center"
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} of ${images.length}`}
+            >
+              <Image
+                src={productImageUrl(img.url)}
+                alt={img.alt || fallbackAlt}
+                fill
+                sizes="(max-width: 1024px) 100vw, 55vw"
+                className="object-contain p-8 md:p-14"
+                priority={i === 0}
+              />
+            </div>
+          ))}
+        </div>
 
         {images.length > 1 && (
-          <p className="absolute bottom-4 right-4 font-label text-muted tnum z-10">
-            {String(activeIdx + 1).padStart(2, "0")} /{" "}
-            {String(images.length).padStart(2, "0")}
-          </p>
+          <>
+            {/* Rendered only when there is somewhere to go, rather than
+                disabled-but-present. `disabled:opacity-0` and
+                `md:group-hover:opacity-100` are both utilities, so which one
+                wins is down to the order Tailwind emits them in — and on
+                desktop the hover rule won, leaving a dead arrow visible on
+                the first slide. Not rendering it cannot be out-specified. */}
+            {current > 0 && <GalleryArrow side="left" onClick={() => goTo(current - 1)} />}
+            {current < images.length - 1 && (
+              <GalleryArrow side="right" onClick={() => goTo(current + 1)} />
+            )}
+
+            <p className="absolute bottom-4 right-4 font-label text-muted tnum z-10 pointer-events-none">
+              {String(current + 1).padStart(2, "0")} /{" "}
+              {String(images.length).padStart(2, "0")}
+            </p>
+
+            {/* Touch has no hover to reveal the arrows, so the dots carry the
+                "there is more here" signal on a phone. */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 md:hidden">
+              {images.map((img, i) => (
+                <span
+                  key={img.url + i}
+                  aria-hidden
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === current ? "w-4 bg-ink" : "w-1.5 bg-ink/25"
+                  }`}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
 
-      {images.length > 1 && (
+      {colourways.length > 1 && (
         <div
           className="mt-3 flex flex-wrap gap-2.5"
-          role="tablist"
-          aria-label="Choose product image"
+          role="radiogroup"
+          aria-label="Choose a colourway"
         >
-          {images.map((img, i) => {
-            const isActive = i === activeIdx;
+          {colourways.map((c) => {
+            const isActive = c === activeColour;
+            const art = swatchFor(c);
+            const available = colourInStock(c);
             return (
               <button
-                key={img.url + i}
+                key={c}
                 type="button"
-                role="tab"
-                aria-selected={isActive}
-                aria-label={`Show image ${i + 1}`}
-                onClick={() => setActiveIdx(i)}
-                onMouseEnter={() => setActiveIdx(i)}
+                role="radio"
+                aria-checked={isActive}
+                aria-label={`${c}${available ? "" : " — sold out"}`}
+                disabled={!available}
+                onClick={() => onPickColour(c)}
+                title={c}
                 className={[
                   "shot relative w-[4.25rem] h-[4.25rem] shrink-0 border-2 transition-colors",
-                  isActive ? "border-ink" : "border-transparent",
+                  isActive ? "border-ink" : "border-transparent hover:border-line-2",
+                  available ? "" : "opacity-40",
                 ].join(" ")}
               >
-                <Image
-                  src={productImageUrl(img.url)}
-                  alt=""
-                  fill
-                  sizes="68px"
-                  className="object-contain p-1.5"
-                />
+                {art && (
+                  <Image
+                    src={productImageUrl(art.url)}
+                    alt=""
+                    fill
+                    sizes="68px"
+                    className="object-contain p-1.5"
+                  />
+                )}
               </button>
             );
           })}
         </div>
       )}
+
+      {colourways.length > 1 && (
+        <p className="sr-only" aria-live="polite">
+          {activeColour} selected, {images.length}{" "}
+          {images.length === 1 ? "image" : "images"}
+        </p>
+      )}
     </div>
+  );
+}
+
+function GalleryArrow({
+  side,
+  onClick,
+}: {
+  side: "left" | "right";
+  onClick: () => void;
+}) {
+  const Icon = side === "left" ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={side === "left" ? "Previous image" : "Next image"}
+      className={[
+        "absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 grid place-items-center",
+        "bg-paper/85 backdrop-blur-[2px] border border-line text-ink",
+        "transition-opacity hover:bg-paper",
+        // Always reachable on touch; on desktop it stays out of the way
+        // until the pointer is over the picture.
+        "md:opacity-0 md:group-hover/gallery:opacity-100 focus-visible:opacity-100",
+        side === "left" ? "left-3" : "right-3",
+      ].join(" ")}
+    >
+      <Icon size={18} />
+    </button>
   );
 }

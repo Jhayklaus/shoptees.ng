@@ -98,25 +98,49 @@ export type SaveCollectionInput = {
   slug: string;
   name: string;
   description: string;
-  imageUrl: string;
-  imageAlt: string;
+  bannerImageUrl: string;
+  bannerImageAlt: string;
+  cardImageUrl: string;
+  cardImageAlt: string;
+  featured: boolean;
   sortOrder: number;
   status: ProductStatus;
 };
 
 export function saveCollection(input: SaveCollectionInput) {
+  // `imageUrl`/`imageAlt` are deliberately absent: they are the legacy
+  // single-image columns, read as a fallback but never written again.
   const data = {
     slug: input.slug,
     name: input.name,
     description: input.description,
-    imageUrl: input.imageUrl,
-    imageAlt: input.imageAlt,
+    bannerImageUrl: input.bannerImageUrl,
+    bannerImageAlt: input.bannerImageAlt,
+    cardImageUrl: input.cardImageUrl,
+    cardImageAlt: input.cardImageAlt,
+    featured: input.featured,
     sortOrder: input.sortOrder,
     status: input.status,
   };
   return input.id
     ? prisma.collection.update({ where: { id: input.id }, data })
     : prisma.collection.create({ data });
+}
+
+/**
+ * Every published collection, with its active product count.
+ *
+ * The homepage needs the whole list, not just the featured slice: the hero
+ * and the feature block each resolve a slug against it, and a collection
+ * that is not itself featured must still be pickable for those. The
+ * featured slice is taken from this in the page.
+ */
+export function listPublishedCollections() {
+  return prisma.collection.findMany({
+    where: { status: "ACTIVE" },
+    orderBy: { sortOrder: "asc" },
+    include: { _count: { select: { products: { where: { status: "ACTIVE" } } } } },
+  });
 }
 
 export function deleteCollection(id: string) {

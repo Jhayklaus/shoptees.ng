@@ -11,9 +11,11 @@ type Props = {
   altValue?: string;
   onAltChange?: (alt: string) => void;
   label?: string;
+  /** One line under the label saying what the image is for. */
+  hint?: string;
 };
 
-export function SingleImagePicker({ value, onChange, altValue, onAltChange, label }: Props) {
+export function SingleImagePicker({ value, onChange, altValue, onAltChange, label, hint }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +51,12 @@ export function SingleImagePicker({ value, onChange, altValue, onAltChange, labe
 
   return (
     <div>
-      {label && <p className="font-label text-ink/55 mb-2">{label}</p>}
+      {label && (
+        <p className="font-label text-ink/55 mb-2">
+          {label}
+          {hint && <span className="text-ink/40 normal-case tracking-normal ml-2">{hint}</span>}
+        </p>
+      )}
 
       {value ? (
         <div className="flex items-start gap-4">

@@ -54,6 +54,7 @@ export default async function EditProductPage({
             id: i.id,
             url: i.url,
             alt: i.alt,
+            color: i.color,
             sortOrder: i.sortOrder,
           })),
         }}

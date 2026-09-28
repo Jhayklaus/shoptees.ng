@@ -8,15 +8,27 @@ export type AdminImage = {
   id?: string;
   url: string;
   alt: string;
+  /**
+   * Which colourway this photo shows, matching a variant's colour. Empty
+   * means "shows for every colourway", which is what an untagged image does
+   * on the product page.
+   */
+  color: string;
   sortOrder: number;
 };
 
 type Props = {
   value: AdminImage[];
   onChange: (next: AdminImage[]) => void;
+  /**
+   * The colours this product's variants offer. Drives the per-image
+   * colourway picker — the product page groups the gallery by it, so an
+   * image tagged "Burgundy" only appears while Burgundy is selected.
+   */
+  colours?: string[];
 };
 
-export function ImageUploader({ value, onChange }: Props) {
+export function ImageUploader({ value, onChange, colours = [] }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +59,7 @@ export function ImageUploader({ value, onChange }: Props) {
         next.push({
           url: publicUrl,
           alt: file.name.replace(/\.[^.]+$/, ""),
+          color: "",
           sortOrder: next.length,
         });
       }
@@ -75,6 +88,12 @@ export function ImageUploader({ value, onChange }: Props) {
   const updateAlt = (idx: number, alt: string) => {
     const next = [...value];
     next[idx] = { ...next[idx], alt };
+    onChange(next);
+  };
+
+  const updateColour = (idx: number, color: string) => {
+    const next = [...value];
+    next[idx] = { ...next[idx], color };
     onChange(next);
   };
 
@@ -151,6 +170,29 @@ export function ImageUploader({ value, onChange }: Props) {
                   {img.url}
                 </p>
               </div>
+
+              {colours.length > 0 && (
+                <label className="shrink-0 text-right">
+                  <span className="font-label text-ink/40 text-[0.65rem] block">
+                    Colourway
+                  </span>
+                  <select
+                    value={img.color}
+                    onChange={(e) => updateColour(i, e.target.value)}
+                    className="bg-transparent border-b border-line py-1 outline-none focus:border-ink font-label max-w-[9rem]"
+                  >
+                    {/* Blank is a real choice, not a prompt: an untagged
+                        image shows under every colourway, which is right for
+                        a flat-lay or a detail shot. */}
+                    <option value="">All colours</option>
+                    {colours.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
               <button
                 type="button"
                 onClick={() => remove(i)}
