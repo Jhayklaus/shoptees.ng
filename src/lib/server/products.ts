@@ -13,6 +13,11 @@ type WithRelations = {
   slug: string;
   name: string;
   description: string;
+  composition: string;
+  fabricWeight: string;
+  fit: string;
+  care: string;
+  madeIn: string;
   priceNGN: number;
   category: { slug: string; name: string } | null;
   collection: { slug: string; name: string } | null;
@@ -33,6 +38,13 @@ export function toDisplayProduct(p: WithRelations): DisplayProduct {
     slug: p.slug,
     name: p.name,
     description: p.description,
+    spec: {
+      composition: p.composition,
+      fabricWeight: p.fabricWeight,
+      fit: p.fit,
+      care: p.care,
+      madeIn: p.madeIn,
+    },
     priceNGN: p.priceNGN,
     category: p.category ? { slug: p.category.slug, name: p.category.name } : null,
     collection: p.collection ? { slug: p.collection.slug, name: p.collection.name } : null,
@@ -110,6 +122,11 @@ export type SaveProductInput = {
   slug: string;
   name: string;
   description: string;
+  composition: string;
+  fabricWeight: string;
+  fit: string;
+  care: string;
+  madeIn: string;
   priceNGN: number;
   status: ProductStatus;
   categoryId: string | null;
@@ -156,6 +173,11 @@ export async function saveProduct(input: SaveProductInput) {
     slug: input.slug,
     name: input.name,
     description: input.description,
+    composition: input.composition,
+    fabricWeight: input.fabricWeight,
+    fit: input.fit,
+    care: input.care,
+    madeIn: input.madeIn,
     priceNGN: input.priceNGN,
     status: input.status,
     categoryId: input.categoryId,

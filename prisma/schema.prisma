@@ -135,6 +135,18 @@ model Product {
   slug         String         @unique
   name         String
   description  String
+
+  // Spec sheet. Every one of these is optional and the product page renders
+  // only the rows that are filled, because the alternative was worse: the
+  // table used to hardcode "Made in Nigeria / Cold wash · line dry /
+  // Dispatch Lagos" identically on all 23 products. A customer who opens
+  // two product pages sees the same three facts and correctly concludes the
+  // spec sheet is decoration.
+  composition String @default("") // e.g. "100% combed cotton"
+  fabricWeight String @default("") // e.g. "240 gsm"
+  fit         String  @default("") // e.g. "Boxy, true to size"
+  care        String  @default("") // e.g. "Cold wash, line dry"
+  madeIn      String  @default("") // e.g. "Lagos, Nigeria"
   priceNGN     Int
   status       String         @default("DRAFT")
   categoryId   String?

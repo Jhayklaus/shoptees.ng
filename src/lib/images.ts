@@ -16,17 +16,46 @@
  * the hero — passes straight through.
  */
 
+import { ARCHIVE_FRONTS } from "@/lib/archive-fronts";
+
 const ARCHIVE_PREFIX = "/archive/";
 const CUT_PREFIX = "/archive-cut/";
+const FRONT_PREFIX = "/archive-front/";
 
 export function productImageUrl(url: string): string {
   if (!url.startsWith(ARCHIVE_PREFIX)) return url;
   return CUT_PREFIX + url.slice(ARCHIVE_PREFIX.length).replace(/\.png$/i, ".webp");
 }
 
+/**
+ * Which image a product CARD shows.
+ *
+ * Most archive flats photograph the garment twice — front and back, side by
+ * side in one frame. Fitted into a card that pair is letterboxed, so each
+ * garment lands at roughly half the size it could be and the grid reads as
+ * a line sheet. Where a single-garment front crop exists (see
+ * scripts/split-archive-fronts.py) the card uses it instead; the product
+ * page keeps the full flat, where seeing front and back at once is the
+ * point.
+ *
+ * Falls back to the full cut-out when no front was produced — a flat with
+ * no clean seam is left whole on purpose rather than sliced through a
+ * garment.
+ */
+export function productCardUrl(url: string): string {
+  const cut = productImageUrl(url);
+  if (!cut.startsWith(CUT_PREFIX)) return cut;
+  const rel = cut.slice(CUT_PREFIX.length);
+  return ARCHIVE_FRONTS.has(rel) ? FRONT_PREFIX + rel : cut;
+}
+
 /** True when an image is a cut-out flat, which needs `contain`, not `cover`. */
 export function isArchiveArt(url: string): boolean {
-  return url.startsWith(ARCHIVE_PREFIX) || url.startsWith(CUT_PREFIX);
+  return (
+    url.startsWith(ARCHIVE_PREFIX) ||
+    url.startsWith(CUT_PREFIX) ||
+    url.startsWith(FRONT_PREFIX)
+  );
 }
 
 /**

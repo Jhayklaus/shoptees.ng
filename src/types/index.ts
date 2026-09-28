@@ -31,11 +31,21 @@ export type DisplayCollection = {
   name: string;
 };
 
+/** Spec-sheet rows. Empty strings are omitted from the table entirely. */
+export type ProductSpec = {
+  composition: string;
+  fabricWeight: string;
+  fit: string;
+  care: string;
+  madeIn: string;
+};
+
 export type DisplayProduct = {
   id: string;
   slug: string;
   name: string;
   description: string;
+  spec: ProductSpec;
   priceNGN: number;
   category: DisplayCategory | null;
   collection: DisplayCollection | null;

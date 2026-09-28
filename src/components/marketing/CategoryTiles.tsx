@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { productImageUrl } from "@/lib/images";
+import { productCardUrl } from "@/lib/images";
 import { SectionHead } from "@/components/marketing/SectionHead";
 
 /**
@@ -34,7 +34,9 @@ export async function CategoryTiles() {
   if (stocked.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 md:pt-16">
+    /* Deliberately tight to the hero and deliberately small: after one
+       full-viewport image, a dense strip of six is the contrast. */
+    <section className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 md:pt-10">
       <SectionHead title="Shop by category" href="/shop" />
 
       <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
@@ -46,7 +48,7 @@ export async function CategoryTiles() {
                 <div className="shot aspect-square">
                   {cover && (
                     <Image
-                      src={productImageUrl(cover.url)}
+                      src={productCardUrl(cover.url)}
                       alt=""
                       fill
                       sizes="(max-width: 640px) 50vw, 16vw"
