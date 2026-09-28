@@ -8,7 +8,7 @@ import type { DisplayProduct, DisplayImage } from "@/types";
 import { useMoney } from "@/components/currency/CurrencyProvider";
 import { useCart } from "@/store/cart";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
-import { productImageUrl } from "@/lib/images";
+import { productCardUrl, productImageUrl } from "@/lib/images";
 import { archiveRef } from "@/lib/archive-ref";
 import { sortBySize } from "@/lib/sizes";
 
@@ -241,18 +241,36 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
           </div>
 
           {/* ── Spec sheet ───────────────────────────────────────── */}
+          {/* Only rows we actually know.
+              This used to end with "Made in Nigeria / Cold wash · line dry /
+              Dispatch Lagos, nationwide" hardcoded — the same three lines on
+              every product in the catalogue. A customer who opens two
+              product pages sees identical specs and correctly stops
+              believing the table. The fields are per-product and admin-set
+              now, and an unfilled one is simply absent: a shorter honest
+              table beats a longer invented one. */}
           <table className="w-full mt-9 border-collapse">
             <tbody>
-              {[
-                ...(ref ? [["Archive ref", ref] as const] : []),
-                ...(product.collection
-                  ? [["Collection", product.collection.name] as const]
-                  : []),
-                ["SKU", variant?.sku ?? "—"] as const,
-                ["Made in", "Nigeria"] as const,
-                ["Care", "Cold wash · line dry"] as const,
-                ["Dispatch", "Lagos, nationwide delivery"] as const,
-              ].map(([k, v]) => (
+              {(
+                [
+                  ...(ref ? [["Archive ref", ref] as const] : []),
+                  ...(product.collection
+                    ? [["Collection", product.collection.name] as const]
+                    : []),
+                  ...(variant?.sku ? [["SKU", variant.sku] as const] : []),
+                  ...(product.spec.composition
+                    ? [["Composition", product.spec.composition] as const]
+                    : []),
+                  ...(product.spec.fabricWeight
+                    ? [["Weight", product.spec.fabricWeight] as const]
+                    : []),
+                  ...(product.spec.fit ? [["Fit", product.spec.fit] as const] : []),
+                  ...(product.spec.care ? [["Care", product.spec.care] as const] : []),
+                  ...(product.spec.madeIn
+                    ? [["Made in", product.spec.madeIn] as const]
+                    : []),
+                ] as const
+              ).map(([k, v]) => (
                 <tr key={k} className="border-b border-line">
                   <th
                     scope="row"
@@ -494,11 +512,13 @@ function ProductGallery({
               >
                 {art && (
                   <Image
-                    src={productImageUrl(art.url)}
+                    // The front crop, not the full flat: at 68px a
+                    // front-and-back pair is two illegible smudges.
+                    src={productCardUrl(art.url)}
                     alt=""
                     fill
                     sizes="68px"
-                    className="object-contain p-1.5"
+                    className="object-contain p-1"
                   />
                 )}
               </button>

@@ -79,7 +79,6 @@
   --color-foreground: var(--ink);
 
   --font-display: var(--font-archivo);
-  --font-serif-display: var(--font-serif);
   --font-sans: var(--font-archivo);
 }
 
@@ -124,20 +123,34 @@ body {
 
 /* ── Type voices ─────────────────────────────────────────────────────── */
 
-/* Display: SERIF, and only on headlines that sit on or beside an image —
-   the hero, the banner blocks, page titles. Nowhere else.
-   
-   This is the voice that decides whether a storefront reads as a fashion
-   house or as a poster, and a compressed grotesque was firmly the second.
-   Kept to the blocks that earn it: the section headers on a shop page are
-   deliberately small sans below, because a page where every heading shouts
-   has no hierarchy and no density. */
+/* Display: heavy condensed grotesque. Headlines that sit on or beside an
+   image — the hero, the banner blocks, page titles. Nowhere else.
+
+   This used to be a serif, on the reasoning that "a compressed grotesque
+   reads as a poster, a serif reads as a house". That reasoning was right
+   about what each does and wrong about which one this brand wants. A serif
+   headline is a fashion house — Vogue, an atelier, Paris. Shoptees is Lagos
+   streetwear, and the reference points there (Corteiz, Palace, Motherlan)
+   all speak in blunt heavy sans. A poster is the correct answer; the
+   previous voice was borrowing authority from the wrong tradition.
+
+   It also costs nothing: Archivo's width and weight axes were already
+   loaded, so this deletes an entire second family rather than adding one.
+
+   Kept to the blocks that earn it. Section headers on a shop page stay
+   small sans below, because a page where every heading shouts has no
+   hierarchy and no density. */
 .font-display {
-  font-family: var(--font-serif), "Times New Roman", Times, serif;
-  font-weight: 400;
+  font-family: var(--font-archivo), "Arial Narrow", Arial, sans-serif;
+  /* 78 is condensed enough to read as screenprint without the letterforms
+     collapsing at a headline's size; below ~70 the counters close up. */
+  font-variation-settings: "wdth" 78;
+  font-weight: 800;
   text-transform: uppercase;
-  line-height: 0.96;
-  letter-spacing: -0.01em;
+  /* Tighter than the serif could go. Heavy caps at 0.88 stack like a
+     stencil; the serif needed 0.96 to keep its ascenders apart. */
+  line-height: 0.88;
+  letter-spacing: -0.015em;
 }
 
 /* Section headings on a shop page: quiet. ~1rem, medium, not a headline.

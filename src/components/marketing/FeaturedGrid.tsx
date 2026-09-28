@@ -31,13 +31,16 @@ export async function FeaturedGrid() {
   return (
     <section
       id="new-in"
-      className="mx-auto max-w-[1400px] px-5 md:px-10 pt-12 md:pt-16 pb-12 md:pb-16 scroll-mt-24"
+      className="mx-auto max-w-[1400px] px-5 md:px-10 pt-16 md:pt-28 pb-16 md:pb-28 scroll-mt-24"
     >
       <SectionHead title="New in" href="/shop" count={rows.length} />
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12 md:gap-x-7 md:gap-y-14">
-        {featured.map((p) => (
-          <ProductCard key={p.id} product={p} />
+        {/* The first tile is double-width. A grid of identical rectangles
+            has no focal point and reads as inventory; one tile that breaks
+            the rhythm is what makes it look edited. */}
+        {featured.map((p, i) => (
+          <ProductCard key={p.id} product={p} lead={i === 0} />
         ))}
       </div>
     </section>

@@ -1,35 +1,17 @@
-import { Archivo, Instrument_Serif } from "next/font/google";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 import { rootMetadata } from "@/lib/seo";
 import { organizationJsonLd } from "@/lib/jsonld";
 
-// One variable family carries the whole identity: the width axis spans
-// condensed ticker type (wdth 62) to ultra-expanded display (wdth 125).
+// ONE variable family carries the whole identity, and now literally the
+// whole of it: the width axis spans condensed ticker type (wdth 62) through
+// body copy (100) to expanded (125), and the weight axis carries the display
+// voice at 800. The display serif that used to sit beside this is gone —
+// see .font-display in globals.css for why.
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
   axes: ["wdth"],
-  display: "swap",
-});
-
-// Display serif, headlines only — hero, banner blocks, page titles.
-//
-// The headline voice is the single biggest thing separating this from a
-// fashion storefront: a compressed grotesque reads as a poster, a serif
-// reads as a house. Instrument Serif is one weight, ~20 KB, and high
-// enough in contrast to carry a headline at 5rem without extra weight.
-//
-// It does NOT add a family. The mono it replaces (Azeret, three weights)
-// was heavier than this, and the reference this is built against uses no
-// mono at all — labels there are small sans. So the count stays at two and
-// the byte total goes down.
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: "400",
-  // Normal only. The italic was being preloaded at ~15 KB and nothing on
-  // the site sets it — the one italic voice, .font-italic-accent, is
-  // Archivo, not the serif.
   display: "swap",
 });
 
@@ -43,7 +25,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${archivo.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-paper text-ink flex flex-col">
         <script

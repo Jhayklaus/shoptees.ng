@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { productImageUrl } from "@/lib/images";
+import { productCardUrl } from "@/lib/images";
 import Link from "next/link";
 import { useCart } from "@/store/cart";
 import { useHydratedCart } from "@/store/useHydratedCart";
@@ -70,7 +70,7 @@ export function CartView() {
                 <div className="shot col-span-3 sm:col-span-2 aspect-square">
                   {hero && (
                     <Image
-                      src={productImageUrl(hero.url)}
+                      src={productCardUrl(hero.url)}
                       alt={hero.alt || l.product.name}
                       fill
                       sizes="120px"

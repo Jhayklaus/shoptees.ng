@@ -38,7 +38,12 @@ export function Hero({ content }: { content: HeroContent }) {
 
   return (
     <section className="relative bg-ink">
-      <div className="relative h-[76svh] min-h-[27rem] max-h-[44rem] w-full overflow-hidden">
+      {/* Nearly the whole viewport, on purpose. At 76svh the hero was merely
+          the first of eight sections of similar weight, and a page where
+          nothing is allowed to be the loudest thing reads as a template.
+          This is the one element that gets to dominate; everything below it
+          is deliberately smaller and denser. */}
+      <div className="relative h-[92svh] min-h-[32rem] max-h-[54rem] w-full overflow-hidden">
         {content.imageUrl && (
           <Image
             src={content.imageUrl}
@@ -66,7 +71,7 @@ export function Hero({ content }: { content: HeroContent }) {
               </span>
             </p>
 
-            <h1 className="font-display text-paper text-[clamp(2.6rem,8vw,5.4rem)] max-w-[14ch]">
+            <h1 className="font-display text-paper text-[clamp(3.2rem,11vw,8rem)] max-w-[12ch]">
               {headlineLines.map((line, i) => (
                 <span key={i} className="block">
                   {line}

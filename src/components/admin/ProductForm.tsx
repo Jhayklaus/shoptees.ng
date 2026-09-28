@@ -21,6 +21,11 @@ export type ProductFormInitial = {
   slug: string;
   name: string;
   description: string;
+  composition: string;
+  fabricWeight: string;
+  fit: string;
+  care: string;
+  madeIn: string;
   priceNGN: number;
   status: ProductStatus;
   categoryId: string | null;
@@ -230,6 +235,29 @@ export function ProductForm({ initial, categories, collections, action, deleteAc
         </Section>
 
         <Section
+          title="Specification"
+          hint="Every row is optional and only the ones you fill appear on the product page. Blank is better than a guess — these used to be identical on every product, which a customer reading two pages notices."
+        >
+          <div className="grid sm:grid-cols-2 gap-5">
+            <Field label="Composition">
+              <SpecInput value={state.composition} onChange={(v) => update("composition", v)} placeholder="100% combed cotton" />
+            </Field>
+            <Field label="Fabric weight">
+              <SpecInput value={state.fabricWeight} onChange={(v) => update("fabricWeight", v)} placeholder="240 gsm" />
+            </Field>
+            <Field label="Fit">
+              <SpecInput value={state.fit} onChange={(v) => update("fit", v)} placeholder="Boxy, true to size" />
+            </Field>
+            <Field label="Care">
+              <SpecInput value={state.care} onChange={(v) => update("care", v)} placeholder="Cold wash, line dry" />
+            </Field>
+            <Field label="Made in">
+              <SpecInput value={state.madeIn} onChange={(v) => update("madeIn", v)} placeholder="Lagos, Nigeria" />
+            </Field>
+          </div>
+        </Section>
+
+        <Section
           title="Images"
           hint="Drag to reorder. The first image is the hero. Tag an image with a colourway and it only shows while that colourway is selected."
         >
@@ -372,4 +400,25 @@ function Th({ children }: { children?: React.ReactNode }) {
 }
 function Td({ children }: { children?: React.ReactNode }) {
   return <td className="px-3 py-2">{children}</td>;
+}
+
+/** One spec-sheet row. Placeholder shows the shape of a good answer, and is
+    never submitted — an empty field means the row is omitted, not defaulted. */
+function SpecInput({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full bg-transparent border-b border-line py-2 outline-none focus:border-ink font-display text-lg placeholder:text-ink/25 placeholder:font-sub placeholder:text-base"
+    />
+  );
 }
