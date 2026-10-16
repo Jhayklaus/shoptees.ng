@@ -5,7 +5,24 @@ import { useState, useTransition } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { ImageUploader, type AdminImage } from "./ImageUploader";
 import { slugify } from "@/lib/utils";
-import type { ProductStatus } from "@/lib/constants";
+import {
+  PRODUCT_STATUSES,
+  PRODUCT_STATUS_LABELS,
+  type ProductStatus,
+} from "@/lib/constants";
+
+/**
+ * What each status actually does, shown under the control rather than
+ * written down somewhere nobody reads. "Coming soon" in particular is not
+ * self-evident: it is not a draft, and the difference is the whole reason
+ * it exists.
+ */
+const STATUS_HINTS: Record<ProductStatus, string> = {
+  DRAFT: "Hidden everywhere on the storefront.",
+  COMING_SOON: "On the storefront, blurred and tagged — but not for sale. Live pieces show first.",
+  ACTIVE: "Live and for sale.",
+  ARCHIVED: "Off the storefront; past orders keep it.",
+};
 
 type Variant = {
   id?: string;
@@ -272,15 +289,17 @@ export function ProductForm({ initial, categories, collections, action, deleteAc
       {/* Right column — meta */}
       <aside className="col-span-12 lg:col-span-4 space-y-6 lg:sticky lg:top-6 self-start">
         <div className="border border-line p-5 space-y-5">
-          <Field label="Status">
+          <Field label="Status" hint={STATUS_HINTS[state.status]}>
             <select
               value={state.status}
               onChange={(e) => update("status", e.target.value as ProductStatus)}
               className="w-full bg-transparent border border-line py-2 px-3 outline-none focus:border-ink font-label"
             >
-              <option value="DRAFT">Draft</option>
-              <option value="ACTIVE">Active</option>
-              <option value="ARCHIVED">Archived</option>
+              {PRODUCT_STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {PRODUCT_STATUS_LABELS[s]}
+                </option>
+              ))}
             </select>
           </Field>
           <Field label="Price (₦)" required>

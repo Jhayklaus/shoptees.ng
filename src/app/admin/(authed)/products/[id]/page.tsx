@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getProductById, getActiveCategories } from "@/lib/server/products";
+import type { ProductStatus } from "@/lib/constants";
 import { getActiveCollections } from "@/lib/server/collections";
 import { ProductForm } from "@/components/admin/ProductForm";
 import { PageHeader } from "@/components/admin/PageHeader";
@@ -44,7 +45,7 @@ export default async function EditProductPage({
           care: product.care,
           madeIn: product.madeIn,
           priceNGN: product.priceNGN,
-          status: product.status as "DRAFT" | "ACTIVE" | "ARCHIVED",
+          status: product.status as ProductStatus,
           categoryId: product.categoryId,
           collectionId: product.collectionId,
           variants: product.variants.map((v) => ({

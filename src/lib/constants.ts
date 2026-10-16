@@ -3,8 +3,50 @@
 export const ORDER_STATUSES = ["PENDING", "PAID", "FULFILLED", "CANCELLED"] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
-export const PRODUCT_STATUSES = ["DRAFT", "ACTIVE", "ARCHIVED"] as const;
+// Product lifecycle.
+//
+// COMING_SOON sits between DRAFT and ACTIVE, and it exists because a drop
+// rolls out in waves. The pieces that are not in the first wave are not
+// secret — they are the reason to come back — so hiding them as drafts is
+// the wrong tool. A COMING_SOON piece is listed, blurred and tagged on the
+// storefront and its page is reachable, but it cannot be added to a cart or
+// bought, and an ACTIVE piece always sorts ahead of it.
+export const PRODUCT_STATUSES = ["DRAFT", "COMING_SOON", "ACTIVE", "ARCHIVED"] as const;
 export type ProductStatus = (typeof PRODUCT_STATUSES)[number];
+
+/**
+ * The two statuses a customer may see. Everything the storefront queries
+ * filters on this; DRAFT and ARCHIVED are admin-only and 404 in public.
+ */
+export const STOREFRONT_PRODUCT_STATUSES = ["ACTIVE", "COMING_SOON"] as const;
+
+/**
+ * May a customer see a product in this status at all?
+ *
+ * The guards in the public routes read a `string` off a Prisma row, so this
+ * narrows rather than making every call site cast the tuple to string[].
+ */
+export function isStorefrontStatus(
+  status: string,
+): status is (typeof STOREFRONT_PRODUCT_STATUSES)[number] {
+  return (STOREFRONT_PRODUCT_STATUSES as readonly string[]).includes(status);
+}
+
+/** Admin-facing names. The raw values are shouty and carry an underscore. */
+export const PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
+  DRAFT: "Draft",
+  COMING_SOON: "Coming soon",
+  ACTIVE: "Active",
+  ARCHIVED: "Archived",
+};
+
+// Collections deliberately have no COMING_SOON of their own: a collection
+// reads as coming soon when none of its products are ACTIVE, which is
+// derived from the products rather than set by hand. Two switches for one
+// fact go out of sync the first week — a line whose pieces all went live
+// would still be flagged "coming soon" until someone remembered to flip it.
+export const COLLECTION_STATUSES = ["DRAFT", "ACTIVE", "ARCHIVED"] as const;
+export type CollectionStatus = (typeof COLLECTION_STATUSES)[number];
 
 // ── Shipping destinations ────────────────────────────────────────────────
 // Checkout is limited to countries we actually ship to. `states` doubles as

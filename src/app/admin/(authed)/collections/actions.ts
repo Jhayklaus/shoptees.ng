@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/session";
 import { saveCollection, deleteCollection } from "@/lib/server/collections";
-import { PRODUCT_STATUSES } from "@/lib/constants";
+import { COLLECTION_STATUSES } from "@/lib/constants";
 
 // Mirrors TaxonomyFormInitial — optional fields may be omitted by the form.
 type CollectionFormInput = {
@@ -35,7 +35,9 @@ const schema = z.object({
   cardImageAlt: z.string().default(""),
   featured: z.boolean().default(false),
   sortOrder: z.number().int(),
-  status: z.enum(PRODUCT_STATUSES).default("DRAFT"),
+  // Collections have no COMING_SOON of their own — it is derived from their
+  // products — so this is the collection vocabulary, not the product one.
+  status: z.enum(COLLECTION_STATUSES).default("DRAFT"),
 });
 
 function revalidateStorefront() {

@@ -47,9 +47,15 @@ export function productJsonLd(product: DisplayProduct) {
       "@type": "Offer",
       priceCurrency: CURRENCY,
       price: product.priceNGN,
-      availability: inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+      availability:
+        product.status === "COMING_SOON"
+          ? // Not yet released, as opposed to released and gone. Schema.org
+            // has a term for exactly this and Google reads it, so a teaser
+            // is not reported to search as a sold-out product.
+            "https://schema.org/PreOrder"
+          : inStock
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
       url: `${siteConfig.url}/shop/${product.slug}`,
       seller: { "@type": "Organization", name: siteConfig.name },
     },

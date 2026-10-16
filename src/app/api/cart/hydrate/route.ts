@@ -25,7 +25,13 @@ export async function POST(req: Request) {
 
   const productIds = Array.from(new Set(parsed.data.lines.map((l) => l.productId)));
   const products = await prisma.product.findMany({
-    where: { id: { in: productIds }, status: { not: "ARCHIVED" } },
+    // COMING_SOON is excluded alongside ARCHIVED, so a line for a piece
+    // that has not dropped drops out of the cart instead of sitting there
+    // priced and un-checkout-able. There is no route that puts one in —
+    // the product page has no add button — but the cart lives in
+    // localStorage, so a piece that was ACTIVE when it was added and has
+    // since been pulled back into the next wave would otherwise survive.
+    where: { id: { in: productIds }, status: { notIn: ["ARCHIVED", "COMING_SOON"] } },
     include: {
       category: true,
       collection: true,

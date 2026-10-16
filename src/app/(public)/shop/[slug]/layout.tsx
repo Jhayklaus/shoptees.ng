@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/server/products";
+import { isStorefrontStatus } from "@/lib/constants";
 
 // The existence check lives in the layout, not the page.
 //
@@ -19,6 +20,9 @@ export default async function ProductLayout({
 }) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  if (!product || product.status !== "ACTIVE") notFound();
+  // COMING_SOON passes: the piece is tagged and blurred in the grid but its
+  // tile is still a link, so the page has to exist. Drafts and archived
+  // rows stay a hard 404.
+  if (!product || !isStorefrontStatus(product.status)) notFound();
   return <>{children}</>;
 }

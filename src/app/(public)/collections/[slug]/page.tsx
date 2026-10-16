@@ -53,9 +53,18 @@ export default async function CollectionPage({
   if (!collection || collection.status !== "ACTIVE") notFound();
 
   const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
-  const { products, total } = await getCollectionProductsPage(slug, page, PER_PAGE);
+  const { products, total, activeTotal } = await getCollectionProductsPage(
+    slug,
+    page,
+    PER_PAGE,
+  );
   const display = products.map(toDisplayProduct);
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+  // Nothing live in the whole line — not just nothing live on this page of
+  // it, which is why the count comes from the query rather than from
+  // `display`. The masthead says so once, so the blurred tiles underneath
+  // read as a line that is coming rather than one that has sold out.
+  const comingSoon = activeTotal === 0;
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-6 pb-24">
@@ -67,13 +76,13 @@ export default async function CollectionPage({
         <span className="text-ink">{collection.name}</span>
       </nav>
 
-      <CollectionBanner collection={collection} count={total} />
+      <CollectionBanner collection={collection} count={total} comingSoon={comingSoon} />
 
       <div className="mt-10 md:mt-12">
         {display.length === 0 ? (
           <div className="border border-dashed border-line-2 p-16 text-center">
             <p className="font-label text-muted">
-              Nothing in {collection.name.toLowerCase()} right now
+              {collection.name} is coming soon — nothing in it has landed yet
             </p>
             <p className="mt-5">
               <Link href="/shop" className="font-label underline underline-offset-4">

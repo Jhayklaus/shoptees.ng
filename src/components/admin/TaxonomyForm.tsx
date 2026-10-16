@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { slugify } from "@/lib/utils";
 import { SingleImagePicker } from "@/components/admin/SingleImagePicker";
-import { PRODUCT_STATUSES } from "@/lib/constants";
+import { COLLECTION_STATUSES } from "@/lib/constants";
 
 // One form for both catalogue groupings — collections ("Urban Retro") and
 // categories ("Hoodies"). Same fields either way; collections additionally
@@ -184,14 +184,14 @@ export function TaxonomyForm({
         {withStatus && (
           <Field
             label="Status"
-            hint="Drafts are invisible on the storefront — no listing, no page, not in the sitemap."
+            hint="Drafts are invisible on the storefront — no listing, no page, not in the sitemap. There is no “coming soon” to pick here: a live collection with no live pieces in it says that by itself."
           >
             <select
               value={state.status ?? "DRAFT"}
               onChange={(e) => update("status", e.target.value)}
               className="bg-transparent border-b border-line py-2 outline-none focus:border-ink font-label"
             >
-              {PRODUCT_STATUSES.map((s) => (
+              {COLLECTION_STATUSES.map((s) => (
                 <option key={s} value={s}>
                   {s === "ACTIVE" ? "Live" : s === "DRAFT" ? "Draft" : "Archived"}
                 </option>

@@ -75,7 +75,11 @@ model Collection {
   id          String    @id @default(cuid())
   slug        String    @unique
   name        String
-  // "DRAFT" | "ACTIVE" | "ARCHIVED", same vocabulary as Product.
+  // "DRAFT" | "ACTIVE" | "ARCHIVED" — Product's vocabulary minus
+  // COMING_SOON, which a collection never carries itself: a published
+  // collection with no ACTIVE products in it IS the coming-soon state, and
+  // the storefront derives that rather than reading a second flag that
+  // could disagree with its own contents.
   // Defaults to ACTIVE, NOT DRAFT: this column is being added to a database
   // that already has live collections, and a DRAFT default would pull every
   // one of them off the storefront the moment it is applied. New collections
@@ -129,7 +133,17 @@ model HomeBanner {
   @@index([slot, enabled, sortOrder])
 }
 
-// status: "DRAFT" | "ACTIVE" | "ARCHIVED"
+// status: "DRAFT" | "COMING_SOON" | "ACTIVE" | "ARCHIVED"
+//
+// COMING_SOON is a storefront-visible, not-for-sale state: the piece is
+// listed (blurred, tagged, sorted after everything ACTIVE) and its page
+// resolves, but it cannot be added to a cart and checkout rejects it. It
+// exists so a drop can roll out in waves without the later waves having to
+// hide as drafts. See src/lib/constants.ts for the one definition of which
+// statuses the storefront may show.
+//
+// Deliberately a String rather than an enum: adding a value is then a code
+// change, not a migration, which is what let this one ship without one.
 model Product {
   id           String         @id @default(cuid())
   slug         String         @unique

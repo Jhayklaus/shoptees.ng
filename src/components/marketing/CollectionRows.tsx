@@ -25,6 +25,8 @@ export type FeaturedCollection = {
   imageUrl: string | null;
   imageAlt: string;
   count: number;
+  /** Nothing live in the line: tagged and veiled instead of counted. */
+  comingSoon: boolean;
 };
 
 export function CollectionRows({ collections }: { collections: FeaturedCollection[] }) {
@@ -49,8 +51,20 @@ export function CollectionRows({ collections }: { collections: FeaturedCollectio
                     alt={c.imageAlt}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-[700ms] ease-out group-hover:scale-[1.04]"
+                    className={[
+                      "object-cover transition-transform duration-[700ms] ease-out",
+                      // Scaled past the frame while blurred — see the note
+                      // on the same treatment in /collections.
+                      c.comingSoon
+                        ? "blur-[3px] scale-[1.06] group-hover:scale-[1.1]"
+                        : "group-hover:scale-[1.04]",
+                    ].join(" ")}
                   />
+                )}
+                {c.comingSoon && (
+                  <span className="absolute top-3 left-3 z-10 bg-paper/95 text-ink border border-ink font-label px-2 py-1 text-[0.64rem]">
+                    Coming soon
+                  </span>
                 )}
               </div>
 
@@ -59,8 +73,14 @@ export function CollectionRows({ collections }: { collections: FeaturedCollectio
                   {c.name}
                 </h3>
                 <p className="font-label text-muted tnum whitespace-nowrap">
-                  {String(c.count).padStart(2, "0")}{" "}
-                  {c.count === 1 ? "piece" : "pieces"}
+                  {c.comingSoon ? (
+                    "Coming soon"
+                  ) : (
+                    <>
+                      {String(c.count).padStart(2, "0")}{" "}
+                      {c.count === 1 ? "piece" : "pieces"}
+                    </>
+                  )}
                 </p>
               </div>
 

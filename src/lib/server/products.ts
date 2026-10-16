@@ -2,10 +2,38 @@ import "server-only";
 import { cache } from "react";
 import { prisma } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
-import { PRODUCT_STATUSES, type ProductStatus } from "@/lib/constants";
+import {
+  PRODUCT_STATUSES,
+  STOREFRONT_PRODUCT_STATUSES,
+  type ProductStatus,
+} from "@/lib/constants";
 import type { DisplayProduct } from "@/types";
 
 export { PRODUCT_STATUSES, type ProductStatus };
+
+/**
+ * How the storefront orders products, everywhere it lists them.
+ *
+ * ACTIVE first, COMING_SOON after: a customer who can buy five pieces today
+ * should not have to scroll past the ones they cannot. Within each band the
+ * newest leads, as before.
+ *
+ * It leans on `status: "asc"` to do the banding, because "ACTIVE" sorts
+ * before "COMING_SOON". That is load-bearing and it is why this lives here
+ * as one named constant rather than being retyped at six call sites: a
+ * third visible status whose name sorted earlier — "ANNOUNCED", say —
+ * would quietly outrank the pieces that are actually for sale. Add one and
+ * this becomes a CASE expression, not another orderBy.
+ */
+export const STOREFRONT_PRODUCT_ORDER: Prisma.ProductOrderByWithRelationInput[] = [
+  { status: "asc" },
+  { createdAt: "desc" },
+];
+
+/** Products a customer may see at all — the public counterpart to DRAFT. */
+export const storefrontProductWhere = (): Prisma.ProductWhereInput => ({
+  status: { in: [...STOREFRONT_PRODUCT_STATUSES] },
+});
 
 // Prisma row → storefront DisplayProduct shape.
 type WithRelations = {
@@ -13,6 +41,7 @@ type WithRelations = {
   slug: string;
   name: string;
   description: string;
+  status: string;
   composition: string;
   fabricWeight: string;
   fit: string;
@@ -38,6 +67,10 @@ export function toDisplayProduct(p: WithRelations): DisplayProduct {
     slug: p.slug,
     name: p.name,
     description: p.description,
+    // Cast because the column is a plain String in Postgres, not an enum.
+    // Every query that feeds this filters on a known status, so a value
+    // outside the union cannot reach a storefront component.
+    status: p.status as ProductStatus,
     spec: {
       composition: p.composition,
       fabricWeight: p.fabricWeight,
@@ -73,13 +106,27 @@ export function listAdminProducts() {
   });
 }
 
-export function listActiveProducts(opts?: { categorySlug?: string; collectionSlug?: string }) {
-  const where: Prisma.ProductWhereInput = { status: "ACTIVE" };
+/**
+ * Everything the storefront shows in a grid: live pieces and the ones
+ * coming soon, live ones first (see STOREFRONT_PRODUCT_ORDER).
+ *
+ * Pass `onlyActive` where the question is "is there anything to actually
+ * buy here" — a category tile or a collection's own tally — rather than
+ * "what should this grid render".
+ */
+export function listStorefrontProducts(opts?: {
+  categorySlug?: string;
+  collectionSlug?: string;
+  onlyActive?: boolean;
+}) {
+  const where: Prisma.ProductWhereInput = opts?.onlyActive
+    ? { status: "ACTIVE" }
+    : storefrontProductWhere();
   if (opts?.categorySlug) where.category = { slug: opts.categorySlug };
   if (opts?.collectionSlug) where.collection = { slug: opts.collectionSlug };
   return prisma.product.findMany({
     where,
-    orderBy: { createdAt: "desc" },
+    orderBy: STOREFRONT_PRODUCT_ORDER,
     include: {
       category: true,
       collection: true,

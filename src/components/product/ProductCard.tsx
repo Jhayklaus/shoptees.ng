@@ -31,7 +31,18 @@ export function ProductCard({ product, lead }: Props) {
   const hero = product.images[0];
   const back = product.images[1]; // back view / second colourway by convention
   const totalStock = product.variants.reduce((s, v) => s + v.stock, 0);
-  const isSoldOut = totalStock === 0 && product.variants.length > 0;
+
+  // Not out yet: the tile stays in the grid, veiled and tagged, rather than
+  // being hidden. The veil is light on purpose — enough that the eye reads
+  // "not this one, not yet" at a glance across the grid, not so much that
+  // the garment becomes a smudge. It is the tag that carries the message;
+  // the blur only stops a teaser from competing with what is for sale.
+  const comingSoon = product.status === "COMING_SOON";
+
+  // A coming-soon piece has no stock by definition, so the sold-out stamp
+  // would fire on every one of them and say the wrong thing. Coming soon
+  // wins — it is the more specific fact.
+  const isSoldOut = !comingSoon && totalStock === 0 && product.variants.length > 0;
 
   return (
     <Link href={`/shop/${product.slug}`} className={`group block ${lead ? "sm:col-span-2" : ""}`}>
@@ -58,6 +69,7 @@ export function ProductCard({ product, lead }: Props) {
                 // anything more is padding the padding.
                 "object-contain p-2 md:p-3 transition-all duration-[650ms] ease-[cubic-bezier(.2,.7,.1,1)]",
                 back ? "opacity-100 group-hover:opacity-0" : "group-hover:scale-[1.04]",
+                comingSoon ? "blur-[3px]" : "",
               ].join(" ")}
             />
             {back && (
@@ -66,7 +78,9 @@ export function ProductCard({ product, lead }: Props) {
                 alt=""
                 fill
                 sizes={lead ? "(max-width: 640px) 100vw, 50vw" : "(max-width: 640px) 50vw, 25vw"}
-                className="object-contain p-2 md:p-3 absolute inset-0 opacity-0 scale-[1.03] transition-all duration-[650ms] ease-[cubic-bezier(.2,.7,.1,1)] group-hover:opacity-100 group-hover:scale-100"
+                className={`object-contain p-2 md:p-3 absolute inset-0 opacity-0 scale-[1.03] transition-all duration-[650ms] ease-[cubic-bezier(.2,.7,.1,1)] group-hover:opacity-100 group-hover:scale-100 ${
+                  comingSoon ? "blur-[3px]" : ""
+                }`}
               />
             )}
           </>
@@ -74,6 +88,12 @@ export function ProductCard({ product, lead }: Props) {
           <div className="absolute inset-0 flex items-center justify-center font-label text-muted">
             no image
           </div>
+        )}
+
+        {comingSoon && (
+          <span className="absolute top-3 left-3 z-10 bg-paper/95 text-ink border border-ink font-label px-2 py-1 text-[0.64rem]">
+            Coming soon
+          </span>
         )}
 
         {isSoldOut && (
