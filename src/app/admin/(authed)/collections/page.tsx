@@ -41,11 +41,12 @@ export default async function AdminCollectionsPage() {
           </div>
         ) : (
           <div className="border border-line overflow-x-auto">
-            <table className="w-full text-sm min-w-[560px]">
+            <table className="w-full text-sm min-w-[720px]">
               <thead className="bg-paper-deep border-b border-line">
                 <tr className="text-left">
                   <Th>Name</Th>
                   <Th>Status</Th>
+                  <Th>On the storefront</Th>
                   <Th>Slug</Th>
                   <Th>Products</Th>
                   <Th>Sort</Th>
@@ -64,6 +65,25 @@ export default async function AdminCollectionsPage() {
                     </Td>
                     <Td>
                       <StatusBadge status={c.status} variant="product" />
+                    </Td>
+                    {/* What a customer currently sees. A published line with
+                        nothing live in it reads as "coming soon" on the
+                        storefront by itself — it is derived from the
+                        products, so this column is where an editor finds
+                        out that is happening and why. */}
+                    <Td className="font-label">
+                      {c.status !== "ACTIVE" ? (
+                        <span className="text-ink/40">—</span>
+                      ) : c.comingSoon ? (
+                        <span className="border border-ink border-dashed px-2 py-0.5">
+                          coming soon
+                        </span>
+                      ) : (
+                        <span className="text-ink-soft">
+                          {c.activeCount} live
+                          {c.comingSoonCount > 0 ? ` · ${c.comingSoonCount} soon` : ""}
+                        </span>
+                      )}
                     </Td>
                     <Td className="font-label text-ink/55">/{c.slug}</Td>
                     <Td className="font-label">{c._count.products}</Td>

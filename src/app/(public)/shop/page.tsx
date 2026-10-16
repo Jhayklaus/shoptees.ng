@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
-import { listActiveProducts, toDisplayProduct, getActiveCategories } from "@/lib/server/products";
+import { listStorefrontProducts, toDisplayProduct, getActiveCategories } from "@/lib/server/products";
 import {
   getActiveCollections,
   getCollectionBySlug,
@@ -88,7 +88,7 @@ export default async function ShopPage({
     ? categories.find((cat) => cat.slug === categorySlugParam) ?? null
     : null;
 
-  const products = await listActiveProducts({
+  const products = await listStorefrontProducts({
     categorySlug: activeCategory?.slug,
     collectionSlug: activeCollection?.slug,
   });
@@ -104,7 +104,7 @@ export default async function ShopPage({
   // real shop filter does. Derived from the rows already fetched — no extra
   // query, and it stays correct under an active collection filter.
   const all = activeCollection
-    ? await listActiveProducts({ collectionSlug: activeCollection.slug })
+    ? await listStorefrontProducts({ collectionSlug: activeCollection.slug })
     : products;
   const countBy = (pick: (p: (typeof all)[number]) => string | undefined) => {
     const m = new Map<string, number>();

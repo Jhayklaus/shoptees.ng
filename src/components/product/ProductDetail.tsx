@@ -33,6 +33,19 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
 
   const variant = product.variants.find((v) => v.id === variantId);
   const inStock = (variant?.stock ?? 0) > 0;
+
+  // A coming-soon piece has a page, a gallery and a spec sheet — everything
+  // except a way to buy it. The images stay sharp here, unlike the blurred
+  // tile in the grid: someone who opened the page came to look at the
+  // garment, and veiling it at that point would be withholding the only
+  // thing the page is for. What changes is the controls.
+  //
+  // It also carries no stock, so every stock-derived label below ("Sold
+  // out", "Only 2 left", struck-through size chips) would fire and read as
+  // a piece that has been and gone rather than one that has not arrived.
+  const comingSoon = product.status === "COMING_SOON";
+  const buyable = inStock && !comingSoon;
+
   const money = useMoney();
   const displayPrice = variant?.priceOverrideNGN ?? product.priceNGN;
   // Each colourway carries its own archive ref (TH-16, TH-17, TH-18), so
@@ -91,14 +104,14 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
   };
 
   const onAdd = () => {
-    if (!variant || !inStock) return;
+    if (!variant || !buyable) return;
     add({ productId: product.id, variantId: variant.id, quantity: qty });
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
 
   const onBuyNow = () => {
-    if (!variant || !inStock) return;
+    if (!variant || !buyable) return;
     add({ productId: product.id, variantId: variant.id, quantity: qty });
     router.push("/checkout");
   };
@@ -134,6 +147,7 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
           picture — which is what 1.15/0.85 did. */}
       <div className="grid lg:grid-cols-[1.2fr_.8fr] gap-8 lg:gap-14">
         <ProductGallery
+          comingSoon={comingSoon}
           // Keyed by colourway: switching colour remounts the gallery, so its
           // position resets to the first shot with no state left over.
           // Pairing the index with the colour instead LOOKED right but kept a
@@ -175,8 +189,10 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
           {/* ── Size ─────────────────────────────────────────────── */}
           <div className="mt-7">
             <div className="flex items-baseline justify-between gap-3 mb-2.5">
-              <p className="font-label text-muted">Size</p>
-              {variant && !inStock && (
+              <p className="font-label text-muted">
+                {comingSoon ? "Sizes it lands in" : "Size"}
+              </p>
+              {!comingSoon && variant && !inStock && (
                 <p className="font-label text-vermillion">Sold out</p>
               )}
             </div>
@@ -185,7 +201,11 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
                 <button
                   key={v.id}
                   type="button"
-                  disabled={v.stock === 0}
+                  // On a coming-soon piece the chips are a size list, not an
+                  // availability report: disabling all of them because stock
+                  // is zero would strike through every size of a garment
+                  // that has not shipped yet.
+                  disabled={!comingSoon && v.stock === 0}
                   onClick={() => setVariantId(v.id)}
                   aria-pressed={v.id === variantId}
                   className="chip"
@@ -197,48 +217,55 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
           </div>
 
           {/* ── Quantity ─────────────────────────────────────────── */}
-          <div className="mt-6">
-            <p className="font-label text-muted mb-2.5">Quantity</p>
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="inline-flex items-center border-2 border-ink">
-                <button
-                  type="button"
-                  onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  aria-label="Decrease quantity"
-                  className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors text-lg leading-none"
-                >
-                  −
-                </button>
-                <span className="w-12 text-center font-sub tnum">
-                  {String(qty).padStart(2, "0")}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setQty((q) => Math.min(variant?.stock ?? 99, q + 1))}
-                  aria-label="Increase quantity"
-                  className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors text-lg leading-none"
-                >
-                  +
-                </button>
+          {/* Nothing to count on a piece that cannot be bought yet. */}
+          {!comingSoon && (
+            <div className="mt-6">
+              <p className="font-label text-muted mb-2.5">Quantity</p>
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="inline-flex items-center border-2 border-ink">
+                  <button
+                    type="button"
+                    onClick={() => setQty((q) => Math.max(1, q - 1))}
+                    aria-label="Decrease quantity"
+                    className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors text-lg leading-none"
+                  >
+                    −
+                  </button>
+                  <span className="w-12 text-center font-sub tnum">
+                    {String(qty).padStart(2, "0")}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQty((q) => Math.min(variant?.stock ?? 99, q + 1))}
+                    aria-label="Increase quantity"
+                    className="w-11 h-11 hover:bg-ink hover:text-paper transition-colors text-lg leading-none"
+                  >
+                    +
+                  </button>
+                </div>
+                {variant && inStock && variant.stock <= 5 && (
+                  <p className="font-label text-vermillion">Only {variant.stock} left</p>
+                )}
               </div>
-              {variant && inStock && variant.stock <= 5 && (
-                <p className="font-label text-vermillion">Only {variant.stock} left</p>
-              )}
             </div>
-          </div>
+          )}
 
           {/* ── Desktop actions ──────────────────────────────────── */}
-          <div className="mt-8 hidden lg:grid gap-2.5">
-            <AddButton added={added} inStock={inStock} onClick={onAdd} />
-            <button
-              type="button"
-              onClick={onBuyNow}
-              disabled={!inStock}
-              className="btn btn-ghost press w-full py-4"
-            >
-              Buy now
-            </button>
-          </div>
+          {comingSoon ? (
+            <ComingSoonNotice className="mt-8 hidden lg:block" />
+          ) : (
+            <div className="mt-8 hidden lg:grid gap-2.5">
+              <AddButton added={added} inStock={inStock} onClick={onAdd} />
+              <button
+                type="button"
+                onClick={onBuyNow}
+                disabled={!inStock}
+                className="btn btn-ghost press w-full py-4"
+              >
+                Buy now
+              </button>
+            </div>
+          )}
 
           {/* ── Spec sheet ───────────────────────────────────────── */}
           {/* Only rows we actually know.
@@ -291,14 +318,46 @@ export function ProductDetail({ product }: { product: DisplayProduct }) {
         <div className="min-w-0">
           <p className="font-sub text-[0.82rem] truncate">{product.name}</p>
           <p className="font-sub tnum text-[0.88rem]">
-            {displayPrice > 0 ? money.formatLine(displayPrice, qty) : "—"}
+            {displayPrice <= 0
+              ? "—"
+              : comingSoon
+                ? money.format(displayPrice)
+                : money.formatLine(displayPrice, qty)}
           </p>
         </div>
         <div className="ml-auto shrink-0 w-[52%] max-w-[15rem]">
-          <AddButton added={added} inStock={inStock} onClick={onAdd} compact />
+          {comingSoon ? (
+            /* Not a disabled button: there is no action behind it, and a
+               button that can never be pressed is still focusable and still
+               announced as one. */
+            <p className="font-label text-center border-2 border-ink py-3.5">
+              Coming soon
+            </p>
+          ) : (
+            <AddButton added={added} inStock={inStock} onClick={onAdd} compact />
+          )}
         </div>
       </div>
     </main>
+  );
+}
+
+/**
+ * What stands in for the buy controls on a piece that has not dropped yet.
+ *
+ * Deliberately not a greyed-out "Add to cart". A disabled primary action
+ * reads as something broken or as stock that ran out; this says which of
+ * the two it actually is, and that the piece is coming rather than gone.
+ */
+function ComingSoonNotice({ className = "" }: { className?: string }) {
+  return (
+    <div className={`border-2 border-ink bg-paper-deep px-5 py-4 ${className}`}>
+      <p className="font-label text-ink">Coming soon</p>
+      <p className="text-ink-soft text-[0.9rem] leading-snug mt-1.5 max-w-[42ch]">
+        Not on sale yet — this one lands in a later wave of the drop. The
+        sizes and colourways above are what it will come in.
+      </p>
+    </div>
   );
 }
 
@@ -355,6 +414,7 @@ function ProductGallery({
   onPickColour,
   colourInStock,
   swatchFor,
+  comingSoon,
 }: {
   images: DisplayImage[];
   fallbackAlt: string;
@@ -363,6 +423,8 @@ function ProductGallery({
   onPickColour: (colour: string) => void;
   colourInStock: (colour: string) => boolean;
   swatchFor: (colour: string) => DisplayImage | null;
+  /** Stamps the frame and stops stock deciding which colourways are pickable. */
+  comingSoon: boolean;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -449,6 +511,12 @@ function ProductGallery({
           ))}
         </div>
 
+        {comingSoon && (
+          <span className="absolute top-4 left-4 z-10 bg-paper/95 text-ink border border-ink font-label px-2.5 py-1">
+            Coming soon
+          </span>
+        )}
+
         {images.length > 1 && (
           <>
             {/* Rendered only when there is somewhere to go, rather than
@@ -493,7 +561,10 @@ function ProductGallery({
           {colourways.map((c) => {
             const isActive = c === activeColour;
             const art = swatchFor(c);
-            const available = colourInStock(c);
+            // Before the drop, every colourway is pickable: stock is zero
+            // across the board, so reading availability off it would strike
+            // out the whole strip.
+            const available = comingSoon || colourInStock(c);
             return (
               <button
                 key={c}

@@ -1,4 +1,4 @@
-import { listActiveProducts, toDisplayProduct } from "@/lib/server/products";
+import { listStorefrontProducts, toDisplayProduct } from "@/lib/server/products";
 import { ProductCard } from "@/components/product/ProductCard";
 import { SectionHead } from "@/components/marketing/SectionHead";
 
@@ -15,7 +15,7 @@ import { SectionHead } from "@/components/marketing/SectionHead";
  * that made the old grid read as a template.
  */
 export async function FeaturedGrid() {
-  const rows = await listActiveProducts();
+  const rows = await listStorefrontProducts();
   const featured = rows.slice(0, 8).map(toDisplayProduct);
 
   if (featured.length === 0) {

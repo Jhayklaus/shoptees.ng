@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import { buildMetadata } from "@/lib/seo";
+import { isStorefrontStatus } from "@/lib/constants";
 import { productJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import {
   getProductBySlug,
-  listActiveProducts,
+  listStorefrontProducts,
   toDisplayProduct,
 } from "@/lib/server/products";
 import { ProductDetail } from "@/components/product/ProductDetail";
@@ -21,12 +22,17 @@ export async function generateMetadata({
   const row = await getProductBySlug(slug);
   // Drafts and archived products must not leak their name through the page
   // title — the body is the 404, the <title> should match it.
-  if (!row || row.status !== "ACTIVE") return {};
+  if (!row || !isStorefrontStatus(row.status)) return {};
   return buildMetadata({
     title: row.name,
     description: row.description,
     path: `/shop/${row.slug}`,
     image: row.images[0]?.url,
+    // A teaser is kept out of the index, which is also what the sitemap
+    // does with it — the two have to agree, or we are asking Google to
+    // index a page we never submitted. It goes in on the day the piece
+    // goes ACTIVE.
+    noIndex: row.status === "COMING_SOON",
   });
 }
 
@@ -37,16 +43,16 @@ export default async function ProductDetailPage({
 }) {
   const { slug } = await params;
   const row = await getProductBySlug(slug);
-  if (!row || row.status === "ARCHIVED") notFound();
+  if (!row || !isStorefrontStatus(row.status)) notFound();
 
   const product = toDisplayProduct(row);
 
   // Rest of the line. Falls back to the wider catalogue when a collection
   // holds only this one piece, so the block is never a lonely single card.
   const siblings = product.collection
-    ? await listActiveProducts({ collectionSlug: product.collection.slug })
+    ? await listStorefrontProducts({ collectionSlug: product.collection.slug })
     : [];
-  const pool = siblings.length > 1 ? siblings : await listActiveProducts();
+  const pool = siblings.length > 1 ? siblings : await listStorefrontProducts();
   const related = pool
     .filter((p) => p.slug !== product.slug)
     .slice(0, 4)

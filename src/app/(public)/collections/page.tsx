@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
-import { listCollectionsWithProducts } from "@/lib/server/collections";
+import { listPublishedCollections } from "@/lib/server/collections";
 import { collectionCard } from "@/lib/images";
 import { COLLECTIONS } from "@/lib/taxonomy";
 
@@ -19,10 +19,11 @@ export const dynamic = "force-dynamic";
 const DEFINING = new Map(COLLECTIONS.map((c) => [c.slug, c.definingGraphic]));
 
 export default async function CollectionsPage() {
-  // `take: 1` — the tiles show a graphic, not a product rail, so only the
-  // counts are needed. Reusing the existing query keeps this page out of
-  // the data layer.
-  const collections = await listCollectionsWithProducts(1);
+  // Tiles show a graphic and a count, never a product rail, so the rows
+  // and their tallies are all this page needs. Lines with something live
+  // in them come first; a line whose pieces are all still coming is
+  // labelled rather than counted.
+  const collections = await listPublishedCollections();
 
   return (
     <main className="mx-auto max-w-[1400px] px-5 md:px-10 pt-8 pb-24">
@@ -66,8 +67,22 @@ export default async function CollectionsPage() {
                       alt={art.alt}
                       fill
                       sizes="(max-width: 640px) 100vw, 50vw"
-                      className="object-cover transition-transform duration-[700ms] ease-out group-hover:scale-[1.04]"
+                      className={[
+                        "object-cover transition-transform duration-[700ms] ease-out",
+                        // Blurring a cover image softens its edges inside
+                        // the frame, which leaves a pale rim of the tile
+                        // ground showing all the way round. Scaling it up
+                        // a touch pushes that soft edge out of shot.
+                        col.comingSoon
+                          ? "blur-[3px] scale-[1.06] group-hover:scale-[1.1]"
+                          : "group-hover:scale-[1.04]",
+                      ].join(" ")}
                     />
+                  )}
+                  {col.comingSoon && (
+                    <span className="absolute top-3 left-3 z-10 bg-paper/95 text-ink border border-ink font-label px-2 py-1 text-[0.64rem]">
+                      Coming soon
+                    </span>
                   )}
                 </div>
 
@@ -75,9 +90,19 @@ export default async function CollectionsPage() {
                   <h2 className="font-display text-[clamp(1.4rem,3vw,2rem)] group-hover:text-vermillion transition-colors">
                     {col.name}
                   </h2>
+                  {/* Nothing live in the line, so there is no piece count
+                      worth printing — "00 pieces" is a bug report, not a
+                      label. The tile still opens: inside are the blurred
+                      tiles of what is coming. */}
                   <p className="font-label text-muted tnum whitespace-nowrap">
-                    {String(col._count.products).padStart(2, "0")}{" "}
-                    {col._count.products === 1 ? "piece" : "pieces"}
+                    {col.comingSoon ? (
+                      "Coming soon"
+                    ) : (
+                      <>
+                        {String(col.pieces).padStart(2, "0")}{" "}
+                        {col.pieces === 1 ? "piece" : "pieces"}
+                      </>
+                    )}
                   </p>
                 </div>
 

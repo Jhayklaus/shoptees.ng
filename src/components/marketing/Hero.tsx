@@ -15,6 +15,8 @@ export type HeroContent = {
   imageAlt: string;
   caption: string;
   pieces: number;
+  /** Nothing live in the line yet — the count gives way to "coming soon". */
+  comingSoon?: boolean;
 };
 
 /**
@@ -65,10 +67,14 @@ export function Hero({ content }: { content: HeroContent }) {
             <p className="font-label text-paper/75 mb-4">
               {content.eyebrow}
               <span aria-hidden className="mx-2 text-paper/40">·</span>
-              <span className="tnum">
-                {String(content.pieces).padStart(2, "0")}{" "}
-                {content.pieces === 1 ? "piece" : "pieces"}
-              </span>
+              {content.comingSoon ? (
+                <span>Coming soon</span>
+              ) : (
+                <span className="tnum">
+                  {String(content.pieces).padStart(2, "0")}{" "}
+                  {content.pieces === 1 ? "piece" : "pieces"}
+                </span>
+              )}
             </p>
 
             <h1 className="font-display text-paper text-[clamp(3.2rem,11vw,8rem)] max-w-[12ch]">

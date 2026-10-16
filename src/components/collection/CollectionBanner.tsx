@@ -17,9 +17,17 @@ import { collectionBanner, type CollectionArtSource } from "@/lib/images";
 export function CollectionBanner({
   collection,
   count,
+  comingSoon,
 }: {
   collection: CollectionArtSource & { description?: string };
   count: number;
+  /**
+   * Nothing in the line is live yet. The art stays sharp — it is the
+   * collection's defining graphic and the page is where you come to look at
+   * it — but the count is replaced, because a piece count on a line you
+   * cannot buy from reads as an invitation that goes nowhere.
+   */
+  comingSoon?: boolean;
 }) {
   const { name, description } = collection;
   const art = collectionBanner(collection);
@@ -47,9 +55,13 @@ export function CollectionBanner({
             <span aria-hidden className="mx-2 text-paper/40">
               ·
             </span>
-            <span className="tnum">
-              {String(count).padStart(2, "0")} {count === 1 ? "piece" : "pieces"}
-            </span>
+            {comingSoon ? (
+              <span>Coming soon</span>
+            ) : (
+              <span className="tnum">
+                {String(count).padStart(2, "0")} {count === 1 ? "piece" : "pieces"}
+              </span>
+            )}
           </p>
           <h1 className="font-display text-paper text-[clamp(2rem,6vw,4rem)] mt-2.5">
             {name}

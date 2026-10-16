@@ -17,6 +17,7 @@ async function loadKpis() {
     pendingOrders,
     customers,
     activeProducts,
+    comingSoonProducts,
     lowStockVariants,
     recentOrders,
   ] = await Promise.all([
@@ -35,6 +36,7 @@ async function loadKpis() {
     prisma.order.count({ where: { status: "PENDING" } }),
     prisma.customer.count(),
     prisma.product.count({ where: { status: "ACTIVE" } }),
+    prisma.product.count({ where: { status: "COMING_SOON" } }),
     prisma.variant.count({ where: { stock: { lte: 3 } } }),
     prisma.order.findMany({
       take: 8,
@@ -50,6 +52,7 @@ async function loadKpis() {
     pendingOrders,
     customers,
     activeProducts,
+    comingSoonProducts,
     lowStockVariants,
     recentOrders,
   };
@@ -99,9 +102,14 @@ export default async function AdminDashboard() {
             value={k.activeProducts.toString()}
           />
           <KpiCard
+            label="Coming soon"
+            value={k.comingSoonProducts.toString()}
+            hint="on the storefront, not for sale"
+          />
+          <KpiCard
             label="Low-stock variants"
             value={k.lowStockVariants.toString()}
-            hint="≤ 3 in stock"
+            hint="≤ 3 in stock, every status"
           />
         </section>
 

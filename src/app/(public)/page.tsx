@@ -52,7 +52,12 @@ export default async function HomePage() {
   // Admin picks the collection with `hero.collection`; anything missing or
   // unpublished falls back to the first published collection, so the hero is
   // never empty and never links somewhere a customer cannot open.
-  const featured = bySlug(s["hero.collection"]) ?? collections[0];
+  // The fallback prefers a line with something live in it. An admin's
+  // explicit pick is still honoured even when that line is all coming
+  // soon — a teaser hero is a legitimate thing to want — but the automatic
+  // choice should land on a collection a customer can actually buy from.
+  const featured =
+    bySlug(s["hero.collection"]) ?? collections.find((c) => !c.comingSoon) ?? collections[0];
 
   // Image precedence, and the order here is the whole point:
   //   1. a hero-slot banner row's own image
@@ -69,7 +74,8 @@ export default async function HomePage() {
     ? {
         slug: featured.slug,
         name: featured.name,
-        pieces: featured._count.products,
+        pieces: featured.pieces,
+        comingSoon: featured.comingSoon,
         eyebrow: heroBanner?.eyebrow || s["hero.eyebrow"] || "Featured collection",
         headline: heroBanner?.title || s["hero.headline"] || featured.name,
         body: heroBanner?.body || s["hero.body"] || featured.description,
@@ -138,7 +144,8 @@ export default async function HomePage() {
       description: c.description,
       imageUrl: art?.url ?? null,
       imageAlt: art?.alt ?? "",
-      count: c._count.products,
+      count: c.pieces,
+      comingSoon: c.comingSoon,
     };
   });
 

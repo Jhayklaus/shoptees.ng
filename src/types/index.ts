@@ -2,6 +2,8 @@
 // the customer-facing components rely on, so server queries get normalised
 // into these shapes via toDisplayProduct() in lib/server/products.ts.
 
+import type { ProductStatus } from "@/lib/constants";
+
 export type DisplayVariant = {
   id: string;
   size: string;
@@ -45,6 +47,13 @@ export type DisplayProduct = {
   slug: string;
   name: string;
   description: string;
+  /**
+   * Carried through to the card and the product page because a storefront
+   * product is no longer necessarily for sale: COMING_SOON renders blurred,
+   * tagged and with the buy controls replaced. Only ever ACTIVE or
+   * COMING_SOON here — anything else never leaves the admin.
+   */
+  status: ProductStatus;
   spec: ProductSpec;
   priceNGN: number;
   category: DisplayCategory | null;
